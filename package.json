@@ -17,6 +17,7 @@
     "vite-plugin-virtual-html": "^1.1.19"
   },
   "dependencies": {
+    "@alpinejs/persist": "^3.13.5",
     "alpinejs": "^3.13.5",
     "daisyui": "latest"
   }

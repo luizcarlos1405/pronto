@@ -1,7 +1,17 @@
-<h1>Pronto</h1>
+<main x-data="taskStack">
+  <h1>Tasks</h1>
 
-<ol>
-  <template x-for="task in tasks">
-    <li>Alo</li>
-  </template>
-</ol>
+  <ol class="w-80">
+    <template x-for="(task, index) in tasks">
+      <li class="w-full flex justify-between" :key="task.id">
+        <span x-text="task.name"></span>
+        <button @click="removeTask(index)">delete</button>
+      </li>
+    </template>
+  </ol>
+
+  <form @submit.prevent="addTask({title: title.value})">
+    <input id="title" class="input" />
+    <button class="btn" :disabled="!title.value">Add</button>
+  </form>
+</main>
