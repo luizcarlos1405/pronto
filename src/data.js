@@ -35,6 +35,15 @@ document.addEventListener("alpine:init", () => {
   Alpine.data("nextTask", function () {
     return {
       tasks: this.$persist([]).as("tasks"),
+      title: "",
+
+      startNewTask({ title }) {
+        if (title) {
+          this.tasks = [{ id: crypto.randomUUID(), title }, ...this.tasks];
+          this.title = "";
+        }
+      },
+
       get todayTasks() {
         return this.tasks.filter((task) => {
           if (task.constraints?.afterDate) {

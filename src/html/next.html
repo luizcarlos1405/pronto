@@ -3,25 +3,26 @@
     <a class="btn btn-link join-item" href="/"> Home </a>
   </div>
 
-  <h1>Next task</h1>
-
   <template x-if="currentTask">
-    <h2 x-text="currentTask.title"></h2>
+    <div>
+      <h2 class="mb-4" x-text="currentTask.title"></h2>
 
-    <div class="join">
-      <button class="btn btn-sm join-item" @click="doTomorrow()">
-        Do Tomorrow
-      </button>
-      <button class="btn btn-sm join-item" @click="doTomorrow()">
-        Do Next
-      </button>
-      <button class="btn btn-sm join-item" @click="doTomorrow()">
-        Do Last
-      </button>
+      <div class="join">
+        <button class="btn btn-sm join-item" @click="doTomorrow()">
+          Do Tomorrow
+        </button>
+        <button class="btn btn-sm join-item" @click="doNext()">Do Next</button>
+        <button class="btn btn-sm join-item" @click="doLast()">Do Last</button>
+      </div>
     </div>
   </template>
 
   <template x-if="isAllDone">
     <h2>All done for today!</h2>
   </template>
+
+  <form class="mt-8" @submit.prevent="startNewTask({title})">
+    <input x-model="title" class="input input-bordered" />
+    <button class="btn" :disabled="!title">Start new</button>
+  </form>
 </main>

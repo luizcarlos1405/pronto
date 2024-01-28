@@ -3,15 +3,16 @@
     <a class="btn btn-link join-item" href="/next.html">Next Task</a>
   </div>
 
-  <h1>Tasks</h1>
+  <h1 class="text-xl mb-8">Tasks</h1>
 
-  <ol class="w-full">
+  <ol class="w-full flex flex-col gap-1">
     <template x-for="(task, index) in tasks">
       <li class="w-full flex" :key="task.id">
         <div class="flex flex-col">
-          <span x-text="task.title"></span>
+          <span class="leading-none" x-text="task.title"></span>
           <span
             class="opacity-60 text-sm"
+            x-show="task.constraints?.afterDate"
             x-text="'Do after ' + dayjs(task.constraints?.afterDate).format('MMM D')"
           ></span>
         </div>
@@ -39,7 +40,7 @@
     </template>
   </ol>
 
-  <form @submit.prevent="addTask({title})">
+  <form class="mt-8" @submit.prevent="addTask({title})">
     <input x-model="title" class="input input-bordered" />
     <button class="btn" :disabled="!title">Add</button>
   </form>
