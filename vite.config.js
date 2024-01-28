@@ -1,21 +1,21 @@
 import virtualHtml from "vite-plugin-virtual-html";
+import { pages } from "./src/pages";
 import Mustache from "mustache";
-import { routes } from "./src/routes";
+import fs from "fs";
 
 export default {
   plugins: [
     virtualHtml({
-      pages: Object.fromEntries(
-        Object.entries(routes).map(([key, value]) => [
-          key,
-          {
-            template: "/index.html",
-            render: async (layout) => Mustache.render(layout, value),
-            ...value,
-          },
-        ]),
-      ),
+      pages,
       indexPage: "home",
+      render: (template, data) => {
+        const layoutTemplate = fs.readFileSync("index.html", {
+          encoding: "utf8",
+          flag: "r",
+        });
+
+        return Mustache.render(layoutTemplate, { ...data, body: template });
+      },
     }),
   ],
 };

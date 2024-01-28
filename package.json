@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.17",
+    "feather-icons": "^4.29.1",
     "mustache": "^4.2.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",

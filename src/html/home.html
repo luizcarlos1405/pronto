@@ -3,15 +3,34 @@
 
   <ol class="w-80">
     <template x-for="(task, index) in tasks">
-      <li class="w-full flex justify-between" :key="task.id">
-        <span x-text="task.name"></span>
-        <button @click="removeTask(index)">delete</button>
+      <li class="w-full flex" :key="task.id">
+        <span x-text="task.title"></span>
+
+        <div class="ml-auto join">
+          <button
+            class="join-item btn btn-xs"
+            @click="moveDown(index)"
+            :disabled="index === tasks.length - 1"
+          >
+            <i x-feather:arrow-down="{width: 18, height: 18}"></i>
+          </button>
+          <button
+            class="join-item btn btn-xs"
+            @click="moveUp(index)"
+            :disabled="index === 0"
+          >
+            <i x-feather:arrow-up="{width: 18, height: 18}"></i>
+          </button>
+          <button class="join-item btn btn-xs" @click="removeTask(index)">
+            <i x-feather:x="{width: 18, height: 18}"></i>
+          </button>
+        </div>
       </li>
     </template>
   </ol>
 
-  <form @submit.prevent="addTask({title: title.value})">
-    <input id="title" class="input" />
-    <button class="btn" :disabled="!title.value">Add</button>
+  <form @submit.prevent="addTask({title})">
+    <input x-model="title" class="input input-bordered" />
+    <button class="btn" :disabled="!title">Add</button>
   </form>
 </main>
