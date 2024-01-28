@@ -1,10 +1,20 @@
-<main x-data="taskStack">
+<main class="w-1/3 m-auto" x-data="taskStack">
+  <div class="join">
+    <a class="btn btn-link join-item" href="/next.html">Next Task</a>
+  </div>
+
   <h1>Tasks</h1>
 
-  <ol class="w-80">
+  <ol class="w-full">
     <template x-for="(task, index) in tasks">
       <li class="w-full flex" :key="task.id">
-        <span x-text="task.title"></span>
+        <div class="flex flex-col">
+          <span x-text="task.title"></span>
+          <span
+            class="opacity-60 text-sm"
+            x-text="'Do after ' + dayjs(task.constraints?.afterDate).format('MMM D')"
+          ></span>
+        </div>
 
         <div class="ml-auto join">
           <button

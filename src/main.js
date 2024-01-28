@@ -1,10 +1,8 @@
 import "./style.css";
+import "./data";
 import Alpine from "alpinejs";
 import persist from "@alpinejs/persist";
 import feather from "feather-icons";
-import "./html/home";
-
-console.log(`feather`, feather);
 
 Alpine.plugin(persist);
 Alpine.directive("feather", (el, { value, expression }, { evaluate }) => {
@@ -14,4 +12,5 @@ Alpine.directive("feather", (el, { value, expression }, { evaluate }) => {
 });
 
 window.Alpine = Alpine;
+
 Alpine.start();
