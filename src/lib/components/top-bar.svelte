@@ -97,7 +97,7 @@
 </script>
 
 <div
-	class="navbar fixed top-0 left-0 right-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
+	class="navbar absolute top-0 left-0 right-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
 >
 	<div class="navbar-start">
 		<span class="text-xl font-bold tracking-tight">Faz</span>

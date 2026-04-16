@@ -3,6 +3,14 @@
 	themes: all;
 }
 
+body {
+    @apply max-w-lg mx-auto relative;
+}
+
+.modal-box {
+    @apply mx-auto;
+}
+
 @keyframes slide-up {
 	from {
 		opacity: 0;

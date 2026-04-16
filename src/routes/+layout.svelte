@@ -51,7 +51,7 @@
 		{@render children()}
 	</main>
 
-	<nav class="dock dock-md fixed bottom-0 left-0 right-0 z-50">
+	<nav class="dock dock-md absolute bottom-0 left-0 right-0 z-50">
 		{#each navItems as item (item.href)}
 			<a
 				href={resolve(item.href)}
