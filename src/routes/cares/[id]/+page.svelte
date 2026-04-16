@@ -118,7 +118,7 @@
 		<h1 class="text-2xl font-bold mb-4">{ctrl.care.title}</h1>
 
 		{#if ctrl.care.taskPlans.length > 0}
-			<h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Task Plans</h2>
+			<h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Task plans</h2>
 			<ul class="list mb-6">
 				{#each ctrl.care.taskPlans as plan (plan._id)}
 					<li class="list-row">
@@ -139,7 +139,9 @@
 				{/each}
 			</ul>
 		{:else}
-			<p class="text-base-content/50 text-center py-4 mb-4">No task plans yet.</p>
+			<p class="text-base-content/50 text-center py-4 mb-4">
+				No task plans yet. Add one to get started.
+			</p>
 		{/if}
 
 		{#if !ctrl.showWizard}
@@ -151,12 +153,12 @@
 				}}
 			>
 				<Plus class="size-4" />
-				Add Task Plan
+				Add task plan
 			</button>
 		{:else}
 			<div class="card card-border bg-base-200 mt-4">
 				<div class="card-body p-4 gap-3">
-					<h3 class="font-semibold">New Task Plan</h3>
+					<h3 class="font-semibold">New task plan</h3>
 
 					{#if planStep >= 0}
 						<label class="label">
@@ -277,7 +279,7 @@
 						{/if}
 						{#if planStep === 4}
 							<button class="btn btn-primary btn-sm" disabled={!canCreate()} onclick={handleCreate}>
-								Create
+								Add
 							</button>
 						{/if}
 						<div class="flex-1"></div>

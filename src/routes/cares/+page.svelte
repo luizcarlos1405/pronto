@@ -37,7 +37,7 @@
 	{:else if state.cares.length === 0}
 		<div class="text-center py-12 text-base-content/50">
 			<Heart class="size-12 mx-auto mb-3 opacity-40" />
-			<p>No cares yet. Create one to set up recurring tasks.</p>
+			<p>No cares yet. Add one to set up recurring tasks.</p>
 		</div>
 	{:else}
 		<div class="grid gap-3">

@@ -42,7 +42,7 @@
 	{:else if state.items.length === 0}
 		<div class="text-center py-12 text-base-content/50">
 			<Inbox class="size-12 mx-auto mb-3 opacity-40" />
-			<p>Inbox is empty. Capture something above.</p>
+			<p>Your inbox is empty. Nice.</p>
 		</div>
 	{:else}
 		<ul class="list">

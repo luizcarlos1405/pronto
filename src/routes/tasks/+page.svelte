@@ -36,7 +36,7 @@
 	{:else if state.tasks.length === 0 && state.doneToday.length === 0}
 		<div class="text-center py-12 text-base-content/50">
 			<CheckSquare class="size-12 mx-auto mb-3 opacity-40" />
-			<p>All clear! Nothing to do right now.</p>
+			<p>No tasks for today. Enjoy the quiet — or add something new.</p>
 		</div>
 	{:else}
 		{#if state.tasks.length > 0}

@@ -83,7 +83,7 @@
 {#if showThemeModal}
 	<dialog class="modal modal-open">
 		<div class="modal-box max-w-lg">
-			<h3 class="font-bold text-lg mb-4">Choose Theme</h3>
+			<h3 class="font-bold text-lg mb-4">Choose theme</h3>
 			<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
 				{#each themes as theme (theme)}
 					<button

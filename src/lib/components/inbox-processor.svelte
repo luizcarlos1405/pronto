@@ -58,12 +58,12 @@
 
 <dialog class="modal modal-open">
 	<div class="modal-box max-w-lg">
-		<h3 class="font-bold text-lg mb-1">Process Inbox Item</h3>
+		<h3 class="font-bold text-lg mb-1">Process inbox item</h3>
 		<p class="text-base-content/60 mb-4">{inboxItem.title}</p>
 
 		{#if ctrl.created.length > 0}
 			<div class="mb-4">
-				<p class="text-sm font-semibold text-base-content/60 uppercase mb-1">Created</p>
+				<p class="text-sm font-semibold text-base-content/60 uppercase mb-1">Added</p>
 				{#each ctrl.created as entity (entity.title + entity.type)}
 					<div class="badge badge-sm badge-success gap-1 mr-1">
 						{entityLabel[entity.type]}: {entity.title}
@@ -75,13 +75,13 @@
 		{#if ctrl.mode === 'choose'}
 			<div class="flex flex-col gap-2">
 				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'task')}>
-					<CheckSquare class="size-4" /> Create Task
+					<CheckSquare class="size-4" /> Add task
 				</button>
 				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'goal')}>
-					<Target class="size-4" /> Create Goal
+					<Target class="size-4" /> Add goal
 				</button>
 				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'care')}>
-					<Heart class="size-4" /> Create Care
+					<Heart class="size-4" /> Add care
 				</button>
 			</div>
 		{:else if ctrl.mode === 'task'}
@@ -103,7 +103,7 @@
 						{#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
 								class="size-4"
 							/>{/if}
-						Create Task
+						Add task
 					</button>
 					<button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
 				</div>
@@ -126,7 +126,7 @@
 						{#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
 								class="size-4"
 							/>{/if}
-						Create Goal
+						Add goal
 					</button>
 					<button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
 				</div>
@@ -142,7 +142,7 @@
 
 				{#if ctrl.created.some((e) => e.type === 'care')}
 					<p class="text-xs text-success">
-						Care created. You can add task plans later from the Cares page.
+						Care added. You can add task plans from the Cares page.
 					</p>
 				{:else if !showCarePlan}
 					<button class="btn btn-ghost btn-sm" onclick={() => (showCarePlan = true)}>
@@ -169,7 +169,7 @@
 								</label>
 							{/each}
 						</div>
-						<button class="btn btn-sm" onclick={handleAddCarePlan}>Add Plan</button>
+						<button class="btn btn-sm" onclick={handleAddCarePlan}>Add plan</button>
 					</div>
 				{/if}
 
@@ -182,7 +182,7 @@
 						{#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
 								class="size-4"
 							/>{/if}
-						Create Care
+						Add care
 					</button>
 					<button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
 				</div>

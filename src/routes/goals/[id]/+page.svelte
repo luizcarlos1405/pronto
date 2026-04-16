@@ -25,7 +25,7 @@
 		NOT_STARTED: 'Not started',
 		IN_PROGRESS: 'In progress',
 		REVIEW: 'Review',
-		COMPLETED: 'Completed'
+		COMPLETED: 'Done'
 	};
 </script>
 
@@ -46,9 +46,7 @@
 		</div>
 
 		{#if ctrl.goal.status === 'REVIEW'}
-			<button class="btn btn-success btn-sm mb-4" onclick={ctrl.markCompleted}>
-				Mark Completed
-			</button>
+			<button class="btn btn-success btn-sm mb-4" onclick={ctrl.markCompleted}> Mark done </button>
 		{/if}
 
 		<div class="join w-full mb-6">
@@ -65,7 +63,7 @@
 		</div>
 
 		{#if ctrl.tasks.length === 0}
-			<p class="text-base-content/50 text-center py-4">No tasks yet.</p>
+			<p class="text-base-content/50 text-center py-4">No tasks yet. Add your first one.</p>
 		{:else}
 			<ul class="list">
 				{#each ctrl.tasks as task (task._id)}

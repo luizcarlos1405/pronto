@@ -23,7 +23,7 @@
 		NOT_STARTED: 'Not started',
 		IN_PROGRESS: 'In progress',
 		REVIEW: 'Review',
-		COMPLETED: 'Completed'
+		COMPLETED: 'Done'
 	};
 </script>
 
@@ -51,7 +51,7 @@
 	{:else if state.goals.length === 0}
 		<div class="text-center py-12 text-base-content/50">
 			<Target class="size-12 mx-auto mb-3 opacity-40" />
-			<p>No goals yet. Create one above.</p>
+			<p>No goals yet. Add one above.</p>
 		</div>
 	{:else}
 		<div class="grid gap-3">
