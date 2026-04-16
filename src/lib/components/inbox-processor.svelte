@@ -56,7 +56,7 @@
 	};
 </script>
 
-<dialog class="modal modal-open">
+<dialog class="modal modal-bottom modal-open">
 	<div class="modal-box max-w-lg">
 		<h3 class="font-bold text-lg mb-1">Process inbox item</h3>
 		<p class="text-base-content/60 mb-4">{inboxItem.title}</p>

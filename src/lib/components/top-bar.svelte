@@ -127,7 +127,7 @@
 </div>
 
 {#if showThemeModal}
-	<dialog class="modal modal-open">
+	<dialog class="modal modal-bottom modal-open">
 		<div class="modal-box max-w-lg">
 			<h3 class="font-bold text-lg mb-4">Choose theme</h3>
 			<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
@@ -139,9 +139,7 @@
 						onclick={() => selectTheme(theme)}
 					>
 						{theme}
-						<span
-							class="badge badge-xs ml-auto"
-						>
+						<span class="badge badge-xs ml-auto">
 							{darkThemes.has(theme) ? 'dark' : 'light'}
 						</span>
 					</button>

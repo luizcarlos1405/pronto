@@ -76,7 +76,7 @@
 	}
 </script>
 
-<dialog class="modal modal-open">
+<dialog class="modal modal-bottom modal-open">
 	<div class="modal-box max-w-lg">
 		<h3 class="font-bold text-lg mb-4">Your data</h3>
 
