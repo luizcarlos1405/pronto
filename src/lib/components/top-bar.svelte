@@ -7,6 +7,23 @@
 	let showDataModal = $state(false);
 	let currentTheme = $state('light');
 
+	const darkThemes = new Set([
+		'dark',
+		'synthwave',
+		'halloween',
+		'forest',
+		'black',
+		'luxury',
+		'dracula',
+		'business',
+		'night',
+		'coffee',
+		'dim',
+		'nord',
+		'sunset',
+		'abyss'
+	]);
+
 	const themes = [
 		'light',
 		'dark',
@@ -116,12 +133,17 @@
 			<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
 				{#each themes as theme (theme)}
 					<button
-						class="btn btn-sm justify-start capitalize"
+						class="btn btn-sm flex capitalize"
 						class:btn-primary={currentTheme === theme}
 						class:btn-outline={currentTheme !== theme}
 						onclick={() => selectTheme(theme)}
 					>
 						{theme}
+						<span
+							class="badge badge-xs ml-auto"
+						>
+							{darkThemes.has(theme) ? 'dark' : 'light'}
+						</span>
 					</button>
 				{/each}
 			</div>
