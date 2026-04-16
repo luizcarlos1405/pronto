@@ -34,5 +34,9 @@
 		"typescript": "^6.0.2",
 		"vite": "^8.0.7",
 		"vitest": "^4.1.4"
+	},
+	"dependencies": {
+		"events": "^3.3.0",
+		"pouchdb-browser": "8.0.1"
 	}
 }
