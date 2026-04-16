@@ -43,7 +43,6 @@
 		"events": "^3.3.0",
 		"lucide-svelte": "^1.0.1",
 		"pouchdb-browser": "8.0.1",
-		"pouchdb-find": "^9.0.0",
-		"theme-change": "^2.5.0"
+		"pouchdb-find": "^9.0.0"
 	}
 }

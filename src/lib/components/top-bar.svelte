@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { themeChange } from 'theme-change';
 	import { MoreVertical, Palette } from 'lucide-svelte';
 
 	let showThemeModal = $state(false);
@@ -42,15 +41,19 @@
 		'caramellatte',
 		'abyss',
 		'silk'
-	].sort() as const;
+	].sort();
 
 	onMount(() => {
-		themeChange(false);
-		currentTheme = document.documentElement.getAttribute('data-theme') ?? 'light';
+		const saved = localStorage.getItem('theme');
+		if (saved) {
+			document.documentElement.setAttribute('data-theme', saved);
+			currentTheme = saved;
+		}
 	});
 
 	function selectTheme(name: string) {
 		document.documentElement.setAttribute('data-theme', name);
+		localStorage.setItem('theme', name);
 		currentTheme = name;
 	}
 </script>
