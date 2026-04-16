@@ -1,4 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
@@ -7,6 +8,7 @@ export default defineConfig({
 		global: 'globalThis'
 	},
 	plugins: [
+		tailwindcss(),
 		sveltekit(),
 		SvelteKitPWA({
 			registerType: 'autoUpdate',
