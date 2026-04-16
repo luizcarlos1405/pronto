@@ -1,5 +1,8 @@
 import PouchDB from 'pouchdb-browser';
+import pouchdbFind from 'pouchdb-find';
 import type { InboxItemDoc, TaskDoc, ObjectiveDoc, CareDoc } from '$lib/types';
+
+PouchDB.plugin(pouchdbFind);
 
 type ProntoDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
 
