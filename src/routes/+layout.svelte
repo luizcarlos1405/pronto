@@ -3,6 +3,8 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { ListChecks, Inbox, Target, Heart } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { runSchedulerNow } from '$lib/scheduler';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
@@ -13,6 +15,12 @@
 		{ href: '/objectives', label: 'Goals', icon: Target },
 		{ href: '/cares', label: 'Cares', icon: Heart }
 	];
+
+	onMount(() => {
+		runSchedulerNow();
+		const interval = setInterval(() => runSchedulerNow(), 5 * 60 * 1000);
+		return () => clearInterval(interval);
+	});
 </script>
 
 <svelte:head>
