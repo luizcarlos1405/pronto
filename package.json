@@ -39,6 +39,7 @@
 		"vitest": "^4.1.4"
 	},
 	"dependencies": {
+		"@js-temporal/polyfill": "^0.5.1",
 		"events": "^3.3.0",
 		"lucide-svelte": "^1.0.1",
 		"pouchdb-browser": "8.0.1",
