@@ -43,7 +43,7 @@
 		<div class="grid gap-3">
 			{#each state.cares as care (care._id)}
 				<a
-					href={resolve('/cares/{care._id}')}
+					href={resolve(`/cares/${care._id}`)}
 					class="card card-border hover:bg-base-200 transition-colors"
 				>
 					<div class="card-body flex-row items-center gap-3 p-4">
