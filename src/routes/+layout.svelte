@@ -26,7 +26,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>Pronto</title>
+	<title>Faz</title>
 </svelte:head>
 
 <div class="flex flex-col h-dvh">

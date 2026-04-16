@@ -13,8 +13,8 @@ export default defineConfig({
 		SvelteKitPWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: 'Pronto',
-				short_name: 'Pronto',
+				name: 'Faz',
+				short_name: 'Faz',
 				description: 'Personal GTD organization app',
 				theme_color: '#ffffff',
 				icons: [

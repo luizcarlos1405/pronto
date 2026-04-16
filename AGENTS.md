@@ -1,4 +1,4 @@
-# Pronto
+# Faz
 
 Personal GTD/task organization PWA. SvelteKit 5, client-only SPA, PouchDB (browser), Tailwind CSS v4 + DaisyUI v5.
 

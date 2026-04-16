@@ -112,4 +112,4 @@ export interface CareDoc {
 	updatedAt: string;
 }
 
-export type ProntoDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
+export type FazDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;

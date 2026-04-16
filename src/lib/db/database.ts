@@ -4,16 +4,16 @@ import type { InboxItemDoc, TaskDoc, ObjectiveDoc, CareDoc } from '$lib/types';
 
 PouchDB.plugin(pouchdbFind);
 
-type ProntoDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
+type FazDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
 
-export type Database = PouchDB.Database<ProntoDoc>;
+export type Database = PouchDB.Database<FazDoc>;
 
 let dbInstance: Database | null = null;
 let initPromise: Promise<void> | null = null;
 
 export async function getDb(): Promise<Database> {
 	if (!dbInstance) {
-		dbInstance = new PouchDB<ProntoDoc>('pronto');
+		dbInstance = new PouchDB<FazDoc>('faz');
 		initPromise = setupIndexes(dbInstance);
 	}
 	if (initPromise) {
