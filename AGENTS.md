@@ -44,6 +44,10 @@ No build step needed before check/lint/test.
 
 5 recurrence types in `types.ts`: `INTERVAL/FIXED`, `INTERVAL/AFTER_DONE`, `FIXED_DAYS/WEEKDAYS`, `FIXED_DAYS/MONTHDAYS`, `FIXED_DAYS/YEARDAYS`. Engines are pure functions with no DB access — they receive data and return results.
 
+## Related Docs
+
+When working on user-facing copy (labels, empty states, error messages, notifications, onboarding text), read [`.agents/docs/WRITING.md`](./.agents/docs/WRITING.md) for tone and voice guidelines.
+
 ## Style
 
 - Tabs, single quotes, no trailing commas, 100 char width (`.prettierrc`)
