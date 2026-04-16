@@ -8,6 +8,7 @@
 	import { runSchedulerNow } from '$lib/scheduler';
 	import TopBar from '$lib/components/top-bar.svelte';
 	import type { Snippet } from 'svelte';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -18,14 +19,26 @@
 		{ href: '/cares', label: 'Cares', icon: Heart }
 	] as const;
 
+	const webManifestHref = pwaInfo?.webManifest.href ?? '';
+
 	onMount(() => {
 		runSchedulerNow();
 		const interval = setInterval(() => runSchedulerNow(), 5 * 60 * 1000);
+
+		if (pwaInfo) {
+			import('virtual:pwa-register').then(({ registerSW }) => {
+				registerSW({ immediate: true });
+			});
+		}
+
 		return () => clearInterval(interval);
 	});
 </script>
 
 <svelte:head>
+	{#if webManifestHref}
+		<link rel="manifest" href={webManifestHref} />
+	{/if}
 	<link rel="icon" href={favicon} />
 	<title>Faz</title>
 </svelte:head>
