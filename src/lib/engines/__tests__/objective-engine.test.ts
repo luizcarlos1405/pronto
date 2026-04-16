@@ -46,12 +46,12 @@ describe('calculateObjectiveStatus', () => {
 		expect(calculateObjectiveStatus(makeObjective(), tasks)).toBe('REVIEW');
 	});
 
-	it('returns COMPLETED when objective is already COMPLETED', () => {
+	it('returns IN_PROGRESS when adding TODO task to COMPLETED objective', () => {
 		const tasks = [makeTask('TODO')];
-		expect(calculateObjectiveStatus(makeObjective('COMPLETED'), tasks)).toBe('COMPLETED');
+		expect(calculateObjectiveStatus(makeObjective('COMPLETED'), tasks)).toBe('IN_PROGRESS');
 	});
 
-	it('returns COMPLETED even with no tasks when already COMPLETED', () => {
-		expect(calculateObjectiveStatus(makeObjective('COMPLETED'), [])).toBe('COMPLETED');
+	it('returns NOT_STARTED for COMPLETED objective with no tasks', () => {
+		expect(calculateObjectiveStatus(makeObjective('COMPLETED'), [])).toBe('NOT_STARTED');
 	});
 });
