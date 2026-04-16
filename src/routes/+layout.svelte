@@ -37,7 +37,10 @@
 		{#each navItems as item}
 			<a
 				href={item.href}
-				class={page.url.pathname === item.href || (item.href !== '/' && page.url.pathname.startsWith(item.href + '/')) ? 'dock-active' : ''}
+				class={page.url.pathname === item.href ||
+				(item.href !== '/' && page.url.pathname.startsWith(item.href + '/'))
+					? 'dock-active'
+					: ''}
 			>
 				<item.icon class="size-5" />
 				<span class="dock-label">{item.label}</span>

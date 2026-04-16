@@ -1,4 +1,9 @@
-import { getAllObjectives, createObjective, updateObjective, getObjective } from '$lib/db/objective-repo';
+import {
+	getAllObjectives,
+	createObjective,
+	updateObjective,
+	getObjective
+} from '$lib/db/objective-repo';
 import { getTasksByObjective, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
 import { calculateObjectiveStatus } from '$lib/engines/objective-engine';
 import type { ObjectiveDoc, TaskDoc } from '$lib/types';
@@ -44,10 +49,18 @@ export function getObjectivesPageState() {
 	}
 
 	return {
-		get objectives() { return objectives; },
-		get newTitle() { return newTitle; },
-		set newTitle(v: string) { newTitle = v; },
-		get loading() { return loading; },
+		get objectives() {
+			return objectives;
+		},
+		get newTitle() {
+			return newTitle;
+		},
+		set newTitle(v: string) {
+			newTitle = v;
+		},
+		get loading() {
+			return loading;
+		},
 		load,
 		add,
 		markCompleted,
@@ -99,11 +112,21 @@ export function getObjectiveDetailState(objectiveId: string) {
 	}
 
 	return {
-		get objective() { return objective; },
-		get tasks() { return tasks; },
-		get newTaskTitle() { return newTaskTitle; },
-		set newTaskTitle(v: string) { newTaskTitle = v; },
-		get loading() { return loading; },
+		get objective() {
+			return objective;
+		},
+		get tasks() {
+			return tasks;
+		},
+		get newTaskTitle() {
+			return newTaskTitle;
+		},
+		set newTaskTitle(v: string) {
+			newTaskTitle = v;
+		},
+		get loading() {
+			return loading;
+		},
 		load,
 		addTask,
 		toggleTask,

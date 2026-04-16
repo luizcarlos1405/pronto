@@ -54,7 +54,10 @@
 							{new Date(item.createdAt).toLocaleString()}
 						</div>
 					</div>
-					<button class="btn btn-ghost btn-sm btn-primary" onclick={() => state.startProcessing(item._id)}>
+					<button
+						class="btn btn-ghost btn-sm btn-primary"
+						onclick={() => state.startProcessing(item._id)}
+					>
 						<ArrowRight class="size-4" />
 					</button>
 					<button class="btn btn-ghost btn-sm text-error" onclick={() => state.discard(item._id)}>

@@ -35,11 +35,21 @@ export function getInboxPageState() {
 	}
 
 	return {
-		get items() { return items; },
-		get newTitle() { return newTitle; },
-		set newTitle(v: string) { newTitle = v; },
-		get loading() { return loading; },
-		get processingItemId() { return processingItemId; },
+		get items() {
+			return items;
+		},
+		get newTitle() {
+			return newTitle;
+		},
+		set newTitle(v: string) {
+			newTitle = v;
+		},
+		get loading() {
+			return loading;
+		},
+		get processingItemId() {
+			return processingItemId;
+		},
 		load,
 		add,
 		discard,

@@ -39,7 +39,9 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
 		processing = false;
 	}
 
-	async function createCareFromItem(plans: { title: string; recurrence: Recurrence }[]): Promise<void> {
+	async function createCareFromItem(
+		plans: { title: string; recurrence: Recurrence }[]
+	): Promise<void> {
 		const title = careTitle.trim();
 		if (!title) return;
 		processing = true;
@@ -62,19 +64,45 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
 	}
 
 	return {
-		get mode() { return mode; },
-		set mode(v: 'choose' | 'task' | 'objective' | 'care') { mode = v; },
-		get taskTitle() { return taskTitle; },
-		set taskTitle(v: string) { taskTitle = v; },
-		get taskDoAt() { return taskDoAt; },
-		set taskDoAt(v: string) { taskDoAt = v; },
-		get objectiveTitle() { return objectiveTitle; },
-		set objectiveTitle(v: string) { objectiveTitle = v; },
-		get careTitle() { return careTitle; },
-		set careTitle(v: string) { careTitle = v; },
-		get created() { return created; },
-		get processing() { return processing; },
-		get inboxItem() { return inboxItem; },
+		get mode() {
+			return mode;
+		},
+		set mode(v: 'choose' | 'task' | 'objective' | 'care') {
+			mode = v;
+		},
+		get taskTitle() {
+			return taskTitle;
+		},
+		set taskTitle(v: string) {
+			taskTitle = v;
+		},
+		get taskDoAt() {
+			return taskDoAt;
+		},
+		set taskDoAt(v: string) {
+			taskDoAt = v;
+		},
+		get objectiveTitle() {
+			return objectiveTitle;
+		},
+		set objectiveTitle(v: string) {
+			objectiveTitle = v;
+		},
+		get careTitle() {
+			return careTitle;
+		},
+		set careTitle(v: string) {
+			careTitle = v;
+		},
+		get created() {
+			return created;
+		},
+		get processing() {
+			return processing;
+		},
+		get inboxItem() {
+			return inboxItem;
+		},
 		createTask: createTaskFromItem,
 		createObjective: createObjectiveFromItem,
 		createCare: createCareFromItem,

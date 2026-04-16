@@ -1,4 +1,10 @@
-import { getVisibleTasks, getDoneToday, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
+import {
+	getVisibleTasks,
+	getDoneToday,
+	createTask,
+	completeTask,
+	uncompleteTask
+} from '$lib/db/task-repo';
 import type { TaskDoc } from '$lib/types';
 
 function getToday(): string {
@@ -14,10 +20,7 @@ export function getTasksPageState() {
 	async function load() {
 		loading = true;
 		const today = getToday();
-		[tasks, doneTodayList] = await Promise.all([
-			getVisibleTasks(today),
-			getDoneToday(today)
-		]);
+		[tasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
 		loading = false;
 	}
 
@@ -41,11 +44,21 @@ export function getTasksPageState() {
 	}
 
 	return {
-		get tasks() { return tasks; },
-		get doneToday() { return doneTodayList; },
-		get newTitle() { return newTitle; },
-		set newTitle(v: string) { newTitle = v; },
-		get loading() { return loading; },
+		get tasks() {
+			return tasks;
+		},
+		get doneToday() {
+			return doneTodayList;
+		},
+		get newTitle() {
+			return newTitle;
+		},
+		set newTitle(v: string) {
+			newTitle = v;
+		},
+		get loading() {
+			return loading;
+		},
 		load,
 		add,
 		toggleComplete

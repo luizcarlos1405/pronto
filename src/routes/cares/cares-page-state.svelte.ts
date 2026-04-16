@@ -1,4 +1,10 @@
-import { getAllCares, createCare, removeTaskPlan as removeTaskPlanRepo, getCare, updateCare } from '$lib/db/care-repo';
+import {
+	getAllCares,
+	createCare,
+	removeTaskPlan as removeTaskPlanRepo,
+	getCare,
+	updateCare
+} from '$lib/db/care-repo';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
 
 export function getCaresPageState() {
@@ -21,10 +27,18 @@ export function getCaresPageState() {
 	}
 
 	return {
-		get cares() { return cares; },
-		get newTitle() { return newTitle; },
-		set newTitle(v: string) { newTitle = v; },
-		get loading() { return loading; },
+		get cares() {
+			return cares;
+		},
+		get newTitle() {
+			return newTitle;
+		},
+		set newTitle(v: string) {
+			newTitle = v;
+		},
+		get loading() {
+			return loading;
+		},
 		load,
 		add
 	};
@@ -63,10 +77,18 @@ export function getCareDetailState(careId: string) {
 	}
 
 	return {
-		get care() { return care; },
-		get loading() { return loading; },
-		get showWizard() { return showWizard; },
-		set showWizard(v: boolean) { showWizard = v; },
+		get care() {
+			return care;
+		},
+		get loading() {
+			return loading;
+		},
+		get showWizard() {
+			return showWizard;
+		},
+		set showWizard(v: boolean) {
+			showWizard = v;
+		},
 		load,
 		removeTaskPlan,
 		addTaskPlan
@@ -94,13 +116,32 @@ export function describeRecurrence(r: Recurrence): string {
 		return `Every ${r.daysOfMonth.map((d) => `${d}${suffix(d)}`).join(' and ')} of the month`;
 	}
 	if (r.type === 'FIXED_DAYS' && r.subtype === 'YEARDAYS') {
-		const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		const months = [
+			'',
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec'
+		];
 		return r.dates.map(({ month, day }) => `${months[month]} ${day}`).join(' and ');
 	}
 	return 'Unknown schedule';
 }
 
-function describeInterval(d: { years?: number; months?: number; weeks?: number; days?: number }): string {
+function describeInterval(d: {
+	years?: number;
+	months?: number;
+	weeks?: number;
+	days?: number;
+}): string {
 	const parts: string[] = [];
 	if (d.years) parts.push(`${d.years} year${d.years > 1 ? 's' : ''}`);
 	if (d.months) parts.push(`${d.months} month${d.months > 1 ? 's' : ''}`);

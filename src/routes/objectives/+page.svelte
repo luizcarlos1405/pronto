@@ -55,11 +55,15 @@
 	{:else}
 		<div class="grid gap-3">
 			{#each state.objectives as obj (obj._id)}
-				<a href="/objectives/{obj._id}" class="card card-border hover:bg-base-200 transition-colors">
+				<a
+					href="/objectives/{obj._id}"
+					class="card card-border hover:bg-base-200 transition-colors"
+				>
 					<div class="card-body flex-row items-center gap-3 p-4">
 						<div class="flex-1">
 							<div class="font-semibold">{obj.title}</div>
-							<span class="badge badge-sm {statusBadge[obj.status]}">{statusLabel[obj.status]}</span>
+							<span class="badge badge-sm {statusBadge[obj.status]}">{statusLabel[obj.status]}</span
+							>
 						</div>
 					</div>
 				</a>

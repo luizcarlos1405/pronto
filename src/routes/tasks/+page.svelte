@@ -44,10 +44,7 @@
 			<ul class="list mb-6">
 				{#each state.tasks as task (task._id)}
 					<li class="list-row">
-						<button
-							class="btn btn-ghost btn-sm"
-							onclick={() => state.toggleComplete(task._id)}
-						>
+						<button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
 							<Square class="size-5" />
 						</button>
 						<div class="list-col-grow">
@@ -64,10 +61,7 @@
 			<ul class="list">
 				{#each state.doneToday as task (task._id)}
 					<li class="list-row opacity-60">
-						<button
-							class="btn btn-ghost btn-sm"
-							onclick={() => state.toggleComplete(task._id)}
-						>
+						<button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
 							<CheckSquare class="size-5 text-success" />
 						</button>
 						<div class="list-col-grow">
