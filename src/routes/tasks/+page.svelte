@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getTasksPageState } from './tasks-page-state.svelte';
 	import { onMount } from 'svelte';
-	import { CheckSquare, Square, Plus, Loader2 } from 'lucide-svelte';
+	import { CheckSquare, Square, Plus, Loader2, CalendarClock, Trash2 } from 'lucide-svelte';
+	import SwipeableItem from '$lib/components/swipeable-item.svelte';
 
 	const state = getTasksPageState();
 
@@ -43,15 +44,32 @@
 			<h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">To Do</h2>
 			<ul class="list mb-6">
 				{#each state.tasks as task (task._id)}
-					<li class="list-row">
-						<button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
-							<Square class="size-5" />
-						</button>
-						<div class="list-col-grow">
-							<div>{task.title}</div>
-							<div class="text-xs text-base-content/50">{task.doAt}</div>
-						</div>
-					</li>
+					<SwipeableItem
+						onswipe={(direction) => {
+							if (direction === 'right') state.postponeTask(task._id);
+							else state.removeTask(task._id);
+						}}
+					>
+						{#snippet leftBackground()}
+							<div class="bg-info text-base-100 w-full h-full flex items-center justify-center">
+								<CalendarClock class="size-5" />
+							</div>
+						{/snippet}
+						{#snippet rightBackground()}
+							<div class="bg-error text-base-100 w-full h-full flex items-center justify-center">
+								<Trash2 class="size-5" />
+							</div>
+						{/snippet}
+						<li class="list-row">
+							<button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
+								<Square class="size-5" />
+							</button>
+							<div class="list-col-grow">
+								<div>{task.title}</div>
+								<div class="text-xs text-base-content/50">{task.doAt}</div>
+							</div>
+						</li>
+					</SwipeableItem>
 				{/each}
 			</ul>
 		{/if}
