@@ -4,13 +4,13 @@
 	import { page } from '$app/state';
 	import { ArrowLeft, CheckSquare, Square, Plus, Loader2 } from 'lucide-svelte';
 
-	const objectiveId = page.params.id;
-	const state = getObjectiveDetailState(objectiveId);
+	const objectiveId = page.params.id!;
+	const ctrl = getObjectiveDetailState(objectiveId);
 
-	onMount(() => state.load());
+	onMount(() => ctrl.load());
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') state.addTask();
+		if (e.key === 'Enter') ctrl.addTask();
 	}
 
 	const statusBadge: Record<string, string> = {
@@ -34,18 +34,20 @@
 		Back
 	</a>
 
-	{#if state.loading}
+	{#if ctrl.loading}
 		<div class="flex justify-center py-8">
 			<Loader2 class="size-6 animate-spin text-base-content/40" />
 		</div>
-	{:else if state.objective}
+	{:else if ctrl.objective}
 		<div class="flex items-center gap-3 mb-4">
-			<h1 class="text-2xl font-bold flex-1">{state.objective.title}</h1>
-			<span class="badge {statusBadge[state.objective.status]}">{statusLabel[state.objective.status]}</span>
+			<h1 class="text-2xl font-bold flex-1">{ctrl.objective.title}</h1>
+			<span class="badge {statusBadge[ctrl.objective.status]}"
+				>{statusLabel[ctrl.objective.status]}</span
+			>
 		</div>
 
-		{#if state.objective.status === 'REVIEW'}
-			<button class="btn btn-success btn-sm mb-4" onclick={state.markCompleted}>
+		{#if ctrl.objective.status === 'REVIEW'}
+			<button class="btn btn-success btn-sm mb-4" onclick={ctrl.markCompleted}>
 				Mark Completed
 			</button>
 		{/if}
@@ -55,24 +57,21 @@
 				type="text"
 				class="input join-item flex-1"
 				placeholder="Add a task..."
-				bind:value={state.newTaskTitle}
+				bind:value={ctrl.newTaskTitle}
 				onkeydown={handleKeydown}
 			/>
-			<button class="btn btn-primary join-item" onclick={state.addTask}>
+			<button class="btn btn-primary join-item" onclick={ctrl.addTask}>
 				<Plus class="size-4" />
 			</button>
 		</div>
 
-		{#if state.tasks.length === 0}
+		{#if ctrl.tasks.length === 0}
 			<p class="text-base-content/50 text-center py-4">No tasks yet.</p>
 		{:else}
 			<ul class="list">
-				{#each state.tasks as task (task._id)}
+				{#each ctrl.tasks as task (task._id)}
 					<li class="list-row">
-						<button
-							class="btn btn-ghost btn-sm"
-							onclick={() => state.toggleTask(task._id)}
-						>
+						<button class="btn btn-ghost btn-sm" onclick={() => ctrl.toggleTask(task._id)}>
 							{#if task.status === 'DONE'}
 								<CheckSquare class="size-5 text-success" />
 							{:else}
@@ -80,7 +79,9 @@
 							{/if}
 						</button>
 						<div class="list-col-grow">
-							<div class={task.status === 'DONE' ? 'line-through opacity-60' : ''}>{task.title}</div>
+							<div class={task.status === 'DONE' ? 'line-through opacity-60' : ''}>
+								{task.title}
+							</div>
 							<div class="text-xs text-base-content/50">{task.doAt}</div>
 						</div>
 					</li>

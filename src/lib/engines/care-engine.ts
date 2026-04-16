@@ -1,5 +1,5 @@
 import { Temporal } from '@js-temporal/polyfill';
-import type { TaskDoc, TaskPlan, CareDoc } from '$lib/types';
+import type { TaskDoc, TaskPlan, CareDoc, DurationLike } from '$lib/types';
 
 export function evaluateTaskPlan(
 	plan: TaskPlan,
@@ -20,10 +20,7 @@ export function evaluateTaskPlan(
 	return null;
 }
 
-export function evaluateIntervalFixed(
-	plan: TaskPlan,
-	today: Temporal.PlainDate
-): TaskDoc | null {
+export function evaluateIntervalFixed(plan: TaskPlan, today: Temporal.PlainDate): TaskDoc | null {
 	const r = plan.recurrence;
 	if (r.type !== 'INTERVAL' || r.subtype !== 'FIXED') return null;
 
@@ -125,7 +122,7 @@ export function runScheduler(
 	return { tasks: generatedTasks, updatedPlans };
 }
 
-function addDuration(date: Temporal.PlainDate, duration: Record<string, number>): Temporal.PlainDate {
+function addDuration(date: Temporal.PlainDate, duration: DurationLike): Temporal.PlainDate {
 	const d = Temporal.Duration.from({
 		years: duration.years ?? 0,
 		months: duration.months ?? 0,
@@ -163,20 +160,7 @@ function nextWeekday(from: Temporal.PlainDate, dayOfWeek: number): Temporal.Plai
 }
 
 function nextMonthday(from: Temporal.PlainDate, dayOfMonth: number): Temporal.PlainDate {
-	const maxDays = [
-		31,
-		28,
-		31,
-		30,
-		31,
-		30,
-		31,
-		31,
-		30,
-		31,
-		30,
-		31
-	] as const;
+	const maxDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
 	const clamp = (year: number, month: number, day: number): number => {
 		const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;

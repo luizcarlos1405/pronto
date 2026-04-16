@@ -5,21 +5,26 @@
 	import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-svelte';
 	import type { Recurrence } from '$lib/types';
 
-	const careId = page.params.id;
-	const state = getCareDetailState(careId);
+	const careId = page.params.id!;
+	const ctrl = getCareDetailState(careId);
 
-	onMount(() => state.load());
+	onMount(() => ctrl.load());
 
 	async function handleDeletePlan(planId: string) {
 		if (confirm('Remove this task plan?')) {
-			await state.removeTaskPlan(planId);
+			await ctrl.removeTaskPlan(planId);
 		}
 	}
 
 	let newPlanTitle: string = $state('');
 	let planStep: number = $state(0);
 	let planType: 'INTERVAL_FIXED' | 'INTERVAL_AFTER_DONE' | 'FIXED_DAYS' = $state('INTERVAL_FIXED');
-	let planInterval: { years: number; months: number; weeks: number; days: number } = $state({ years: 0, months: 0, weeks: 0, days: 0 });
+	let planInterval: { years: number; months: number; weeks: number; days: number } = $state({
+		years: 0,
+		months: 0,
+		weeks: 0,
+		days: 0
+	});
 	let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
 	let planDaysOfWeek: number[] = $state([]);
 	let planDaysOfMonth: number[] = $state([]);
@@ -40,18 +45,43 @@
 
 	function buildRecurrence(): Recurrence {
 		if (planType === 'INTERVAL_FIXED') {
-			return { type: 'INTERVAL', subtype: 'FIXED', interval: planInterval, startDate: planStartDate };
+			return {
+				type: 'INTERVAL',
+				subtype: 'FIXED',
+				interval: planInterval,
+				startDate: planStartDate
+			};
 		}
 		if (planType === 'INTERVAL_AFTER_DONE') {
-			return { type: 'INTERVAL', subtype: 'AFTER_DONE', interval: planInterval, startDate: planStartDate };
+			return {
+				type: 'INTERVAL',
+				subtype: 'AFTER_DONE',
+				interval: planInterval,
+				startDate: planStartDate
+			};
 		}
 		if (planDaysSubtype === 'WEEKDAYS') {
-			return { type: 'FIXED_DAYS', subtype: 'WEEKDAYS', daysOfWeek: planDaysOfWeek, startDate: planStartDate };
+			return {
+				type: 'FIXED_DAYS',
+				subtype: 'WEEKDAYS',
+				daysOfWeek: planDaysOfWeek,
+				startDate: planStartDate
+			};
 		}
 		if (planDaysSubtype === 'MONTHDAYS') {
-			return { type: 'FIXED_DAYS', subtype: 'MONTHDAYS', daysOfMonth: planDaysOfMonth, startDate: planStartDate };
+			return {
+				type: 'FIXED_DAYS',
+				subtype: 'MONTHDAYS',
+				daysOfMonth: planDaysOfMonth,
+				startDate: planStartDate
+			};
 		}
-		return { type: 'FIXED_DAYS', subtype: 'YEARDAYS', dates: planYearDates, startDate: planStartDate };
+		return {
+			type: 'FIXED_DAYS',
+			subtype: 'YEARDAYS',
+			dates: planYearDates,
+			startDate: planStartDate
+		};
 	}
 
 	function canCreate(): boolean {
@@ -66,7 +96,7 @@
 	}
 
 	async function handleCreate() {
-		await state.addTaskPlan({ title: newPlanTitle.trim(), recurrence: buildRecurrence() });
+		await ctrl.addTaskPlan({ title: newPlanTitle.trim(), recurrence: buildRecurrence() });
 		resetWizard();
 	}
 
@@ -79,17 +109,17 @@
 		Back
 	</a>
 
-	{#if state.loading}
+	{#if ctrl.loading}
 		<div class="flex justify-center py-8">
 			<Loader2 class="size-6 animate-spin text-base-content/40" />
 		</div>
-	{:else if state.care}
-		<h1 class="text-2xl font-bold mb-4">{state.care.title}</h1>
+	{:else if ctrl.care}
+		<h1 class="text-2xl font-bold mb-4">{ctrl.care.title}</h1>
 
-		{#if state.care.taskPlans.length > 0}
+		{#if ctrl.care.taskPlans.length > 0}
 			<h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Task Plans</h2>
 			<ul class="list mb-6">
-				{#each state.care.taskPlans as plan (plan._id)}
+				{#each ctrl.care.taskPlans as plan (plan._id)}
 					<li class="list-row">
 						<div class="list-col-grow">
 							<div class="font-medium">{plan.title}</div>
@@ -98,7 +128,10 @@
 								<div class="text-xs text-base-content/40">Last generated: {plan.lastDoAtDate}</div>
 							{/if}
 						</div>
-						<button class="btn btn-ghost btn-sm text-error" onclick={() => handleDeletePlan(plan._id)}>
+						<button
+							class="btn btn-ghost btn-sm text-error"
+							onclick={() => handleDeletePlan(plan._id)}
+						>
 							<Trash2 class="size-4" />
 						</button>
 					</li>
@@ -108,8 +141,14 @@
 			<p class="text-base-content/50 text-center py-4 mb-4">No task plans yet.</p>
 		{/if}
 
-		{#if !state.showWizard}
-			<button class="btn btn-primary btn-sm" onclick={() => { resetWizard(); state.showWizard = true; }}>
+		{#if !ctrl.showWizard}
+			<button
+				class="btn btn-primary btn-sm"
+				onclick={() => {
+					resetWizard();
+					ctrl.showWizard = true;
+				}}
+			>
 				<Plus class="size-4" />
 				Add Task Plan
 			</button>
@@ -122,7 +161,12 @@
 						<label class="label">
 							<span class="label-text">Task title</span>
 						</label>
-						<input type="text" class="input input-sm" placeholder="e.g. Water plants" bind:value={newPlanTitle} />
+						<input
+							type="text"
+							class="input input-sm"
+							placeholder="e.g. Water plants"
+							bind:value={newPlanTitle}
+						/>
 					{/if}
 
 					{#if planStep >= 1}
@@ -142,16 +186,16 @@
 								<span class="label-text">Interval</span>
 							</label>
 							<div class="flex gap-2 flex-wrap">
-								{#each [
-									{ key: 'years' as const, label: 'Years' },
-									{ key: 'months' as const, label: 'Months' },
-									{ key: 'weeks' as const, label: 'Weeks' },
-									{ key: 'days' as const, label: 'Days' }
-								] as field}
+								{#each [{ key: 'years' as const, label: 'Years' }, { key: 'months' as const, label: 'Months' }, { key: 'weeks' as const, label: 'Weeks' }, { key: 'days' as const, label: 'Days' }] as field}
 									<label class="input input-sm flex items-center gap-1">
-						<span class="text-xs">{field.label}</span>
-						<input type="number" min="0" class="w-12" bind:value={planInterval[field.key]} />
-					</label>
+										<span class="text-xs">{field.label}</span>
+										<input
+											type="number"
+											min="0"
+											class="w-12"
+											bind:value={planInterval[field.key]}
+										/>
+									</label>
 								{/each}
 							</div>
 						{:else}
@@ -236,7 +280,13 @@
 							</button>
 						{/if}
 						<div class="flex-1"></div>
-						<button class="btn btn-ghost btn-sm" onclick={() => { state.showWizard = false; resetWizard(); }}>Cancel</button>
+						<button
+							class="btn btn-ghost btn-sm"
+							onclick={() => {
+								ctrl.showWizard = false;
+								resetWizard();
+							}}>Cancel</button
+						>
 					</div>
 				</div>
 			</div>

@@ -7,8 +7,17 @@ import { runScheduler } from './engines/care-engine';
 export async function runSchedulerNow(): Promise<number> {
 	const today = Temporal.Now.plainDateISO();
 	const cares = await getAllCares();
-	const { tasks, updatedPlans } = runScheduler(cares, today, (planId) =>
-		getTasksByTaskPlan(planId)
+	const allPlanIds = cares.flatMap((c) => c.taskPlans.map((tp) => tp._id));
+	const tasksByPlan = new Map<string, import('$lib/types').TaskDoc[]>();
+	await Promise.all(
+		allPlanIds.map(async (planId) => {
+			tasksByPlan.set(planId, await getTasksByTaskPlan(planId));
+		})
+	);
+	const { tasks, updatedPlans } = runScheduler(
+		cares,
+		today,
+		(planId) => tasksByPlan.get(planId) ?? []
 	);
 
 	for (const task of tasks) {
@@ -22,14 +31,17 @@ export async function runSchedulerNow(): Promise<number> {
 
 	for (const care of cares) {
 		let modified = false;
-		const updated = { ...care, taskPlans: care.taskPlans.map((tp) => {
-			const updatedPlan = updatedPlans.get(tp._id);
-			if (updatedPlan) {
-				modified = true;
-				return updatedPlan;
-			}
-			return tp;
-		})};
+		const updated = {
+			...care,
+			taskPlans: care.taskPlans.map((tp) => {
+				const updatedPlan = updatedPlans.get(tp._id);
+				if (updatedPlan) {
+					modified = true;
+					return updatedPlan;
+				}
+				return tp;
+			})
+		};
 		if (modified) {
 			await updateCare(updated);
 		}
