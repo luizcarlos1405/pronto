@@ -4,11 +4,14 @@ import {
 	evaluateIntervalFixed,
 	evaluateIntervalAfterDone,
 	evaluateFixedDays,
-	evaluateTaskPlan
+	evaluateTaskPlan,
+	runScheduler
 } from '../care-engine';
-import type { TaskPlan, TaskDoc } from '$lib/types';
+import type { TaskPlan, TaskDoc, CareDoc } from '$lib/types';
 
-function makePlan(overrides: Partial<TaskPlan['recurrence']> & { type: TaskPlan['recurrence']['type'] }): TaskPlan {
+function makePlan(
+	overrides: Partial<TaskPlan['recurrence']> & { type: TaskPlan['recurrence']['type'] }
+): TaskPlan {
 	const base: TaskPlan = {
 		_id: 'tp_test',
 		title: 'Test Task',
@@ -188,7 +191,10 @@ describe('evaluateFixedDays', () => {
 		const plan = makePlan({
 			type: 'FIXED_DAYS',
 			subtype: 'YEARDAYS',
-			dates: [{ month: 12, day: 25 }, { month: 7, day: 4 }],
+			dates: [
+				{ month: 12, day: 25 },
+				{ month: 7, day: 4 }
+			],
 			startDate: '2026-01-01'
 		});
 		const today = Temporal.PlainDate.from('2026-06-01');
@@ -221,7 +227,12 @@ describe('evaluateFixedDays', () => {
 		const today = Temporal.PlainDate.from('2026-01-05');
 		const result = evaluateFixedDays(plan, today, []);
 		expect(result.length).toBe(1);
-		expect(Temporal.PlainDate.compare(Temporal.PlainDate.from(result[0].doAt), Temporal.PlainDate.from('2026-01-15')) >= 0).toBe(true);
+		expect(
+			Temporal.PlainDate.compare(
+				Temporal.PlainDate.from(result[0].doAt),
+				Temporal.PlainDate.from('2026-01-15')
+			) >= 0
+		).toBe(true);
 	});
 });
 
@@ -262,5 +273,34 @@ describe('evaluateTaskPlan', () => {
 		const today = Temporal.PlainDate.from('2026-01-12');
 		const result = evaluateTaskPlan(plan, today, []);
 		expect(result).not.toBeNull();
+	});
+});
+
+describe('runScheduler', () => {
+	it('sets careId on generated tasks', () => {
+		const plan: TaskPlan = {
+			_id: 'tp_1',
+			title: 'Water plants',
+			recurrence: {
+				type: 'INTERVAL',
+				subtype: 'FIXED',
+				interval: { days: 7 },
+				startDate: '2026-01-15'
+			},
+			createdAt: '2026-01-01T00:00:00Z',
+			updatedAt: '2026-01-01T00:00:00Z'
+		};
+		const care: CareDoc = {
+			_id: 'care_1',
+			type: 'Care',
+			title: 'Plants',
+			taskPlans: [plan],
+			createdAt: '2026-01-01T00:00:00Z',
+			updatedAt: '2026-01-01T00:00:00Z'
+		};
+		const today = Temporal.PlainDate.from('2026-01-15');
+		const result = runScheduler([care], today, () => []);
+		expect(result.tasks.length).toBe(1);
+		expect(result.tasks[0].careId).toBe('care_1');
 	});
 });

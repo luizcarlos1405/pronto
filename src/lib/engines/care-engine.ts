@@ -112,6 +112,7 @@ export function runScheduler(
 			const existingTasks = getTasksForPlan(plan._id);
 			const task = evaluateTaskPlan(plan, today, existingTasks);
 			if (task) {
+				task.careId = care._id;
 				generatedTasks.push(task);
 				const updated = { ...plan, lastDoAtDate: task.doAt };
 				updatedPlans.set(plan._id, updated);
