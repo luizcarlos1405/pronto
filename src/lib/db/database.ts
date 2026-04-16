@@ -39,4 +39,9 @@ async function setupIndexes(db: Database): Promise<void> {
 	await db.createIndex({ index: { fields: ['type', 'isProcessed', 'createdAt'] } });
 }
 
+export function resetDb(): void {
+	dbInstance = null;
+	initPromise = null;
+}
+
 export { getDb as db };

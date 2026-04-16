@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { MoreVertical, Palette } from 'lucide-svelte';
+	import { MoreVertical, Palette, Database } from 'lucide-svelte';
+	import DataModal from './data-modal.svelte';
 
 	let showThemeModal = $state(false);
+	let showDataModal = $state(false);
 	let currentTheme = $state('light');
 
 	const themes = [
@@ -97,6 +99,11 @@
 						<Palette class="size-4" /> Themes
 					</button>
 				</li>
+				<li>
+					<button onclick={() => (showDataModal = true)}>
+						<Database class="size-4" /> Your data
+					</button>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -126,4 +133,8 @@
 			<button onclick={() => (showThemeModal = false)}>close</button>
 		</form>
 	</dialog>
+{/if}
+
+{#if showDataModal}
+	<DataModal onclose={() => (showDataModal = false)} />
 {/if}
