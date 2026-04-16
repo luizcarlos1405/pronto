@@ -4,6 +4,12 @@ Personal GTD/task organization PWA. SvelteKit 5, client-only SPA, PouchDB (brows
 
 ## Commands
 
+**Important:** On NixOS, all commands (including `bun run dev` and `playwright-cli`) must run inside the nix-shell to provide shared libraries for Playwright's Chromium:
+
+```
+nix-shell shell.nix
+```
+
 - `bun install` — package manager is bun (lockfile is `bun.lock`)
 - `bun run dev` — dev server
 - `bun run check` — typecheck via svelte-check
