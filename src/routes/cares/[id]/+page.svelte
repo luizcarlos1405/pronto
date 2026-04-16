@@ -187,7 +187,7 @@
 								<span class="label-text">Interval</span>
 							</label>
 							<div class="flex gap-2 flex-wrap">
-								{#each [{ key: 'years' as const, label: 'Years' }, { key: 'months' as const, label: 'Months' }, { key: 'weeks' as const, label: 'Weeks' }, { key: 'days' as const, label: 'Days' }] as field}
+								{#each [{ key: 'years' as const, label: 'Years' }, { key: 'months' as const, label: 'Months' }, { key: 'weeks' as const, label: 'Weeks' }, { key: 'days' as const, label: 'Days' }] as field (field.key)}
 									<label class="input input-sm flex items-center gap-1">
 										<span class="text-xs">{field.label}</span>
 										<input
@@ -214,7 +214,7 @@
 					{#if planStep >= 3 && planType === 'FIXED_DAYS'}
 						{#if planDaysSubtype === 'WEEKDAYS'}
 							<div class="flex flex-wrap gap-1">
-								{#each dayNames as name, i}
+								{#each dayNames as name, i (i)}
 									<button
 										class="btn btn-sm {planDaysOfWeek.includes(i) ? 'btn-primary' : 'btn-ghost'}"
 										onclick={() => {

@@ -157,7 +157,7 @@
 							bind:value={carePlanTitle}
 						/>
 						<div class="flex gap-1 flex-wrap">
-							{#each [{ key: 'years' as const, label: 'Y' }, { key: 'months' as const, label: 'M' }, { key: 'weeks' as const, label: 'W' }, { key: 'days' as const, label: 'D' }] as field}
+							{#each [{ key: 'years' as const, label: 'Y' }, { key: 'months' as const, label: 'M' }, { key: 'weeks' as const, label: 'W' }, { key: 'days' as const, label: 'D' }] as field (field.key)}
 								<label class="input input-sm flex items-center gap-1">
 									<span class="text-xs">{field.label}</span>
 									<input
