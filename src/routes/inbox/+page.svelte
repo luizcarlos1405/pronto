@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getInboxPageState } from './inbox-page-state.svelte';
+	import InboxProcessor from '$lib/components/inbox-processor.svelte';
 	import { onMount } from 'svelte';
-	import { Inbox, Trash2, Loader2 } from 'lucide-svelte';
+	import { Inbox, Trash2, Loader2, ArrowRight } from 'lucide-svelte';
 
 	const state = getInboxPageState();
 
@@ -9,6 +10,11 @@
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter') state.add();
+	}
+
+	async function handleProcessingDone() {
+		state.stopProcessing();
+		await state.load();
 	}
 </script>
 
@@ -48,6 +54,9 @@
 							{new Date(item.createdAt).toLocaleString()}
 						</div>
 					</div>
+					<button class="btn btn-ghost btn-sm btn-primary" onclick={() => state.startProcessing(item._id)}>
+						<ArrowRight class="size-4" />
+					</button>
 					<button class="btn btn-ghost btn-sm text-error" onclick={() => state.discard(item._id)}>
 						<Trash2 class="size-4" />
 					</button>
@@ -56,3 +65,11 @@
 		</ul>
 	{/if}
 </div>
+
+{#if state.processingItemId}
+	{#each state.items as item (item._id)}
+		{#if item._id === state.processingItemId}
+			<InboxProcessor inboxItem={item} onDone={handleProcessingDone} />
+		{/if}
+	{/each}
+{/if}
