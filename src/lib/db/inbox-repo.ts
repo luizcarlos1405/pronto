@@ -10,26 +10,26 @@ export async function createInboxItem(title: string): Promise<InboxItemDoc> {
 		isProcessed: false,
 		createdAt: new Date().toISOString()
 	};
-	const db = getDb();
+	const db = await getDb();
 	await db.put(doc);
 	return doc;
 }
 
 export async function getInboxItem(id: string): Promise<InboxItemDoc> {
-	const db = getDb();
+	const db = await getDb();
 	const doc = await db.get<InboxItemDoc>(id);
 	return doc;
 }
 
 export async function updateInboxItem(doc: InboxItemDoc): Promise<InboxItemDoc> {
-	const db = getDb();
+	const db = await getDb();
 	const result = await db.put(doc);
 	doc._rev = result.rev;
 	return doc;
 }
 
 export async function getUnprocessed(): Promise<InboxItemDoc[]> {
-	const db = getDb();
+	const db = await getDb();
 	const result = await db.find({
 		selector: { type: 'InboxItem', isProcessed: false },
 		sort: [{ createdAt: 'desc' }]
@@ -38,7 +38,7 @@ export async function getUnprocessed(): Promise<InboxItemDoc[]> {
 }
 
 export async function getProcessed(): Promise<InboxItemDoc[]> {
-	const db = getDb();
+	const db = await getDb();
 	const result = await db.find({
 		selector: { type: 'InboxItem', isProcessed: true },
 		sort: [{ createdAt: 'desc' }]

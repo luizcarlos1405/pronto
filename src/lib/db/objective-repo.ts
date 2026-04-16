@@ -16,18 +16,18 @@ export async function createObjective(
 		createdAt: now,
 		updatedAt: now
 	};
-	const db = getDb();
+	const db = await getDb();
 	await db.put(doc);
 	return doc;
 }
 
 export async function getObjective(id: string): Promise<ObjectiveDoc> {
-	const db = getDb();
+	const db = await getDb();
 	return db.get<ObjectiveDoc>(id);
 }
 
 export async function updateObjective(doc: ObjectiveDoc): Promise<ObjectiveDoc> {
-	const db = getDb();
+	const db = await getDb();
 	doc.updatedAt = new Date().toISOString();
 	const result = await db.put(doc);
 	doc._rev = result.rev;
@@ -35,13 +35,13 @@ export async function updateObjective(doc: ObjectiveDoc): Promise<ObjectiveDoc> 
 }
 
 export async function removeObjective(id: string): Promise<void> {
-	const db = getDb();
+	const db = await getDb();
 	const doc = await db.get<ObjectiveDoc>(id);
 	await db.remove(doc);
 }
 
 export async function getAllObjectives(): Promise<ObjectiveDoc[]> {
-	const db = getDb();
+	const db = await getDb();
 	const result = await db.find({
 		selector: { type: 'Objective' },
 		sort: [{ createdAt: 'desc' }]

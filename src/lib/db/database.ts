@@ -9,11 +9,16 @@ type ProntoDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
 export type Database = PouchDB.Database<ProntoDoc>;
 
 let dbInstance: Database | null = null;
+let initPromise: Promise<void> | null = null;
 
-export function getDb(): Database {
+export async function getDb(): Promise<Database> {
 	if (!dbInstance) {
 		dbInstance = new PouchDB<ProntoDoc>('pronto');
-		setupIndexes(dbInstance);
+		initPromise = setupIndexes(dbInstance);
+	}
+	if (initPromise) {
+		await initPromise;
+		initPromise = null;
 	}
 	return dbInstance;
 }

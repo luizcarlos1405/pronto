@@ -22,18 +22,18 @@ export async function createCare(
 		createdAt: now,
 		updatedAt: now
 	};
-	const db = getDb();
+	const db = await getDb();
 	await db.put(doc);
 	return doc;
 }
 
 export async function getCare(id: string): Promise<CareDoc> {
-	const db = getDb();
+	const db = await getDb();
 	return db.get<CareDoc>(id);
 }
 
 export async function updateCare(doc: CareDoc): Promise<CareDoc> {
-	const db = getDb();
+	const db = await getDb();
 	doc.updatedAt = new Date().toISOString();
 	const result = await db.put(doc);
 	doc._rev = result.rev;
@@ -41,13 +41,13 @@ export async function updateCare(doc: CareDoc): Promise<CareDoc> {
 }
 
 export async function removeCare(id: string): Promise<void> {
-	const db = getDb();
+	const db = await getDb();
 	const doc = await db.get<CareDoc>(id);
 	await db.remove(doc);
 }
 
 export async function getAllCares(): Promise<CareDoc[]> {
-	const db = getDb();
+	const db = await getDb();
 	const result = await db.find({
 		selector: { type: 'Care' },
 		sort: [{ createdAt: 'desc' }]
