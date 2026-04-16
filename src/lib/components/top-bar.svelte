@@ -49,12 +49,31 @@
 			document.documentElement.setAttribute('data-theme', saved);
 			currentTheme = saved;
 		}
+		requestAnimationFrame(updateThemeColor);
 	});
 
 	function selectTheme(name: string) {
 		document.documentElement.setAttribute('data-theme', name);
 		localStorage.setItem('theme', name);
 		currentTheme = name;
+		requestAnimationFrame(updateThemeColor);
+	}
+
+	function updateThemeColor() {
+		const el = document.createElement('div');
+		el.style.color = 'oklch(var(--p))';
+		el.style.display = 'none';
+		document.body.appendChild(el);
+		const computed = getComputedStyle(el).color;
+		document.body.removeChild(el);
+
+		let meta = document.querySelector('meta[name="theme-color"]');
+		if (!meta) {
+			meta = document.createElement('meta');
+			meta.setAttribute('name', 'theme-color');
+			document.head.appendChild(meta);
+		}
+		meta.setAttribute('content', computed);
 	}
 </script>
 
