@@ -1,2 +1,6 @@
-<h1>Pronto</h1>
-<p>Getting things done, pronto.</p>
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+
+	onMount(() => goto('/tasks'));
+</script>
