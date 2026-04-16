@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getCaresPageState } from './cares-page-state.svelte';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Heart, Plus, Loader2 } from 'lucide-svelte';
 
@@ -41,7 +42,10 @@
 	{:else}
 		<div class="grid gap-3">
 			{#each state.cares as care (care._id)}
-				<a href="/cares/{care._id}" class="card card-border hover:bg-base-200 transition-colors">
+				<a
+					href={resolve('/cares/{care._id}')}
+					class="card card-border hover:bg-base-200 transition-colors"
+				>
 					<div class="card-body flex-row items-center gap-3 p-4">
 						<div class="flex-1">
 							<div class="font-semibold">{care.title}</div>

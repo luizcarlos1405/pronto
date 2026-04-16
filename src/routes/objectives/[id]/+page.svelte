@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getObjectiveDetailState } from '../objectives-page-state.svelte';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { ArrowLeft, CheckSquare, Square, Plus, Loader2 } from 'lucide-svelte';
@@ -29,7 +30,7 @@
 </script>
 
 <div class="p-4">
-	<a href="/objectives" class="btn btn-ghost btn-sm mb-2">
+	<a href={resolve('/objectives')} class="btn btn-ghost btn-sm mb-2">
 		<ArrowLeft class="size-4" />
 		Back
 	</a>

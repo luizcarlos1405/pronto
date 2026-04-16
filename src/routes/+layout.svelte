@@ -2,6 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import { ListChecks, Inbox, Target, Heart } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { runSchedulerNow } from '$lib/scheduler';
@@ -14,7 +15,7 @@
 		{ href: '/inbox', label: 'Inbox', icon: Inbox },
 		{ href: '/objectives', label: 'Goals', icon: Target },
 		{ href: '/cares', label: 'Cares', icon: Heart }
-	];
+	] as const;
 
 	onMount(() => {
 		runSchedulerNow();
@@ -36,9 +37,8 @@
 	<nav class="dock dock-md fixed bottom-0 left-0 right-0 z-50">
 		{#each navItems as item}
 			<a
-				href={item.href}
-				class={page.url.pathname === item.href ||
-				(item.href !== '/' && page.url.pathname.startsWith(item.href + '/'))
+				href={resolve(item.href)}
+				class={page.url.pathname === item.href || page.url.pathname.startsWith(item.href + '/')
 					? 'dock-active'
 					: ''}
 			>

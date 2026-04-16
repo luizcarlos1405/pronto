@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getObjectivesPageState } from './objectives-page-state.svelte';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Target, Plus, Loader2 } from 'lucide-svelte';
 
@@ -56,7 +57,7 @@
 		<div class="grid gap-3">
 			{#each state.objectives as obj (obj._id)}
 				<a
-					href="/objectives/{obj._id}"
+					href={resolve('/objectives/{obj._id}')}
 					class="card card-border hover:bg-base-200 transition-colors"
 				>
 					<div class="card-body flex-row items-center gap-3 p-4">

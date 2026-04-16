@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getCareDetailState, describeRecurrence } from '../cares-page-state.svelte';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-svelte';
@@ -104,7 +105,7 @@
 </script>
 
 <div class="p-4">
-	<a href="/cares" class="btn btn-ghost btn-sm mb-2">
+	<a href={resolve('/cares')} class="btn btn-ghost btn-sm mb-2">
 		<ArrowLeft class="size-4" />
 		Back
 	</a>
