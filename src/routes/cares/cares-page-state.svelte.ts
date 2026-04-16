@@ -5,6 +5,7 @@ import {
 	getCare,
 	updateCare
 } from '$lib/db/care-repo';
+import { SvelteDate } from 'svelte/reactivity';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
 
 export function getCaresPageState() {
@@ -62,7 +63,7 @@ export function getCareDetailState(careId: string) {
 
 	async function addTaskPlan(plan: { title: string; recurrence: Recurrence }) {
 		const doc = await getCare(careId);
-		const now = new Date().toISOString();
+		const now = new SvelteDate().toISOString();
 		const { nanoid } = await import('nanoid');
 		doc.taskPlans.push({
 			_id: `tp_${nanoid()}`,
