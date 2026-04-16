@@ -1,6 +1,6 @@
 export type TaskStatus = 'TODO' | 'DONE';
 
-export type ObjectiveStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
+export type GoalStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
 
 export type RecurrenceType = 'INTERVAL' | 'FIXED_DAYS';
 export type IntervalSubtype = 'FIXED' | 'AFTER_DONE';
@@ -71,7 +71,7 @@ export interface TaskDoc {
 	title: string;
 	doAt: string;
 	status: TaskStatus;
-	objectiveId?: string;
+	goalId?: string;
 	originInboxItemId?: string;
 	careId?: string;
 	taskPlanId?: string;
@@ -80,12 +80,12 @@ export interface TaskDoc {
 	updatedAt: string;
 }
 
-export interface ObjectiveDoc {
+export interface GoalDoc {
 	_id: string;
 	_rev?: string;
-	type: 'Objective';
+	type: 'Goal';
 	title: string;
-	status: ObjectiveStatus;
+	status: GoalStatus;
 	originInboxItemId?: string;
 	createdAt: string;
 	updatedAt: string;
@@ -112,4 +112,4 @@ export interface CareDoc {
 	updatedAt: string;
 }
 
-export type FazDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
+export type FazDoc = InboxItemDoc | TaskDoc | GoalDoc | CareDoc;

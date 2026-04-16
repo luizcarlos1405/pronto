@@ -5,7 +5,7 @@ import type { TaskDoc } from '$lib/types';
 export async function createTask(data: {
 	title: string;
 	doAt: string;
-	objectiveId?: string;
+	goalId?: string;
 	originInboxItemId?: string;
 	careId?: string;
 	taskPlanId?: string;
@@ -17,7 +17,7 @@ export async function createTask(data: {
 		title: data.title,
 		doAt: data.doAt,
 		status: 'TODO',
-		objectiveId: data.objectiveId,
+		goalId: data.goalId,
 		originInboxItemId: data.originInboxItemId,
 		careId: data.careId,
 		taskPlanId: data.taskPlanId,
@@ -74,11 +74,11 @@ export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
 	});
 }
 
-export async function getTasksByObjective(objectiveId: string): Promise<TaskDoc[]> {
+export async function getTasksByGoal(goalId: string): Promise<TaskDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'Task', objectiveId, doAt: { $gt: null } },
-		sort: [{ type: 'asc' }, { objectiveId: 'asc' }, { doAt: 'asc' }]
+		selector: { type: 'Task', goalId, doAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { goalId: 'asc' }, { doAt: 'asc' }]
 	});
 	return result.docs as TaskDoc[];
 }

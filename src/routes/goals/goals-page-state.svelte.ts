@@ -1,56 +1,51 @@
-import {
-	getAllObjectives,
-	createObjective,
-	updateObjective,
-	getObjective
-} from '$lib/db/objective-repo';
-import { getTasksByObjective, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
-import { calculateObjectiveStatus } from '$lib/engines/objective-engine';
-import type { ObjectiveDoc, TaskDoc } from '$lib/types';
+import { getAllGoals, createGoal, updateGoal, getGoal } from '$lib/db/goal-repo';
+import { getTasksByGoal, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
+import { calculateGoalStatus } from '$lib/engines/goal-engine';
+import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
 	return new Date().toISOString().slice(0, 10);
 }
 
-export function getObjectivesPageState() {
-	let objectives = $state<ObjectiveDoc[]>([]);
+export function getGoalsPageState() {
+	let goals = $state<GoalDoc[]>([]);
 	let newTitle = $state('');
 	let loading = $state(true);
 
 	async function load() {
 		loading = true;
-		objectives = await getAllObjectives();
+		goals = await getAllGoals();
 		loading = false;
 	}
 
 	async function add() {
 		const title = newTitle.trim();
 		if (!title) return;
-		await createObjective(title);
+		await createGoal(title);
 		newTitle = '';
 		await load();
 	}
 
 	async function markCompleted(id: string) {
-		const obj = await getObjective(id);
-		obj.status = 'COMPLETED';
-		await updateObjective(obj);
+		const goal = await getGoal(id);
+		goal.status = 'COMPLETED';
+		await updateGoal(goal);
 		await load();
 	}
 
 	async function recalcStatus(id: string) {
-		const obj = await getObjective(id);
-		const tasks = await getTasksByObjective(id);
-		const newStatus = calculateObjectiveStatus(obj, tasks);
-		if (obj.status !== newStatus) {
-			obj.status = newStatus;
-			await updateObjective(obj);
+		const goal = await getGoal(id);
+		const tasks = await getTasksByGoal(id);
+		const newStatus = calculateGoalStatus(goal, tasks);
+		if (goal.status !== newStatus) {
+			goal.status = newStatus;
+			await updateGoal(goal);
 		}
 	}
 
 	return {
-		get objectives() {
-			return objectives;
+		get goals() {
+			return goals;
 		},
 		get newTitle() {
 			return newTitle;
@@ -68,27 +63,27 @@ export function getObjectivesPageState() {
 	};
 }
 
-export function getObjectiveDetailState(objectiveId: string) {
-	let objective = $state<ObjectiveDoc | null>(null);
+export function getGoalDetailState(goalId: string) {
+	let goal = $state<GoalDoc | null>(null);
 	let tasks = $state<TaskDoc[]>([]);
 	let newTaskTitle = $state('');
 	let loading = $state(true);
 
 	async function load() {
 		loading = true;
-		objective = await getObjective(objectiveId);
-		tasks = await getTasksByObjective(objectiveId);
+		goal = await getGoal(goalId);
+		tasks = await getTasksByGoal(goalId);
 		loading = false;
 	}
 
 	async function addTask() {
 		const title = newTaskTitle.trim();
 		if (!title) return;
-		await createTask({ title, doAt: getToday(), objectiveId });
+		await createTask({ title, doAt: getToday(), goalId });
 		newTaskTitle = '';
 		await load();
-		const { recalcStatus } = getObjectivesPageState();
-		await recalcStatus(objectiveId);
+		const { recalcStatus } = getGoalsPageState();
+		await recalcStatus(goalId);
 		await load();
 	}
 
@@ -100,20 +95,20 @@ export function getObjectiveDetailState(objectiveId: string) {
 		} else {
 			await uncompleteTask(taskId);
 		}
-		const { recalcStatus } = getObjectivesPageState();
-		await recalcStatus(objectiveId);
+		const { recalcStatus } = getGoalsPageState();
+		await recalcStatus(goalId);
 		await load();
 	}
 
 	async function markCompleted() {
-		const { markCompleted: mc } = getObjectivesPageState();
-		await mc(objectiveId);
+		const { markCompleted: mc } = getGoalsPageState();
+		await mc(goalId);
 		await load();
 	}
 
 	return {
-		get objective() {
-			return objective;
+		get goal() {
+			return goal;
 		},
 		get tasks() {
 			return tasks;

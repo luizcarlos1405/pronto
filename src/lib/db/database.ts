@@ -1,10 +1,10 @@
 import PouchDB from 'pouchdb-browser';
 import pouchdbFind from 'pouchdb-find';
-import type { InboxItemDoc, TaskDoc, ObjectiveDoc, CareDoc } from '$lib/types';
+import type { InboxItemDoc, TaskDoc, GoalDoc, CareDoc } from '$lib/types';
 
 PouchDB.plugin(pouchdbFind);
 
-type FazDoc = InboxItemDoc | TaskDoc | ObjectiveDoc | CareDoc;
+type FazDoc = InboxItemDoc | TaskDoc | GoalDoc | CareDoc;
 
 export type Database = PouchDB.Database<FazDoc>;
 
@@ -28,13 +28,13 @@ async function setupIndexes(db: Database): Promise<void> {
 	await db.createIndex({ index: { fields: ['type', 'status'] } });
 	await db.createIndex({ index: { fields: ['type', 'isProcessed'] } });
 	await db.createIndex({ index: { fields: ['type', 'careId'] } });
-	await db.createIndex({ index: { fields: ['type', 'objectiveId'] } });
+	await db.createIndex({ index: { fields: ['type', 'goalId'] } });
 	await db.createIndex({ index: { fields: ['type', 'taskPlanId'] } });
 	await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'status'] } });
 	await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'doAt'] } });
 	await db.createIndex({ index: { fields: ['type', 'createdAt'] } });
 	await db.createIndex({ index: { fields: ['type', 'status', 'doAt', 'createdAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'objectiveId', 'doAt'] } });
+	await db.createIndex({ index: { fields: ['type', 'goalId', 'doAt'] } });
 	await db.createIndex({ index: { fields: ['type', 'careId', 'doAt'] } });
 	await db.createIndex({ index: { fields: ['type', 'isProcessed', 'createdAt'] } });
 }

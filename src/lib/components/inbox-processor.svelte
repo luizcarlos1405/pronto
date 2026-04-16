@@ -19,7 +19,7 @@
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
 			if (ctrl.mode === 'task') ctrl.createTask();
-			else if (ctrl.mode === 'objective') ctrl.createObjective();
+			else if (ctrl.mode === 'goal') ctrl.createGoal();
 		}
 	}
 
@@ -46,12 +46,12 @@
 
 	const entityIcon: Record<string, typeof CheckSquare> = {
 		task: CheckSquare,
-		objective: Target,
+		goal: Target,
 		care: Heart
 	};
 	const entityLabel: Record<string, string> = {
 		task: 'Task',
-		objective: 'Objective',
+		goal: 'Goal',
 		care: 'Care'
 	};
 </script>
@@ -77,8 +77,8 @@
 				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'task')}>
 					<CheckSquare class="size-4" /> Create Task
 				</button>
-				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'objective')}>
-					<Target class="size-4" /> Create Objective
+				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'goal')}>
+					<Target class="size-4" /> Create Goal
 				</button>
 				<button class="btn btn-outline btn-sm" onclick={() => (ctrl.mode = 'care')}>
 					<Heart class="size-4" /> Create Care
@@ -108,25 +108,25 @@
 					<button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
 				</div>
 			</div>
-		{:else if ctrl.mode === 'objective'}
+		{:else if ctrl.mode === 'goal'}
 			<div class="flex flex-col gap-2">
 				<input
 					type="text"
 					class="input input-sm"
-					placeholder="Objective title"
-					bind:value={ctrl.objectiveTitle}
+					placeholder="Goal title"
+					bind:value={ctrl.goalTitle}
 					onkeydown={handleKeydown}
 				/>
 				<div class="flex gap-2">
 					<button
 						class="btn btn-primary btn-sm"
-						onclick={ctrl.createObjective}
-						disabled={ctrl.processing || !ctrl.objectiveTitle.trim()}
+						onclick={ctrl.createGoal}
+						disabled={ctrl.processing || !ctrl.goalTitle.trim()}
 					>
 						{#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
 								class="size-4"
 							/>{/if}
-						Create Objective
+						Create Goal
 					</button>
 					<button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
 				</div>

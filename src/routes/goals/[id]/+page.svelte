@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { getObjectiveDetailState } from '../objectives-page-state.svelte';
+	import { getGoalDetailState } from '../goals-page-state.svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { ArrowLeft, CheckSquare, Square, Plus, Loader2 } from 'lucide-svelte';
 
-	const objectiveId = page.params.id!;
-	const ctrl = getObjectiveDetailState(objectiveId);
+	const goalId = page.params.id!;
+	const ctrl = getGoalDetailState(goalId);
 
 	onMount(() => ctrl.load());
 
@@ -30,7 +30,7 @@
 </script>
 
 <div class="p-4">
-	<a href={resolve('/objectives')} class="btn btn-ghost btn-sm mb-2">
+	<a href={resolve('/goals')} class="btn btn-ghost btn-sm mb-2">
 		<ArrowLeft class="size-4" />
 		Back
 	</a>
@@ -39,15 +39,13 @@
 		<div class="flex justify-center py-8">
 			<Loader2 class="size-6 animate-spin text-base-content/40" />
 		</div>
-	{:else if ctrl.objective}
+	{:else if ctrl.goal}
 		<div class="flex items-center gap-3 mb-4">
-			<h1 class="text-2xl font-bold flex-1">{ctrl.objective.title}</h1>
-			<span class="badge {statusBadge[ctrl.objective.status]}"
-				>{statusLabel[ctrl.objective.status]}</span
-			>
+			<h1 class="text-2xl font-bold flex-1">{ctrl.goal.title}</h1>
+			<span class="badge {statusBadge[ctrl.goal.status]}">{statusLabel[ctrl.goal.status]}</span>
 		</div>
 
-		{#if ctrl.objective.status === 'REVIEW'}
+		{#if ctrl.goal.status === 'REVIEW'}
 			<button class="btn btn-success btn-sm mb-4" onclick={ctrl.markCompleted}>
 				Mark Completed
 			</button>

@@ -14,7 +14,7 @@
 	const navItems = [
 		{ href: '/tasks', label: 'Tasks', icon: ListChecks },
 		{ href: '/inbox', label: 'Inbox', icon: Inbox },
-		{ href: '/objectives', label: 'Goals', icon: Target },
+		{ href: '/goals', label: 'Goals', icon: Target },
 		{ href: '/cares', label: 'Cares', icon: Heart }
 	] as const;
 

@@ -28,17 +28,17 @@ No build step needed before check/lint/test.
 
 ### Key domains (`src/lib/`)
 
-| Path           | Purpose                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------- |
-| `db/`          | PouchDB repos (task, objective, care, inbox)                                                      |
-| `engines/`     | Pure business logic: recurrence scheduling (`care-engine`), objective status (`objective-engine`) |
-| `components/`  | UI components (`.svelte` and `.svelte.ts` reactive state helpers)                                 |
-| `scheduler.ts` | Orchestrator — runs care-engine on mount, polls every 5 min                                       |
-| `types.ts`     | All doc types and recurrence type unions                                                          |
+| Path           | Purpose                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `db/`          | PouchDB repos (task, goal, care, inbox)                                                 |
+| `engines/`     | Pure business logic: recurrence scheduling (`care-engine`), goal status (`goal-engine`) |
+| `components/`  | UI components (`.svelte` and `.svelte.ts` reactive state helpers)                       |
+| `scheduler.ts` | Orchestrator — runs care-engine on mount, polls every 5 min                             |
+| `types.ts`     | All doc types and recurrence type unions                                                |
 
 ### Routes (`src/routes/`)
 
-`/tasks`, `/inbox`, `/objectives`, `/cares` — bottom nav tabs. Root `/` redirects to `/tasks`.
+`/tasks`, `/inbox`, `/goals`, `/cares` — bottom nav tabs. Root `/` redirects to `/tasks`.
 
 ### Recurrence model
 
