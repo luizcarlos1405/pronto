@@ -54,9 +54,10 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
 		selector: {
 			type: 'Task',
 			status: 'TODO',
-			doAt: { $lte: today }
+			doAt: { $lte: today },
+			createdAt: { $gt: null }
 		},
-		sort: [{ doAt: 'asc' }, { createdAt: 'asc' }]
+		sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }]
 	});
 	return result.docs as TaskDoc[];
 }
@@ -76,8 +77,8 @@ export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
 export async function getTasksByObjective(objectiveId: string): Promise<TaskDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'Task', objectiveId },
-		sort: [{ doAt: 'asc' }]
+		selector: { type: 'Task', objectiveId, doAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { objectiveId: 'asc' }, { doAt: 'asc' }]
 	});
 	return result.docs as TaskDoc[];
 }
@@ -85,8 +86,8 @@ export async function getTasksByObjective(objectiveId: string): Promise<TaskDoc[
 export async function getTasksByCare(careId: string): Promise<TaskDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'Task', careId },
-		sort: [{ doAt: 'asc' }]
+		selector: { type: 'Task', careId, doAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { careId: 'asc' }, { doAt: 'asc' }]
 	});
 	return result.docs as TaskDoc[];
 }

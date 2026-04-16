@@ -31,8 +31,8 @@ export async function updateInboxItem(doc: InboxItemDoc): Promise<InboxItemDoc> 
 export async function getUnprocessed(): Promise<InboxItemDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'InboxItem', isProcessed: false },
-		sort: [{ createdAt: 'desc' }]
+		selector: { type: 'InboxItem', isProcessed: false, createdAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }]
 	});
 	return result.docs as InboxItemDoc[];
 }
@@ -40,8 +40,8 @@ export async function getUnprocessed(): Promise<InboxItemDoc[]> {
 export async function getProcessed(): Promise<InboxItemDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'InboxItem', isProcessed: true },
-		sort: [{ createdAt: 'desc' }]
+		selector: { type: 'InboxItem', isProcessed: true, createdAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }]
 	});
 	return result.docs as InboxItemDoc[];
 }

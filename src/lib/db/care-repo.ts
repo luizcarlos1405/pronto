@@ -49,8 +49,8 @@ export async function removeCare(id: string): Promise<void> {
 export async function getAllCares(): Promise<CareDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'Care' },
-		sort: [{ createdAt: 'desc' }]
+		selector: { type: 'Care', createdAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { createdAt: 'desc' }]
 	});
 	return result.docs as CareDoc[];
 }

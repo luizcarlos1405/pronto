@@ -43,8 +43,8 @@ export async function removeObjective(id: string): Promise<void> {
 export async function getAllObjectives(): Promise<ObjectiveDoc[]> {
 	const db = await getDb();
 	const result = await db.find({
-		selector: { type: 'Objective' },
-		sort: [{ createdAt: 'desc' }]
+		selector: { type: 'Objective', createdAt: { $gt: null } },
+		sort: [{ type: 'asc' }, { createdAt: 'desc' }]
 	});
 	return result.docs as ObjectiveDoc[];
 }
