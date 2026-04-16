@@ -3,6 +3,9 @@ import { defineConfig } from 'vitest/config';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
 export default defineConfig({
+	define: {
+		global: 'globalThis'
+	},
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
