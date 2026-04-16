@@ -5,6 +5,8 @@ node_modules
 .vercel
 .netlify
 .wrangler
+.playwright-cli
+.local
 /.svelte-kit
 /build
 
