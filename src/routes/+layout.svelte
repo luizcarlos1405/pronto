@@ -6,6 +6,7 @@
 	import { ListChecks, Inbox, Target, Heart } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { runSchedulerNow } from '$lib/scheduler';
+	import TopBar from '$lib/components/top-bar.svelte';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
@@ -30,7 +31,9 @@
 </svelte:head>
 
 <div class="flex flex-col h-dvh">
-	<main class="flex-1 overflow-y-auto pb-20">
+	<TopBar />
+
+	<main class="flex-1 overflow-y-auto pt-14 pb-20">
 		{@render children()}
 	</main>
 
