@@ -288,6 +288,14 @@
           {/if}
 
           <div class="flex gap-2 mt-2">
+            <button
+              class="btn btn-ghost btn-sm"
+              onclick={() => {
+                ctrl.showWizard = false;
+                resetWizard();
+              }}>Cancel</button
+            >
+            <div class="flex-1"></div>
             {#if planStep > 0}
               <button class="btn btn-ghost btn-sm" onclick={() => planStep--}>Back</button>
             {/if}
@@ -299,14 +307,6 @@
                 Add
               </button>
             {/if}
-            <div class="flex-1"></div>
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick={() => {
-                ctrl.showWizard = false;
-                resetWizard();
-              }}>Cancel</button
-            >
           </div>
         </div>
       </div>

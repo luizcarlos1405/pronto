@@ -95,6 +95,8 @@
         />
         <input type="date" class="input input-sm" bind:value={ctrl.taskDoAt} />
         <div class="flex gap-2">
+          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
+          <div class="flex-1"></div>
           <button
             class="btn btn-primary btn-sm"
             onclick={ctrl.createTask}
@@ -105,7 +107,6 @@
               />{/if}
             Add task
           </button>
-          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
         </div>
       </div>
     {:else if ctrl.mode === 'goal'}
@@ -118,6 +119,8 @@
           onkeydown={handleKeydown}
         />
         <div class="flex gap-2">
+          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
+          <div class="flex-1"></div>
           <button
             class="btn btn-primary btn-sm"
             onclick={ctrl.createGoal}
@@ -128,7 +131,6 @@
               />{/if}
             Add goal
           </button>
-          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
         </div>
       </div>
     {:else if ctrl.mode === 'care'}
@@ -174,6 +176,8 @@
         {/if}
 
         <div class="flex gap-2">
+          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
+          <div class="flex-1"></div>
           <button
             class="btn btn-primary btn-sm"
             onclick={() => ctrl.createCare([])}
@@ -184,16 +188,15 @@
               />{/if}
             Add care
           </button>
-          <button class="btn btn-ghost btn-sm" onclick={ctrl.resetMode}>Back</button>
         </div>
       </div>
     {/if}
 
     <div class="modal-action">
+      <button class="btn btn-ghost btn-sm" onclick={onDone}>Cancel</button>
       <button class="btn btn-success btn-sm" onclick={handleFinish} disabled={ctrl.processing}>
         Done
       </button>
-      <button class="btn btn-ghost btn-sm" onclick={onDone}>Cancel</button>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop"><button onclick={onDone}>close</button></form>
