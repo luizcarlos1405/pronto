@@ -79,7 +79,7 @@
   }
 
   function updateThemeColor() {
-    const computed = getComputedStyle(layout)['background-color'];
+    const computed = getComputedStyle(document.getElementById('layout'))['background-color'];
 
     let meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) {

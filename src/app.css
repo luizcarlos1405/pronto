@@ -3,6 +3,11 @@
   themes: all;
 }
 
+
+body, html {
+    @apply w-full h-full;
+}
+
 body {
   @apply bg-base-300;
   font-family: 'Inter', sans-serif;
