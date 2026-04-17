@@ -1,4 +1,10 @@
-import { getAllGoals, createGoal, updateGoal, getGoal } from '$lib/db/goal-repo';
+import {
+  getAllGoals,
+  createGoal,
+  updateGoal,
+  getGoal,
+  removeGoal as removeGoalRepo
+} from '$lib/db/goal-repo';
 import { getTasksByGoal, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
 import { calculateGoalStatus } from '$lib/engines/goal-engine';
 import type { GoalDoc, TaskDoc } from '$lib/types';
@@ -106,6 +112,10 @@ export function getGoalDetailState(goalId: string) {
     await load();
   }
 
+  async function deleteGoal() {
+    await removeGoalRepo(goalId);
+  }
+
   return {
     get goal() {
       return goal;
@@ -125,6 +135,7 @@ export function getGoalDetailState(goalId: string) {
     load,
     addTask,
     toggleTask,
-    markCompleted
+    markCompleted,
+    deleteGoal
   };
 }

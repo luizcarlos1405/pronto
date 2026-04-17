@@ -2,6 +2,7 @@ import {
   getAllCares,
   createCare,
   removeTaskPlan as removeTaskPlanRepo,
+  removeCare as removeCareRepo,
   getCare,
   updateCare
 } from '$lib/db/care-repo';
@@ -61,6 +62,10 @@ export function getCareDetailState(careId: string) {
     await load();
   }
 
+  async function deleteCare() {
+    await removeCareRepo(careId);
+  }
+
   async function addTaskPlan(plan: { title: string; recurrence: Recurrence }) {
     const doc = await getCare(careId);
     const now = new SvelteDate().toISOString();
@@ -91,6 +96,7 @@ export function getCareDetailState(careId: string) {
       showWizard = v;
     },
     load,
+    deleteCare,
     removeTaskPlan,
     addTaskPlan
   };

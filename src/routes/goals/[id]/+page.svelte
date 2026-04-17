@@ -3,7 +3,8 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
-  import { ArrowLeft, CheckSquare, Square, Plus, Loader2 } from 'lucide-svelte';
+  import { ArrowLeft, CheckSquare, Square, Plus, Trash2, Loader2 } from 'lucide-svelte';
+  import { goto } from '$app/navigation';
 
   const goalId = page.params.id!;
   const ctrl = getGoalDetailState(goalId);
@@ -27,13 +28,28 @@
     REVIEW: 'Review',
     COMPLETED: 'Done'
   };
+
+  async function handleDelete() {
+    if (confirm('Delete this goal and all its tasks?')) {
+      await ctrl.deleteGoal();
+      goto(resolve('/goals'));
+    }
+  }
 </script>
 
 <div class="p-4">
-  <a href={resolve('/goals')} class="btn btn-ghost btn-sm mb-2">
-    <ArrowLeft class="size-4" />
-    Back
-  </a>
+  <div class="flex justify-between mb-2">
+    <a href={resolve('/goals')} class="btn btn-ghost btn-sm">
+      <ArrowLeft class="size-4" />
+      Back
+    </a>
+    {#if ctrl.goal}
+      <button class="btn btn-ghost btn-sm text-error" onclick={handleDelete}>
+        <Trash2 class="size-4" />
+        Delete
+      </button>
+    {/if}
+  </div>
 
   {#if ctrl.loading}
     <div class="flex justify-center py-8">

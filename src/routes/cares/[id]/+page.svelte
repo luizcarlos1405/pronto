@@ -5,11 +5,19 @@
   import { page } from '$app/state';
   import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-svelte';
   import type { Recurrence } from '$lib/types';
+  import { goto } from '$app/navigation';
 
   const careId = page.params.id!;
   const ctrl = getCareDetailState(careId);
 
   onMount(() => ctrl.load());
+
+  async function handleDelete() {
+    if (confirm('Delete this care and all its task plans?')) {
+      await ctrl.deleteCare();
+      goto(resolve('/cares'));
+    }
+  }
 
   async function handleDeletePlan(planId: string) {
     if (confirm('Remove this task plan?')) {
@@ -105,10 +113,18 @@
 </script>
 
 <div class="p-4">
-  <a href={resolve('/cares')} class="btn btn-ghost btn-sm mb-2">
-    <ArrowLeft class="size-4" />
-    Back
-  </a>
+  <div class="flex justify-between mb-2">
+    <a href={resolve('/cares')} class="btn btn-ghost btn-sm">
+      <ArrowLeft class="size-4" />
+      Back
+    </a>
+    {#if ctrl.care}
+      <button class="btn btn-ghost btn-sm text-error" onclick={handleDelete}>
+        <Trash2 class="size-4" />
+        Delete
+      </button>
+    {/if}
+  </div>
 
   {#if ctrl.loading}
     <div class="flex justify-center py-8">
