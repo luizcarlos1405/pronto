@@ -12,36 +12,36 @@ let dbInstance: Database | null = null;
 let initPromise: Promise<void> | null = null;
 
 export async function getDb(): Promise<Database> {
-	if (!dbInstance) {
-		dbInstance = new PouchDB<FazDoc>('faz');
-		initPromise = setupIndexes(dbInstance);
-	}
-	if (initPromise) {
-		await initPromise;
-		initPromise = null;
-	}
-	return dbInstance;
+  if (!dbInstance) {
+    dbInstance = new PouchDB<FazDoc>('faz');
+    initPromise = setupIndexes(dbInstance);
+  }
+  if (initPromise) {
+    await initPromise;
+    initPromise = null;
+  }
+  return dbInstance;
 }
 
 async function setupIndexes(db: Database): Promise<void> {
-	await db.createIndex({ index: { fields: ['type'] } });
-	await db.createIndex({ index: { fields: ['type', 'status'] } });
-	await db.createIndex({ index: { fields: ['type', 'isProcessed'] } });
-	await db.createIndex({ index: { fields: ['type', 'careId'] } });
-	await db.createIndex({ index: { fields: ['type', 'goalId'] } });
-	await db.createIndex({ index: { fields: ['type', 'taskPlanId'] } });
-	await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'status'] } });
-	await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'doAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'createdAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'status', 'doAt', 'createdAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'goalId', 'doAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'careId', 'doAt'] } });
-	await db.createIndex({ index: { fields: ['type', 'isProcessed', 'createdAt'] } });
+  await db.createIndex({ index: { fields: ['type'] } });
+  await db.createIndex({ index: { fields: ['type', 'status'] } });
+  await db.createIndex({ index: { fields: ['type', 'isProcessed'] } });
+  await db.createIndex({ index: { fields: ['type', 'careId'] } });
+  await db.createIndex({ index: { fields: ['type', 'goalId'] } });
+  await db.createIndex({ index: { fields: ['type', 'taskPlanId'] } });
+  await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'status'] } });
+  await db.createIndex({ index: { fields: ['type', 'taskPlanId', 'doAt'] } });
+  await db.createIndex({ index: { fields: ['type', 'createdAt'] } });
+  await db.createIndex({ index: { fields: ['type', 'status', 'doAt', 'createdAt'] } });
+  await db.createIndex({ index: { fields: ['type', 'goalId', 'doAt'] } });
+  await db.createIndex({ index: { fields: ['type', 'careId', 'doAt'] } });
+  await db.createIndex({ index: { fields: ['type', 'isProcessed', 'createdAt'] } });
 }
 
 export function resetDb(): void {
-	dbInstance = null;
-	initPromise = null;
+  dbInstance = null;
+  initPromise = null;
 }
 
 export { getDb as db };

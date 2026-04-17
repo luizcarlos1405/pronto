@@ -50,34 +50,34 @@ It allows pulling appropriate pauses between the actions and annotating the vide
 
 ```js
 async (page) => {
-	await page.screencast.start({ path: 'video.webm', size: { width: 1280, height: 800 } });
-	await page.goto('https://demo.playwright.dev/todomvc');
+  await page.screencast.start({ path: 'video.webm', size: { width: 1280, height: 800 } });
+  await page.goto('https://demo.playwright.dev/todomvc');
 
-	// Show a chapter card — blurs the page and shows a dialog.
-	// Blocks until duration expires, then auto-removes.
-	// Use this for simple use cases, but always feel free to hand-craft your own beautiful
-	// overlay via await page.screencast.showOverlay().
-	await page.screencast.showChapter('Adding Todo Items', {
-		description: 'We will add several items to the todo list.',
-		duration: 2000
-	});
+  // Show a chapter card — blurs the page and shows a dialog.
+  // Blocks until duration expires, then auto-removes.
+  // Use this for simple use cases, but always feel free to hand-craft your own beautiful
+  // overlay via await page.screencast.showOverlay().
+  await page.screencast.showChapter('Adding Todo Items', {
+    description: 'We will add several items to the todo list.',
+    duration: 2000
+  });
 
-	// Perform action
-	await page
-		.getByRole('textbox', { name: 'What needs to be done?' })
-		.pressSequentially('Walk the dog', { delay: 60 });
-	await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
-	await page.waitForTimeout(1000);
+  // Perform action
+  await page
+    .getByRole('textbox', { name: 'What needs to be done?' })
+    .pressSequentially('Walk the dog', { delay: 60 });
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
+  await page.waitForTimeout(1000);
 
-	// Show next chapter
-	await page.screencast.showChapter('Verifying Results', {
-		description: 'Checking the item appeared in the list.',
-		duration: 2000
-	});
+  // Show next chapter
+  await page.screencast.showChapter('Verifying Results', {
+    description: 'Checking the item appeared in the list.',
+    duration: 2000
+  });
 
-	// Add a sticky annotation that stays while you perform actions.
-	// Overlays are pointer-events: none, so they won't block clicks.
-	const annotation = await page.screencast.showOverlay(`
+  // Add a sticky annotation that stays while you perform actions.
+  // Overlays are pointer-events: none, so they won't block clicks.
+  const annotation = await page.screencast.showOverlay(`
     <div style="position: absolute; top: 8px; right: 8px;
       padding: 6px 12px; background: rgba(0,0,0,0.7);
       border-radius: 8px; font-size: 13px; color: white;">
@@ -85,20 +85,20 @@ async (page) => {
     </div>
   `);
 
-	// Perform more actions while the annotation is visible
-	await page
-		.getByRole('textbox', { name: 'What needs to be done?' })
-		.pressSequentially('Buy groceries', { delay: 60 });
-	await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
-	await page.waitForTimeout(1500);
+  // Perform more actions while the annotation is visible
+  await page
+    .getByRole('textbox', { name: 'What needs to be done?' })
+    .pressSequentially('Buy groceries', { delay: 60 });
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
+  await page.waitForTimeout(1500);
 
-	// Remove the annotation when done
-	await annotation.dispose();
+  // Remove the annotation when done
+  await annotation.dispose();
 
-	// You can also highlight relevant locators and provide contextual annotations.
-	const bounds = await page.getByText('Walk the dog').boundingBox();
-	await page.screencast.showOverlay(
-		`
+  // You can also highlight relevant locators and provide contextual annotations.
+  const bounds = await page.getByText('Walk the dog').boundingBox();
+  await page.screencast.showOverlay(
+    `
     <div style="position: absolute;
       top: ${bounds.y}px;
       left: ${bounds.x}px;
@@ -117,10 +117,10 @@ async (page) => {
       color: white;">Check it out, it is right above this text
     </div>
   `,
-		{ duration: 2000 }
-	);
+    { duration: 2000 }
+  );
 
-	await page.screencast.stop();
+  await page.screencast.stop();
 };
 ```
 

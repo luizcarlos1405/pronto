@@ -7,109 +7,109 @@ export type IntervalSubtype = 'FIXED' | 'AFTER_DONE';
 export type FixedDaysSubtype = 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS';
 
 export interface DurationLike {
-	years?: number;
-	months?: number;
-	weeks?: number;
-	days?: number;
+  years?: number;
+  months?: number;
+  weeks?: number;
+  days?: number;
 }
 
 export interface IntervalFixedRecurrence {
-	type: 'INTERVAL';
-	subtype: 'FIXED';
-	interval: DurationLike;
-	startDate: string;
+  type: 'INTERVAL';
+  subtype: 'FIXED';
+  interval: DurationLike;
+  startDate: string;
 }
 
 export interface IntervalAfterDoneRecurrence {
-	type: 'INTERVAL';
-	subtype: 'AFTER_DONE';
-	interval: DurationLike;
-	startDate: string;
+  type: 'INTERVAL';
+  subtype: 'AFTER_DONE';
+  interval: DurationLike;
+  startDate: string;
 }
 
 export interface WeekdaysRecurrence {
-	type: 'FIXED_DAYS';
-	subtype: 'WEEKDAYS';
-	daysOfWeek: number[];
-	startDate: string;
+  type: 'FIXED_DAYS';
+  subtype: 'WEEKDAYS';
+  daysOfWeek: number[];
+  startDate: string;
 }
 
 export interface MonthdaysRecurrence {
-	type: 'FIXED_DAYS';
-	subtype: 'MONTHDAYS';
-	daysOfMonth: number[];
-	startDate: string;
+  type: 'FIXED_DAYS';
+  subtype: 'MONTHDAYS';
+  daysOfMonth: number[];
+  startDate: string;
 }
 
 export interface YeardaysRecurrence {
-	type: 'FIXED_DAYS';
-	subtype: 'YEARDAYS';
-	dates: { month: number; day: number }[];
-	startDate: string;
+  type: 'FIXED_DAYS';
+  subtype: 'YEARDAYS';
+  dates: { month: number; day: number }[];
+  startDate: string;
 }
 
 export type Recurrence =
-	| IntervalFixedRecurrence
-	| IntervalAfterDoneRecurrence
-	| WeekdaysRecurrence
-	| MonthdaysRecurrence
-	| YeardaysRecurrence;
+  | IntervalFixedRecurrence
+  | IntervalAfterDoneRecurrence
+  | WeekdaysRecurrence
+  | MonthdaysRecurrence
+  | YeardaysRecurrence;
 
 export interface InboxItemDoc {
-	_id: string;
-	_rev?: string;
-	type: 'InboxItem';
-	title: string;
-	isProcessed: boolean;
-	createdAt: string;
+  _id: string;
+  _rev?: string;
+  type: 'InboxItem';
+  title: string;
+  isProcessed: boolean;
+  createdAt: string;
 }
 
 export interface TaskDoc {
-	_id: string;
-	_rev?: string;
-	type: 'Task';
-	title: string;
-	doAt: string;
-	status: TaskStatus;
-	goalId?: string;
-	originInboxItemId?: string;
-	careId?: string;
-	taskPlanId?: string;
-	completedAt?: string;
-	createdAt: string;
-	updatedAt: string;
+  _id: string;
+  _rev?: string;
+  type: 'Task';
+  title: string;
+  doAt: string;
+  status: TaskStatus;
+  goalId?: string;
+  originInboxItemId?: string;
+  careId?: string;
+  taskPlanId?: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GoalDoc {
-	_id: string;
-	_rev?: string;
-	type: 'Goal';
-	title: string;
-	status: GoalStatus;
-	originInboxItemId?: string;
-	createdAt: string;
-	updatedAt: string;
+  _id: string;
+  _rev?: string;
+  type: 'Goal';
+  title: string;
+  status: GoalStatus;
+  originInboxItemId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TaskPlan {
-	_id: string;
-	title: string;
-	recurrence: Recurrence;
-	lastDoAtDate?: string;
-	lastDoneDate?: string;
-	createdAt: string;
-	updatedAt: string;
+  _id: string;
+  title: string;
+  recurrence: Recurrence;
+  lastDoAtDate?: string;
+  lastDoneDate?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CareDoc {
-	_id: string;
-	_rev?: string;
-	type: 'Care';
-	title: string;
-	taskPlans: TaskPlan[];
-	originInboxItemId?: string;
-	createdAt: string;
-	updatedAt: string;
+  _id: string;
+  _rev?: string;
+  type: 'Care';
+  title: string;
+  taskPlans: TaskPlan[];
+  originInboxItemId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type FazDoc = InboxItemDoc | TaskDoc | GoalDoc | CareDoc;

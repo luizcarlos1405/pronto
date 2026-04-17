@@ -1,23 +1,23 @@
 @import 'tailwindcss';
 @plugin 'daisyui' {
-	themes: all;
+  themes: all;
 }
 
 body {
-    @apply bg-base-300;
+  @apply bg-base-300;
 }
 
 .modal-box {
-    @apply mx-auto;
+  @apply mx-auto;
 }
 
 @keyframes slide-up {
-	from {
-		opacity: 0;
-		transform: translateY(1rem);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
