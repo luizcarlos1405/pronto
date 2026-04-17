@@ -121,7 +121,11 @@ export function getGoalDetailState(goalId: string) {
       return goal;
     },
     get tasks() {
-      return tasks;
+      return tasks.toSorted((a, b) => {
+        if (a.status === 'DONE' && b.status !== 'DONE') return 1;
+        if (a.status !== 'DONE' && b.status === 'DONE') return -1;
+        return 0;
+      });
     },
     get newTaskTitle() {
       return newTaskTitle;

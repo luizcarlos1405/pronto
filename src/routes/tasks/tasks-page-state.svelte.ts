@@ -27,7 +27,6 @@ export function getTasksPageState() {
   const toast = getToastState();
 
   async function load() {
-    loading = true;
     const today = getToday();
     [tasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
     loading = false;
