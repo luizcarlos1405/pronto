@@ -41,7 +41,6 @@
 </script>
 
 <dialog class="modal modal-bottom" class:modal-open={open}>
-  {#if task}
     <div class="modal-box max-w-lg">
       <h3 class="font-bold text-lg mb-4">Edit task</h3>
 
@@ -93,5 +92,4 @@
     <form method="dialog" class="modal-backdrop">
       <button onclick={onclose}>close</button>
     </form>
-  {/if}
 </dialog>
