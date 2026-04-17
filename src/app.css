@@ -4,7 +4,7 @@
 }
 
 body {
-    @apply max-w-lg mx-auto relative shadow-lg;
+    @apply bg-base-300;
 }
 
 .modal-box {
