@@ -2,6 +2,9 @@
 
 Personal GTD/task organization PWA. SvelteKit 5, client-only SPA, PouchDB (browser), Tailwind CSS v4 + DaisyUI v5.
 
+ATTENTION: update this file anytime you notice a discrepancy between its contents and the reality of
+the codebase.
+
 ## Commands
 
 **Important:** On NixOS, all commands (including `bun run dev` and `playwright-cli`) must run inside the nix-shell to provide shared libraries for Playwright's Chromium:
@@ -46,11 +49,12 @@ No build step needed before check/lint/test.
 
 ## Related Docs
 
-When working on user-facing copy (labels, empty states, error messages, notifications, onboarding text), read [`.agents/docs/WRITING.md`](./.agents/docs/WRITING.md) for tone and voice guidelines.
+[`.agents/docs/WRITING.md`](./.agents/docs/WRITING.md): when working on user-facing copy (labels,
+empty states, error messages, notifications, onboarding text), read it for tone and voice guidelines.
 
 ## Style
 
-- Tabs, single quotes, no trailing commas, 100 char width (`.prettierrc`)
+- Spaces, single quotes, no trailing commas, 100 char width (`.prettierrc`)
 - No comments unless explicitly asked
 - Icons: `lucide-svelte`
 - UI: DaisyUI components (dock nav, etc.)
