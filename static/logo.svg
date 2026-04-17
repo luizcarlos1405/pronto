@@ -41,13 +41,13 @@
        id="g1"
        transform="translate(20.372921,-20.637478)"><g
          id="g3-7"
-         transform="translate(-16.446213,29.103262)"><circle
-           style="opacity:1;fill:currentColor;stroke-width:0.264583"
+         transform="matrix(1.3885334,0,0,1.3885334,-85.010491,-121.6482)"><circle
+           style="opacity:1;fill:#ffffff;stroke-width:0.264583"
            id="path2-9"
            cx="176.46945"
            cy="369.08148"
            r="5.8568702" /></g><path
          id="path8"
-         style="fill:currentColor;stroke:currentColor;stroke-width:3.56587;stroke-linecap:round;stroke-linejoin:round"
-         d="m 186.50395,409.921 c 0,16.66643 -11.85583,30.17721 -26.48072,30.17721 -14.62488,0 -26.48071,-13.51078 -26.48071,-30.17721 0,-16.66642 11.85583,15.28714 26.48071,15.28714 14.62489,0 26.48072,-31.95356 26.48072,-15.28714 z"
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:4.95132;stroke-linecap:round;stroke-linejoin:round"
+         d="m 196.79259,407.12997 c 0,23.14189 -16.46221,41.90206 -36.76936,41.90206 -20.30714,0 -36.76935,-18.76017 -36.76935,-41.90206 0,-23.14188 16.46221,21.22671 36.76935,21.22671 20.30715,0 36.76936,-44.36859 36.76936,-21.22671 z"
          sodipodi:nodetypes="sssss" /></g></g></svg>

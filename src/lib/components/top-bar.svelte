@@ -97,10 +97,13 @@
 </script>
 
 <div
-  class="navbar absolute top-0 left-0 right-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
+  class="navbar absolute top-0 px-4 left-0 right-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
 >
-  <div class="navbar-start">
-    <img src="/logo.svg" alt="Faz" class="h-6 w-6 text-primary" />
+  <div class="navbar-start gap-2">
+    <div
+      class="h-6 w-6 bg-primary"
+      style="mask-image: url('/logo.svg'); -webkit-mask-image: url('/logo.svg'); mask-size: contain; -webkit-mask-size: contain; mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat; mask-position: center; -webkit-mask-position: center;"
+    ></div>
     <span class="text-xl font-bold tracking-tight">Faz</span>
   </div>
   <div class="navbar-end">

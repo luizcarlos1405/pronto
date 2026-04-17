@@ -5,6 +5,7 @@
 
 body {
   @apply bg-base-300;
+  font-family: 'Inter', sans-serif;
 }
 
 .modal-box {
