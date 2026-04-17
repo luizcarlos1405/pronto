@@ -194,8 +194,12 @@
 
     <div class="modal-action">
       <button class="btn btn-ghost btn-sm" onclick={onDone}>Cancel</button>
-      <button class="btn btn-success btn-sm" onclick={handleFinish} disabled={ctrl.processing}>
-        Done
+      <button
+        class="btn {ctrl.created.length > 0 ? 'btn-success' : 'btn-primary'} btn-sm"
+        onclick={handleFinish}
+        disabled={ctrl.processing}
+      >
+        {ctrl.created.length > 0 ? 'Done' : 'Discard'}
       </button>
     </div>
   </div>

@@ -2,7 +2,7 @@
   import { getInboxPageState } from './inbox-page-state.svelte';
   import InboxProcessor from '$lib/components/inbox-processor.svelte';
   import { onMount } from 'svelte';
-  import { Inbox, Trash2, Loader2, ArrowRight } from 'lucide-svelte';
+  import { Inbox, Loader2, ArrowRight } from 'lucide-svelte';
 
   const state = getInboxPageState();
 
@@ -59,9 +59,6 @@
             onclick={() => state.startProcessing(item._id)}
           >
             <ArrowRight class="size-4" />
-          </button>
-          <button class="btn btn-ghost btn-sm text-error" onclick={() => state.discard(item._id)}>
-            <Trash2 class="size-4" />
           </button>
         </li>
       {/each}

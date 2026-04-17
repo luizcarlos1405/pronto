@@ -21,11 +21,6 @@ export function getInboxPageState() {
     await load();
   }
 
-  async function discard(id: string) {
-    await markProcessed(id);
-    await load();
-  }
-
   function startProcessing(id: string) {
     processingItemId = id;
   }
@@ -52,7 +47,6 @@ export function getInboxPageState() {
     },
     load,
     add,
-    discard,
     startProcessing,
     stopProcessing
   };
