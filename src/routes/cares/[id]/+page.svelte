@@ -6,6 +6,7 @@
   import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-svelte';
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
+  import { getConfirmState } from '$lib/components/confirm-state.svelte';
 
   const careId = page.params.id!;
   const ctrl = getCareDetailState(careId);
@@ -13,14 +14,14 @@
   onMount(() => ctrl.load());
 
   async function handleDelete() {
-    if (confirm('Delete this care and all its task plans?')) {
+    if (await getConfirmState().confirm({ message: 'Remove this care and all its task plans?' })) {
       await ctrl.deleteCare();
       goto(resolve('/cares'));
     }
   }
 
   async function handleDeletePlan(planId: string) {
-    if (confirm('Remove this task plan?')) {
+    if (await getConfirmState().confirm({ message: 'Remove this task plan?' })) {
       await ctrl.removeTaskPlan(planId);
     }
   }

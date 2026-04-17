@@ -5,6 +5,7 @@
   import { page } from '$app/state';
   import { ArrowLeft, CheckSquare, Square, Plus, Trash2, Loader2 } from 'lucide-svelte';
   import { goto } from '$app/navigation';
+  import { getConfirmState } from '$lib/components/confirm-state.svelte';
 
   const goalId = page.params.id!;
   const ctrl = getGoalDetailState(goalId);
@@ -30,7 +31,7 @@
   };
 
   async function handleDelete() {
-    if (confirm('Delete this goal and all its tasks?')) {
+    if (await getConfirmState().confirm({ message: 'Remove this goal and all its tasks?' })) {
       await ctrl.deleteGoal();
       goto(resolve('/goals'));
     }

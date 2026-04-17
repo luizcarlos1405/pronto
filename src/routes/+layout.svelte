@@ -8,6 +8,7 @@
   import { runSchedulerNow } from '$lib/scheduler';
   import TopBar from '$lib/components/top-bar.svelte';
   import ToastContainer from '$lib/components/toast-container.svelte';
+  import ConfirmModal from '$lib/components/confirm-modal.svelte';
   import type { Snippet } from 'svelte';
   import { pwaInfo } from 'virtual:pwa-info';
 
@@ -66,4 +67,5 @@
   </nav>
 
   <ToastContainer />
+  <ConfirmModal />
 </div>
