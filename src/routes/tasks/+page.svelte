@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { CheckSquare, Square, Plus, Loader2, CalendarClock, Trash2 } from 'lucide-svelte';
   import SwipeableItem from '$lib/components/swipeable-item.svelte';
+  import TaskEditModal from '$lib/components/task-edit-modal.svelte';
 
   const state = getTasksPageState();
 
@@ -64,7 +65,15 @@
               <button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
                 <Square class="size-5" />
               </button>
-              <div class="list-col-grow">
+              <div
+                class="list-col-grow cursor-pointer"
+                onclick={() => state.openEdit(task._id)}
+                role="button"
+                tabindex="0"
+                onkeydown={(e) => {
+                  if (e.key === 'Enter') state.openEdit(task._id);
+                }}
+              >
                 <div>{task.title}</div>
                 <div class="text-xs text-base-content/50">{task.doAt}</div>
               </div>
@@ -82,7 +91,15 @@
             <button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
               <CheckSquare class="size-5 text-success" />
             </button>
-            <div class="list-col-grow">
+            <div
+              class="list-col-grow cursor-pointer"
+              onclick={() => state.openEdit(task._id)}
+              role="button"
+              tabindex="0"
+              onkeydown={(e) => {
+                if (e.key === 'Enter') state.openEdit(task._id);
+              }}
+            >
               <div class="line-through">{task.title}</div>
               <div class="text-xs text-base-content/50">{task.doAt}</div>
             </div>
@@ -92,3 +109,13 @@
     {/if}
   {/if}
 </div>
+
+{#if state.editingTask}
+  <TaskEditModal
+    task={state.editingTask}
+    onclose={state.closeEdit}
+    onsave={state.saveEdit}
+    ontransformgoal={state.transformToGoal}
+    ontransformcare={state.transformToCare}
+  />
+{/if}

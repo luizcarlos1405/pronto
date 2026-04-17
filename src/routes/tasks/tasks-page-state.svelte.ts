@@ -8,6 +8,8 @@ import {
   updateTask,
   getTask
 } from '$lib/db/task-repo';
+import { createGoal } from '$lib/db/goal-repo';
+import { createCare } from '$lib/db/care-repo';
 import type { TaskDoc } from '$lib/types';
 import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
@@ -21,6 +23,7 @@ export function getTasksPageState() {
   let doneTodayList = $state<TaskDoc[]>([]);
   let newTitle = $state('');
   let loading = $state(true);
+  let editingTask = $state<TaskDoc | null>(null);
   const toast = getToastState();
 
   async function load() {
@@ -102,6 +105,81 @@ export function getTasksPageState() {
     });
   }
 
+  function openEdit(taskId: string) {
+    const task = tasks.find((t) => t._id === taskId) || doneTodayList.find((t) => t._id === taskId);
+    if (task) editingTask = { ...task };
+  }
+
+  function closeEdit() {
+    editingTask = null;
+  }
+
+  async function saveEdit(title: string, doAt: string) {
+    if (!editingTask) return;
+    const task = await getTask(editingTask._id);
+    task.title = title.trim();
+    task.doAt = doAt;
+    await updateTask(task);
+    editingTask = null;
+    await load();
+  }
+
+  async function transformToGoal() {
+    if (!editingTask) return;
+    const task = await getTask(editingTask._id);
+    const backup: Omit<TaskDoc, '_id' | '_rev' | 'updatedAt'> = {
+      type: task.type,
+      title: task.title,
+      doAt: task.doAt,
+      status: task.status,
+      goalId: task.goalId,
+      originInboxItemId: task.originInboxItemId,
+      careId: task.careId,
+      taskPlanId: task.taskPlanId,
+      completedAt: task.completedAt,
+      createdAt: task.createdAt
+    };
+    await createGoal(task.title);
+    await deleteTask(task._id);
+    editingTask = null;
+    await load();
+    toast.notify('Converted to goal', {
+      label: 'Undo',
+      fn: async () => {
+        await createTask(backup);
+        await load();
+      }
+    });
+  }
+
+  async function transformToCare() {
+    if (!editingTask) return;
+    const task = await getTask(editingTask._id);
+    const backup: Omit<TaskDoc, '_id' | '_rev' | 'updatedAt'> = {
+      type: task.type,
+      title: task.title,
+      doAt: task.doAt,
+      status: task.status,
+      goalId: task.goalId,
+      originInboxItemId: task.originInboxItemId,
+      careId: task.careId,
+      taskPlanId: task.taskPlanId,
+      completedAt: task.completedAt,
+      createdAt: task.createdAt
+    };
+    await createCare(task.title, []);
+    await deleteTask(task._id);
+    editingTask = null;
+    await load();
+    toast.notify('Converted to care', {
+      label: 'Undo',
+      fn: async () => {
+        await createTask(backup);
+        await load();
+      }
+    });
+  }
+
   return {
     get tasks() {
       return tasks;
@@ -118,10 +196,18 @@ export function getTasksPageState() {
     get loading() {
       return loading;
     },
+    get editingTask() {
+      return editingTask;
+    },
     load,
     add,
     toggleComplete,
     postponeTask,
-    removeTask
+    removeTask,
+    openEdit,
+    closeEdit,
+    saveEdit,
+    transformToGoal,
+    transformToCare
   };
 }
