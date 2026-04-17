@@ -54,3 +54,4 @@ When working on user-facing copy (labels, empty states, error messages, notifica
 - No comments unless explicitly asked
 - Icons: `lucide-svelte`
 - UI: DaisyUI components (dock nav, etc.)
+- No `index.ts` barrel files — every file gets a meaningful, specific name

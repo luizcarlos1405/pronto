@@ -1,12 +1,18 @@
 <script lang="ts">
-  import { Download, Upload, Trash2, AlertTriangle } from 'lucide-svelte';
+  import { Download, Upload, Trash2, AlertTriangle, ListChecks } from 'lucide-svelte';
   import { exportAllData, importData, clearAllData, type FazExport } from '$lib/db/data-manager';
+  import {
+    importGoogleTasksFromFile,
+    InvalidGoogleTasksFileError
+  } from '$lib/importers/google-tasks-import';
 
   let { onclose }: { onclose: () => void } = $props();
 
   let showClearConfirm = $state(false);
   let clearText = $state('');
   let status = $state<{ text: string; ok: boolean } | null>(null);
+
+  let importing = $state(false);
 
   const CLEAR_PHRASE = 'delete all data';
 
@@ -73,6 +79,36 @@
     } catch {
       status = { text: 'Something went wrong clearing data', ok: false };
     }
+  }
+
+  function handleGoogleTasksImport() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      importing = true;
+      try {
+        const result = await importGoogleTasksFromFile(file);
+        const parts: string[] = [];
+        if (result.cares > 0) parts.push(`${result.cares} cares`);
+        if (result.tasks > 0) parts.push(`${result.tasks} tasks`);
+        status = {
+          text: parts.length > 0 ? `Imported ${parts.join(' and ')}` : 'Nothing to import',
+          ok: true
+        };
+      } catch (e) {
+        if (e instanceof InvalidGoogleTasksFileError) {
+          status = { text: e.message, ok: false };
+        } else {
+          status = { text: 'Something went wrong importing', ok: false };
+        }
+      } finally {
+        importing = false;
+      }
+    };
+    input.click();
   }
 </script>
 
@@ -142,6 +178,22 @@
           <button class="btn btn-outline btn-sm" onclick={handleImport}>
             <Upload class="size-4" />
             Import data
+          </button>
+        </div>
+
+        <div>
+          <p class="text-sm opacity-70 mb-2">Load tasks from a Google Tasks export file.</p>
+          <button
+            class="btn btn-outline btn-sm"
+            onclick={handleGoogleTasksImport}
+            disabled={importing}
+          >
+            <ListChecks class="size-4" />
+            {#if importing}
+              Importing…
+            {:else}
+              Import from Google Tasks
+            {/if}
           </button>
         </div>
 
