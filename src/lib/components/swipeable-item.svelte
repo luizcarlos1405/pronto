@@ -17,11 +17,15 @@
   } = $props();
 
   let startX = $state(0);
+  let startY = $state(0);
   let deltaX = $state(0);
   let dragging = $state(false);
   let swiping = $state(false);
+  let cancelled = $state(false);
 
   const REVEAL_WIDTH = 96;
+  const DEADZONE = 20;
+  const Y_CANCEL_THRESHOLD = 30;
 
   function clamp(val: number, min: number, max: number) {
     return Math.max(min, Math.min(max, val));
@@ -29,17 +33,33 @@
 
   function onTouchStart(e: TouchEvent) {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
     dragging = true;
     deltaX = 0;
+    cancelled = false;
   }
 
   function onTouchMove(e: TouchEvent) {
-    if (!dragging) return;
+    if (!dragging || cancelled) return;
 
     const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
     const rawDeltaX = currentX - startX;
+    const rawDeltaY = Math.abs(currentY - startY);
 
-    if (Math.abs(rawDeltaX) < 10 && !swiping) return;
+    if (!swiping && rawDeltaY >= Y_CANCEL_THRESHOLD) {
+      cancelled = true;
+      deltaX = 0;
+      return;
+    }
+
+    if (!swiping && rawDeltaY > Math.abs(rawDeltaX)) {
+      cancelled = true;
+      deltaX = 0;
+      return;
+    }
+
+    if (Math.abs(rawDeltaX) < DEADZONE && !swiping) return;
 
     swiping = true;
 
@@ -59,6 +79,13 @@
   async function onTouchEnd() {
     if (!dragging) return;
     dragging = false;
+
+    if (cancelled) {
+      cancelled = false;
+      swiping = false;
+      deltaX = 0;
+      return;
+    }
 
     if (Math.abs(deltaX) >= threshold && swiping) {
       const direction = deltaX > 0 ? 'right' : 'left';
