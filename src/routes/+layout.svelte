@@ -44,7 +44,7 @@
   <title>Faz</title>
 </svelte:head>
 
-<div class="flex flex-col h-dvh max-w-lg mx-auto relative shadow-lg bg-base-100">
+<div id="layout" class="flex flex-col h-dvh max-w-lg mx-auto relative shadow-lg bg-base-100">
   <TopBar />
 
   <main class="flex-1 overflow-y-auto pt-14 pb-20">

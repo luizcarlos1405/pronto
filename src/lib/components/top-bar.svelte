@@ -79,12 +79,7 @@
   }
 
   function updateThemeColor() {
-    const el = document.createElement('div');
-    el.style.color = 'oklch(var(--p))';
-    el.style.display = 'none';
-    document.body.appendChild(el);
-    const computed = getComputedStyle(el).color;
-    document.body.removeChild(el);
+    const computed = getComputedStyle(layout)['background-color'];
 
     let meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) {
@@ -92,12 +87,13 @@
       meta.setAttribute('name', 'theme-color');
       document.head.appendChild(meta);
     }
+
     meta.setAttribute('content', computed);
   }
 </script>
 
 <div
-  class="navbar absolute top-0 px-4 left-0 right-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
+  class="navbar absolute top-0 px-4 left-0 right-0 z-50 bg-base-100 backdrop-blur border-b border-base-300"
 >
   <div class="navbar-start gap-2">
     <div
