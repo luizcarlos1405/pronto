@@ -126,35 +126,31 @@
   </div>
 </div>
 
-{#if showThemeModal}
-  <dialog class="modal modal-bottom modal-open">
-    <div class="modal-box max-w-lg">
-      <h3 class="font-bold text-lg mb-4">Choose theme</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
-        {#each themes as theme (theme)}
-          <button
-            class="btn btn-sm flex capitalize"
-            class:btn-primary={currentTheme === theme}
-            class:btn-outline={currentTheme !== theme}
-            onclick={() => selectTheme(theme)}
-          >
-            {theme}
-            <span class="badge badge-xs ml-auto">
-              {darkThemes.has(theme) ? 'dark' : 'light'}
-            </span>
-          </button>
-        {/each}
-      </div>
-      <div class="modal-action">
-        <button class="btn btn-sm" onclick={() => (showThemeModal = false)}>Close</button>
-      </div>
+<dialog class="modal modal-bottom" class:modal-open={showThemeModal}>
+  <div class="modal-box max-w-lg">
+    <h3 class="font-bold text-lg mb-4">Choose theme</h3>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
+      {#each themes as theme (theme)}
+        <button
+          class="btn btn-sm flex capitalize"
+          class:btn-primary={currentTheme === theme}
+          class:btn-outline={currentTheme !== theme}
+          onclick={() => selectTheme(theme)}
+        >
+          {theme}
+          <span class="badge badge-xs ml-auto">
+            {darkThemes.has(theme) ? 'dark' : 'light'}
+          </span>
+        </button>
+      {/each}
     </div>
-    <form method="dialog" class="modal-backdrop">
-      <button onclick={() => (showThemeModal = false)}>close</button>
-    </form>
-  </dialog>
-{/if}
+    <div class="modal-action">
+      <button class="btn btn-sm" onclick={() => (showThemeModal = false)}>Close</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button onclick={() => (showThemeModal = false)}>close</button>
+  </form>
+</dialog>
 
-{#if showDataModal}
-  <DataModal onclose={() => (showDataModal = false)} />
-{/if}
+<DataModal open={showDataModal} onclose={() => (showDataModal = false)} />

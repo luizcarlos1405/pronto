@@ -13,8 +13,8 @@
   }
 </script>
 
-{#if ctrl.pending}
-  <dialog class="modal modal-open">
+<dialog class="modal" class:modal-open={ctrl.pending}>
+  {#if ctrl.pending}
     <div class="modal-box max-w-sm">
       {#if ctrl.pending.options.destructive !== false}
         <div class="flex items-center gap-2 text-error mb-3">
@@ -40,5 +40,5 @@
     <form method="dialog" class="modal-backdrop">
       <button onclick={handleCancel}>close</button>
     </form>
-  </dialog>
-{/if}
+  {/if}
+</dialog>

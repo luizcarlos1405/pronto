@@ -58,4 +58,5 @@ empty states, error messages, notifications, onboarding text), read it for tone 
 - No comments unless explicitly asked
 - Icons: `lucide-svelte`
 - UI: DaisyUI components (dock nav, etc.)
+- **Modals** — Always render `<dialog class="modal">` in the DOM; toggle visibility with `class:modal-open={open}`. Never wrap a `<dialog>` in `{#if}` — destroying the element skips DaisyUI's CSS transition animations. Pass an `open` boolean prop instead.
 - No `index.ts` barrel files — every file gets a meaningful, specific name

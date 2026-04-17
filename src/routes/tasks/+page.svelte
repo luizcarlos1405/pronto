@@ -110,12 +110,11 @@
   {/if}
 </div>
 
-{#if state.editingTask}
-  <TaskEditModal
-    task={state.editingTask}
-    onclose={state.closeEdit}
-    onsave={state.saveEdit}
-    ontransformgoal={state.transformToGoal}
-    ontransformcare={state.transformToCare}
-  />
-{/if}
+<TaskEditModal
+  open={!!state.editingTask}
+  task={state.editingTask}
+  onclose={state.closeEdit}
+  onsave={state.saveEdit}
+  ontransformgoal={state.transformToGoal}
+  ontransformcare={state.transformToCare}
+/>

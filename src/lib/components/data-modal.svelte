@@ -6,7 +6,7 @@
     InvalidGoogleTasksFileError
   } from '$lib/importers/google-tasks-import';
 
-  let { onclose }: { onclose: () => void } = $props();
+  let { open, onclose }: { open: boolean; onclose: () => void } = $props();
 
   let showClearConfirm = $state(false);
   let clearText = $state('');
@@ -112,7 +112,7 @@
   }
 </script>
 
-<dialog class="modal modal-bottom modal-open">
+<dialog class="modal modal-bottom" class:modal-open={open}>
   <div class="modal-box max-w-lg">
     <h3 class="font-bold text-lg mb-4">Your data</h3>
 
