@@ -5,12 +5,29 @@ import {
   getGoal,
   removeGoal as removeGoalRepo
 } from '$lib/db/goal-repo';
-import { getTasksByGoal, createTask, completeTask, uncompleteTask } from '$lib/db/task-repo';
+import {
+  getTasksByGoal,
+  createTask,
+  completeTask,
+  uncompleteTask,
+  reorderGoalTasks,
+  assignStepOrder
+} from '$lib/db/task-repo';
 import { calculateGoalStatus } from '$lib/engines/goal-engine';
 import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
   return new Date().toISOString().slice(0, 10);
+}
+
+async function recalcGoalStatus(goalId: string): Promise<void> {
+  const goal = await getGoal(goalId);
+  const tasks = await getTasksByGoal(goalId);
+  const newStatus = calculateGoalStatus(goal, tasks);
+  if (goal.status !== newStatus) {
+    goal.status = newStatus;
+    await updateGoal(goal);
+  }
 }
 
 export function getGoalsPageState() {
@@ -40,13 +57,7 @@ export function getGoalsPageState() {
   }
 
   async function recalcStatus(id: string) {
-    const goal = await getGoal(id);
-    const tasks = await getTasksByGoal(id);
-    const newStatus = calculateGoalStatus(goal, tasks);
-    if (goal.status !== newStatus) {
-      goal.status = newStatus;
-      await updateGoal(goal);
-    }
+    await recalcGoalStatus(id);
   }
 
   return {
@@ -77,6 +88,7 @@ export function getGoalDetailState(goalId: string) {
 
   async function load() {
     loading = true;
+    await assignStepOrder(goalId);
     goal = await getGoal(goalId);
     tasks = await getTasksByGoal(goalId);
     loading = false;
@@ -87,9 +99,7 @@ export function getGoalDetailState(goalId: string) {
     if (!title) return;
     await createTask({ title, doAt: getToday(), goalId });
     newTaskTitle = '';
-    await load();
-    const { recalcStatus } = getGoalsPageState();
-    await recalcStatus(goalId);
+    await recalcGoalStatus(goalId);
     await load();
   }
 
@@ -101,14 +111,14 @@ export function getGoalDetailState(goalId: string) {
     } else {
       await uncompleteTask(taskId);
     }
-    const { recalcStatus } = getGoalsPageState();
-    await recalcStatus(goalId);
+    await recalcGoalStatus(goalId);
     await load();
   }
 
   async function markCompleted() {
-    const { markCompleted: mc } = getGoalsPageState();
-    await mc(goalId);
+    const goalDoc = await getGoal(goalId);
+    goalDoc.status = 'COMPLETED';
+    await updateGoal(goalDoc);
     await load();
   }
 
@@ -116,16 +126,27 @@ export function getGoalDetailState(goalId: string) {
     await removeGoalRepo(goalId);
   }
 
+  function reorder(fromIndex: number, toIndex: number) {
+    const reordered = [...tasks];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
+    reordered.forEach((t, i) => {
+      t.stepOrder = i;
+    });
+    tasks = reordered;
+  }
+
+  async function persistOrder() {
+    const taskIds = tasks.map((t) => t._id);
+    await reorderGoalTasks(goalId, taskIds);
+  }
+
   return {
     get goal() {
       return goal;
     },
     get tasks() {
-      return tasks.toSorted((a, b) => {
-        if (a.status === 'DONE' && b.status !== 'DONE') return 1;
-        if (a.status !== 'DONE' && b.status === 'DONE') return -1;
-        return 0;
-      });
+      return tasks;
     },
     get newTaskTitle() {
       return newTaskTitle;
@@ -140,6 +161,8 @@ export function getGoalDetailState(goalId: string) {
     addTask,
     toggleTask,
     markCompleted,
-    deleteGoal
+    deleteGoal,
+    reorder,
+    persistOrder
   };
 }

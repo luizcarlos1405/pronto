@@ -72,6 +72,7 @@ export interface TaskDoc {
   doAt: string;
   status: TaskStatus;
   goalId?: string;
+  stepOrder?: number;
   originInboxItemId?: string;
   careId?: string;
   taskPlanId?: string;

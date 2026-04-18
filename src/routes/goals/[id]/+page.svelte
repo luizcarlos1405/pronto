@@ -3,12 +3,24 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
-  import { ArrowLeft, CheckSquare, Square, Plus, Trash2, Loader2 } from 'lucide-svelte';
+  import {
+    ArrowLeft,
+    CheckSquare,
+    Square,
+    Plus,
+    Trash2,
+    Loader2,
+    GripVertical
+  } from 'lucide-svelte';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import { orderableChildren } from '$lib/actions/orderable';
+  import { flip } from 'svelte/animate';
 
   const goalId = page.params.id!;
   const ctrl = getGoalDetailState(goalId);
+
+  let isDragging = $state(false);
 
   onMount(() => ctrl.load());
 
@@ -82,9 +94,24 @@
     {#if ctrl.tasks.length === 0}
       <p class="text-base-content/50 text-center py-4">No tasks yet. Add your first one.</p>
     {:else}
-      <ul class="list">
+      <ul
+        class="list"
+        use:orderableChildren={{
+          handleSelector: '.drag-handle',
+          onStart: () => {
+            isDragging = true;
+          },
+          onEnd: () => {
+            isDragging = false;
+            ctrl.persistOrder();
+          },
+          onMove: ({ fromIndex, toIndex }) => {
+            ctrl.reorder(fromIndex, toIndex);
+          }
+        }}
+      >
         {#each ctrl.tasks as task (task._id)}
-          <li class="list-row">
+          <li class="list-row bg-base-100" animate:flip={{ duration: 100 }}>
             <button class="btn btn-ghost btn-sm" onclick={() => ctrl.toggleTask(task._id)}>
               {#if task.status === 'DONE'}
                 <CheckSquare class="size-5 text-success" />
@@ -97,6 +124,13 @@
                 {task.title}
               </div>
               <div class="text-xs text-base-content/50">{task.doAt}</div>
+            </div>
+            <div
+              class:cursor-grab={!isDragging}
+              class:cursor-grabbing={isDragging}
+              class="drag-handle flex px-2 items-center"
+            >
+              <GripVertical class="size-6 text-base-content/30" />
             </div>
           </li>
         {/each}

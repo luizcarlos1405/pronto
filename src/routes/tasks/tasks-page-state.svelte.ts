@@ -85,6 +85,7 @@ export function getTasksPageState() {
       doAt: task.doAt,
       status: task.status,
       goalId: task.goalId,
+      stepOrder: task.stepOrder,
       originInboxItemId: task.originInboxItemId,
       careId: task.careId,
       taskPlanId: task.taskPlanId,
@@ -132,6 +133,7 @@ export function getTasksPageState() {
       doAt: task.doAt,
       status: task.status,
       goalId: task.goalId,
+      stepOrder: task.stepOrder,
       originInboxItemId: task.originInboxItemId,
       careId: task.careId,
       taskPlanId: task.taskPlanId,
@@ -160,6 +162,7 @@ export function getTasksPageState() {
       doAt: task.doAt,
       status: task.status,
       goalId: task.goalId,
+      stepOrder: task.stepOrder,
       originInboxItemId: task.originInboxItemId,
       careId: task.careId,
       taskPlanId: task.taskPlanId,
@@ -181,7 +184,19 @@ export function getTasksPageState() {
 
   return {
     get tasks() {
-      return tasks;
+      const standalone = tasks.filter((t) => !t.goalId);
+      const goalTasks = tasks.filter((t) => t.goalId);
+      const seen: Record<string, boolean> = {};
+      const firstPerGoal: TaskDoc[] = [];
+      for (const t of goalTasks.toSorted(
+        (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
+      )) {
+        if (t.status !== 'TODO') continue;
+        if (seen[t.goalId!]) continue;
+        seen[t.goalId!] = true;
+        firstPerGoal.push(t);
+      }
+      return [...standalone, ...firstPerGoal];
     },
     get doneToday() {
       return doneTodayList;

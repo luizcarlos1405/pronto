@@ -6,11 +6,18 @@ export async function createTask(data: {
   title: string;
   doAt: string;
   goalId?: string;
+  stepOrder?: number;
   originInboxItemId?: string;
   careId?: string;
   taskPlanId?: string;
 }): Promise<TaskDoc> {
   const now = new Date().toISOString();
+  let stepOrder = data.stepOrder;
+  if (data.goalId && stepOrder == null) {
+    const existing = await getTasksByGoal(data.goalId);
+    const maxOrder = existing.reduce((max, t) => Math.max(max, t.stepOrder ?? 0), 0);
+    stepOrder = existing.length > 0 ? maxOrder + 1 : 0;
+  }
   const doc: TaskDoc = {
     _id: `task_${nanoid()}`,
     type: 'Task',
@@ -18,6 +25,7 @@ export async function createTask(data: {
     doAt: data.doAt,
     status: 'TODO',
     goalId: data.goalId,
+    stepOrder,
     originInboxItemId: data.originInboxItemId,
     careId: data.careId,
     taskPlanId: data.taskPlanId,
@@ -80,7 +88,9 @@ export async function getTasksByGoal(goalId: string): Promise<TaskDoc[]> {
     selector: { type: 'Task', goalId, doAt: { $gt: null } },
     sort: [{ type: 'asc' }, { goalId: 'asc' }, { doAt: 'asc' }]
   });
-  return result.docs as TaskDoc[];
+  return (result.docs as TaskDoc[]).toSorted(
+    (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
+  );
 }
 
 export async function getTasksByCare(careId: string): Promise<TaskDoc[]> {
@@ -120,4 +130,35 @@ export async function uncompleteTask(id: string): Promise<TaskDoc> {
   doc.status = 'TODO';
   delete doc.completedAt;
   return updateTask(doc);
+}
+
+export async function reorderGoalTasks(goalId: string, taskIds: string[]): Promise<void> {
+  const db = await getDb();
+  for (let i = 0; i < taskIds.length; i++) {
+    const doc = await db.get<TaskDoc>(taskIds[i]);
+    doc.stepOrder = i;
+    doc.updatedAt = new Date().toISOString();
+    await db.put(doc);
+  }
+}
+
+export async function assignStepOrder(goalId: string): Promise<void> {
+  const tasks = await getTasksByGoal(goalId);
+  const needsMigration = tasks.some((t) => t.stepOrder == null);
+  if (!needsMigration) return;
+
+  const sorted = tasks.toSorted((a, b) => {
+    const doAtDiff = a.doAt.localeCompare(b.doAt);
+    if (doAtDiff !== 0) return doAtDiff;
+    return a.createdAt.localeCompare(b.createdAt);
+  });
+
+  const db = await getDb();
+  for (let i = 0; i < sorted.length; i++) {
+    if (sorted[i].stepOrder !== i) {
+      sorted[i].stepOrder = i;
+      sorted[i].updatedAt = new Date().toISOString();
+      await db.put(sorted[i]);
+    }
+  }
 }
