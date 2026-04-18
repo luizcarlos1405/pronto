@@ -66,10 +66,7 @@
     >
       {#each ctrl.cares as care (care._id)}
         <li class="list-row bg-base-100 w-full" animate:flip={{ duration: 200 }}>
-          <a
-            href={resolve(`/cares/${care._id}`)}
-            class="list-col-grow hover:bg-base-200 transition-colors rounded-lg p-2 -m-2"
-          >
+          <a href={resolve(`/cares/${care._id}`)} class="list-col-grow">
             <div class="font-semibold">{care.title}</div>
             <div class="text-xs text-base-content/50">
               {care.taskPlans.length} task plan{care.taskPlans.length !== 1 ? 's' : ''}

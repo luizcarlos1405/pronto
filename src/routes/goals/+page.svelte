@@ -80,10 +80,7 @@
     >
       {#each ctrl.goals as goal (goal._id)}
         <li class="list-row bg-base-100 w-full" animate:flip={{ duration: 200 }}>
-          <a
-            href={resolve(`/goals/${goal._id}`)}
-            class="list-col-grow hover:bg-base-200 transition-colors rounded-lg p-2 -m-2"
-          >
+          <a href={resolve(`/goals/${goal._id}`)} class="list-col-grow p-2 -m-2">
             <div class="font-semibold">{goal.title}</div>
             <span class="badge badge-sm {statusBadge[goal.status]}">{statusLabel[goal.status]}</span
             >
