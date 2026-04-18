@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: '*.{js,ts,svelte,html,css,json,md}'
+      run: bunx prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    eslint:
+      glob: '*.{js,ts,svelte}'
+      run: bunx eslint --no-warn-ignored {staged_files}
