@@ -8,6 +8,8 @@ export async function createCare(
   originInboxItemId?: string
 ): Promise<CareDoc> {
   const now = new Date().toISOString();
+  const existing = await getAllCares();
+  const maxOrder = existing.reduce((max, c) => Math.max(max, c.caresListOrder ?? -1), -1);
   const doc: CareDoc = {
     _id: `care_${nanoid()}`,
     type: 'Care',
@@ -18,6 +20,7 @@ export async function createCare(
       createdAt: now,
       updatedAt: now
     })),
+    caresListOrder: maxOrder + 1,
     originInboxItemId,
     createdAt: now,
     updatedAt: now
@@ -52,7 +55,23 @@ export async function getAllCares(): Promise<CareDoc[]> {
     selector: { type: 'Care', createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { createdAt: 'desc' }]
   });
-  return result.docs as CareDoc[];
+  const cares = result.docs as CareDoc[];
+  return cares.toSorted((a, b) => {
+    const orderA = a.caresListOrder ?? Infinity;
+    const orderB = b.caresListOrder ?? Infinity;
+    if (orderA !== orderB) return orderA - orderB;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
+}
+
+export async function reorderCares(careIds: string[]): Promise<void> {
+  const db = await getDb();
+  for (let i = 0; i < careIds.length; i++) {
+    const doc = await db.get<CareDoc>(careIds[i]);
+    doc.caresListOrder = i;
+    doc.updatedAt = new Date().toISOString();
+    await db.put(doc);
+  }
 }
 
 export async function addTaskPlan(

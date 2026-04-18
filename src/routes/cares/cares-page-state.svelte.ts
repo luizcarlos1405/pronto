@@ -4,9 +4,11 @@ import {
   removeTaskPlan as removeTaskPlanRepo,
   removeCare as removeCareRepo,
   getCare,
-  updateCare
+  updateCare,
+  reorderCares as reorderCaresRepo
 } from '$lib/db/care-repo';
 import { SvelteDate } from 'svelte/reactivity';
+import { reorderItems } from '$lib/utils/reorderItems';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
 
 export function getCaresPageState() {
@@ -28,6 +30,17 @@ export function getCaresPageState() {
     await load();
   }
 
+  function reorder(fromIndex: number, toIndex: number) {
+    cares = reorderItems(cares, fromIndex, toIndex, (c, i) => {
+      c.caresListOrder = i;
+    });
+  }
+
+  async function persistOrder() {
+    const careIds = cares.map((c) => c._id);
+    await reorderCaresRepo(careIds);
+  }
+
   return {
     get cares() {
       return cares;
@@ -42,7 +55,9 @@ export function getCaresPageState() {
       return loading;
     },
     load,
-    add
+    add,
+    reorder,
+    persistOrder
   };
 }
 

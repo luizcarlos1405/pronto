@@ -109,6 +109,7 @@ export interface CareDoc {
   type: 'Care';
   title: string;
   taskPlans: TaskPlan[];
+  caresListOrder?: number;
   originInboxItemId?: string;
   createdAt: string;
   updatedAt: string;
