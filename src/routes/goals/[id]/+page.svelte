@@ -14,7 +14,7 @@
   } from 'lucide-svelte';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
-  import { orderableChildren } from '$lib/actions/orderable';
+  import { orderableChildren } from '$lib/actions/orderableChildren';
   import { flip } from 'svelte/animate';
 
   const goalId = page.params.id!;
