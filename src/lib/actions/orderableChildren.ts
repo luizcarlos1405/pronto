@@ -1,6 +1,22 @@
 const moveEvents = ['touchmove', 'mousemove'] as const;
 const endEvents = ['touchend', 'touchcancel', 'mouseup'] as const;
 
+const EDGE_ZONE = 120;
+const MAX_SCROLL_SPEED = 12;
+
+function findScrollableAncestor(node: HTMLElement): HTMLElement | null {
+  let current = node.parentElement;
+  while (current) {
+    const style = getComputedStyle(current);
+    const overflowY = style.overflowY;
+    if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
 function extractEventClientPosition(event: Event): { x: number; y: number } {
   const e = event as MouseEvent & TouchEvent;
   const position = {
@@ -63,6 +79,8 @@ export function orderableChildren(
   let lastOverNode: HTMLElement | null = null;
   let translateOffset = { x: 0, y: 0 };
   let activeStartEvent: string | null = null;
+  let scrollContainer: HTMLElement | null = null;
+  let scrollRafId = 0;
 
   const makeStopPropagationOnce = (useCapture: boolean): EventListener => {
     const handler: EventListener = (event) => {
@@ -81,6 +99,8 @@ export function orderableChildren(
     }
 
     activeStartEvent = event.type;
+
+    event.preventDefault();
 
     const currentTarget = event.currentTarget as HTMLElement;
     itemNode = currentTarget;
@@ -114,6 +134,7 @@ export function orderableChildren(
     containerNode.appendChild(itemNodeCopy);
     containerNode.style.setProperty('user-select', 'none');
     containerNode.style.setProperty('cursor', 'grabbing');
+    scrollContainer = findScrollableAncestor(containerNode);
 
     onStart?.({
       event,
@@ -125,8 +146,37 @@ export function orderableChildren(
     });
   };
 
+  const autoScrollNearEdges = (position: { x: number; y: number }) => {
+    cancelAnimationFrame(scrollRafId);
+    scrollRafId = 0;
+
+    if (!scrollContainer) return;
+
+    const rect = scrollContainer.getBoundingClientRect();
+    const distTop = position.y - rect.top;
+    const distBottom = rect.bottom - position.y;
+
+    if (distTop >= 0 && distTop < EDGE_ZONE) {
+      const speed = MAX_SCROLL_SPEED * (1 - distTop / EDGE_ZONE);
+      const step = () => {
+        scrollContainer!.scrollTop -= speed;
+        scrollRafId = requestAnimationFrame(step);
+      };
+      scrollRafId = requestAnimationFrame(step);
+    } else if (distBottom >= 0 && distBottom < EDGE_ZONE) {
+      const speed = MAX_SCROLL_SPEED * (1 - distBottom / EDGE_ZONE);
+      const step = () => {
+        scrollContainer!.scrollTop += speed;
+        scrollRafId = requestAnimationFrame(step);
+      };
+      scrollRafId = requestAnimationFrame(step);
+    }
+  };
+
   const handleMoveEvent = (event: Event) => {
     if (!itemNodeCopy) return;
+
+    event.preventDefault();
 
     const position = extractEventClientPosition(event);
     const translate = {
@@ -139,6 +189,8 @@ export function orderableChildren(
     );
     itemNodeIndex = itemNodes.findIndex((node) => node === itemNode);
     itemNodeCopy.style.transform = `translate(${translate.x}px, ${translate.y}px)`;
+
+    autoScrollNearEdges(position);
 
     const elementsUnderPoint = document.elementsFromPoint(position.x, position.y);
     const overNode = elementsUnderPoint.find(
@@ -178,6 +230,9 @@ export function orderableChildren(
     itemNodeCopy.remove();
     lastOverNode = null;
     activeStartEvent = null;
+    cancelAnimationFrame(scrollRafId);
+    scrollRafId = 0;
+    scrollContainer = null;
 
     containerNode.style.removeProperty('user-select');
     containerNode.style.removeProperty('cursor');
@@ -196,9 +251,11 @@ export function orderableChildren(
     const startEventNode = (handleSelector && node.closest(handleSelector)) || node;
 
     startEvents.forEach((eventName) =>
-      startEventNode.addEventListener(eventName, handleStartEvent)
+      startEventNode.addEventListener(eventName, handleStartEvent, { passive: false })
     );
-    moveEvents.forEach((eventName) => window.addEventListener(eventName, handleMoveEvent));
+    moveEvents.forEach((eventName) =>
+      window.addEventListener(eventName, handleMoveEvent, { passive: false })
+    );
     endEvents.forEach((eventName) => window.addEventListener(eventName, handleEndEvent));
   };
 
@@ -235,6 +292,7 @@ export function orderableChildren(
       );
     },
     destroy: () => {
+      cancelAnimationFrame(scrollRafId);
       itemNodes.forEach(removeEventListeners);
       observer.disconnect();
     }
