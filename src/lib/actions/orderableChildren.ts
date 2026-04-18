@@ -72,8 +72,6 @@ export function orderableChildren(
     return handler;
   };
 
-  const startEventHandlers = new Map<HTMLElement, Map<string, EventListener>>();
-
   const handleStartEvent = (event: Event) => {
     if (activeStartEvent) return;
     activeStartEvent = event.type;
@@ -113,9 +111,8 @@ export function orderableChildren(
     itemNodeCopy.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
 
     containerNode.appendChild(itemNodeCopy);
-
     containerNode.style.setProperty('user-select', 'none');
-    document.body.style.setProperty('cursor', 'grabbing', 'important');
+    containerNode.style.setProperty('cursor', 'grabbing');
 
     onStart?.({
       event,
@@ -184,7 +181,7 @@ export function orderableChildren(
     activeStartEvent = null;
 
     containerNode.style.removeProperty('user-select');
-    document.body.style.removeProperty('cursor');
+    containerNode.style.removeProperty('cursor');
 
     onEnd?.({
       event,
@@ -197,25 +194,21 @@ export function orderableChildren(
   };
 
   const addEventListeners = (node: HTMLElement) => {
-    const handlers = new Map<string, EventListener>();
-    for (const eventName of startEvents) {
-      const handler: EventListener = (event) => handleStartEvent(event);
-      node.addEventListener(eventName, handler);
-      handlers.set(eventName, handler);
-    }
-    startEventHandlers.set(node, handlers);
+    const startEventNode = (handleSelector && node.closest(handleSelector)) || node;
+
+    startEvents.forEach((eventName) =>
+      startEventNode.addEventListener(eventName, handleStartEvent)
+    );
     moveEvents.forEach((eventName) => window.addEventListener(eventName, handleMoveEvent));
     endEvents.forEach((eventName) => window.addEventListener(eventName, handleEndEvent));
   };
 
   const removeEventListeners = (node: HTMLElement) => {
-    const handlers = startEventHandlers.get(node);
-    if (handlers) {
-      for (const [eventName, handler] of handlers) {
-        node.removeEventListener(eventName, handler);
-      }
-      startEventHandlers.delete(node);
-    }
+    const startEventNode = (handleSelector && node.closest(handleSelector)) || node;
+
+    startEvents.forEach((eventName) =>
+      startEventNode.removeEventListener(eventName, handleStartEvent)
+    );
     moveEvents.forEach((eventName) => window.removeEventListener(eventName, handleMoveEvent));
     endEvents.forEach((eventName) => window.removeEventListener(eventName, handleEndEvent));
   };
