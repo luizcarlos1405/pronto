@@ -1,5 +1,5 @@
 const moveEvents = ['touchmove', 'mousemove'] as const;
-const endEvents = ['touchend', 'mouseup'] as const;
+const endEvents = ['touchend', 'touchcancel', 'mouseup'] as const;
 
 function extractEventClientPosition(event: Event): { x: number; y: number } {
   const e = event as MouseEvent & TouchEvent;
@@ -74,12 +74,13 @@ export function orderableChildren(
 
   const handleStartEvent = (event: Event) => {
     if (activeStartEvent) return;
-    activeStartEvent = event.type;
 
     if (handleSelector) {
       const target = event.target as HTMLElement;
       if (!target.closest(handleSelector)) return;
     }
+
+    activeStartEvent = event.type;
 
     const currentTarget = event.currentTarget as HTMLElement;
     itemNode = currentTarget;
@@ -166,7 +167,10 @@ export function orderableChildren(
   };
 
   const handleEndEvent = (event: Event) => {
-    if (!itemNodeCopy) return;
+    if (!itemNodeCopy) {
+      activeStartEvent = null;
+      return;
+    }
     event.stopPropagation();
     event.stopImmediatePropagation();
     const position = extractEventClientPosition(event);
