@@ -74,7 +74,7 @@ export function orderableChildren({
   return (containerNode: HTMLElement) => {
     let itemNodes = Array.from(containerNode?.children || []) as HTMLElement[];
     let itemNode: HTMLElement | null = null;
-    let itemNodeCopy: HTMLElement;
+    let itemNodeCopy: HTMLElement | null = null;
     let itemNodeIndex = -1;
     let lastOverNode: HTMLElement | null = null;
     let translateOffset = { x: 0, y: 0 };
@@ -229,7 +229,11 @@ export function orderableChildren({
         itemNode.style.removeProperty('pointer-events');
         itemNode.style.removeProperty('touch-action');
       }
-      itemNodeCopy.remove();
+      if (itemNodeCopy) {
+        itemNodeCopy.remove();
+      }
+
+      itemNodeCopy = null;
       lastOverNode = null;
       activeStartEvent = null;
       cancelAnimationFrame(scrollRafId);
