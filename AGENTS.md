@@ -49,8 +49,11 @@ No build step needed before check/lint/test.
 
 ## Related Docs
 
-[`.agents/docs/WRITING.md`](./.agents/docs/WRITING.md): when working on user-facing copy (labels,
+[Writing guide](./docs/WRITING.md): when working on user-facing copy (labels,
 empty states, error messages, notifications, onboarding text), read it for tone and voice guidelines.
+
+[Reordering lists](./docs/reordering-lists.md): when adding or modifying drag-to-reorder
+on a list page, read it for the full pattern (type, repo, state, component).
 
 ## Style
 
