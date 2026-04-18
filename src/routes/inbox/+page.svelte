@@ -69,11 +69,9 @@
 </div>
 
 {#each state.items as item (item._id)}
-  {#if item._id === state.processingItemId}
-    <InboxProcessor
-      open={!!state.processingItemId}
-      inboxItem={item}
-      onDone={handleProcessingDone}
-    />
-  {/if}
+  <InboxProcessor
+    open={state.processingItemId === item._id}
+    inboxItem={item}
+    onDone={handleProcessingDone}
+  />
 {/each}
