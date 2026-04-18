@@ -137,8 +137,16 @@ export function getGoalDetailState(goalId: string) {
   }
 
   async function persistOrder() {
-    const taskIds = tasks.map((t) => t._id);
-    await reorderGoalTasks(goalId, taskIds);
+    const sortedTasks = tasks.toSorted((a, b) => {
+      if (a.status === 'DONE' && b.status !== 'DONE') return 1;
+      if (a.status !== 'DONE' && b.status === 'DONE') return -1;
+      return (a.stepOrder ?? 0) - (b.stepOrder ?? 0);
+    });
+
+    tasks = sortedTasks;
+
+    const sortedTaskIds = sortedTasks.map((t) => t._id);
+    await reorderGoalTasks(goalId, sortedTaskIds);
   }
 
   return {

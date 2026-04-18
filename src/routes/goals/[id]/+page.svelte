@@ -111,7 +111,7 @@
         }}
       >
         {#each ctrl.tasks as task (task._id)}
-          <li class="list-row bg-base-100" animate:flip={{ duration: 100 }}>
+          <li class="list-row bg-base-100" animate:flip={{ duration: 200 }}>
             <button class="btn btn-ghost btn-sm" onclick={() => ctrl.toggleTask(task._id)}>
               {#if task.status === 'DONE'}
                 <CheckSquare class="size-5 text-success" />
