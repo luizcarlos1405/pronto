@@ -8,3 +8,6 @@ pre-commit:
     eslint:
       glob: '*.{js,ts,svelte}'
       run: bunx eslint --no-warn-ignored {staged_files}
+    svelte-check:
+      glob: '*.{svelte,ts}'
+      run: bun run check

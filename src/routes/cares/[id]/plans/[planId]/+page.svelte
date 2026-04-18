@@ -188,9 +188,7 @@
         </select>
 
         {#if planType.startsWith('INTERVAL')}
-          <label class="label">
-            <span class="label-text">Interval</span>
-          </label>
+          <span class="label-text">Interval</span>
           <div class="grid grid-cols-2 gap-2 flex-wrap">
             {#each intervalFields as field (field.key)}
               <label class="input input-sm flex items-center gap-1">
