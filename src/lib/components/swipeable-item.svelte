@@ -7,13 +7,15 @@
     rightBackground,
     onswipe,
     children,
-    threshold = 80
+    threshold = 80,
+    class: className = ''
   }: {
     leftBackground?: Snippet;
     rightBackground?: Snippet;
     onswipe: (direction: 'left' | 'right') => void | Promise<void>;
     children: Snippet;
     threshold?: number;
+    class?: string;
   } = $props();
 
   let startX = $state(0);
@@ -105,7 +107,7 @@
   }
 </script>
 
-<div class="relative overflow-hidden" style="touch-action: pan-y;" role="group">
+<div class="relative overflow-hidden {className}" style="touch-action: pan-y;" role="group">
   {#if leftBackground}
     <div class="absolute inset-y-0 left-0 flex items-center justify-center w-24">
       {@render leftBackground()}

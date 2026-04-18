@@ -77,6 +77,7 @@ export interface TaskDoc {
   careId?: string;
   taskPlanId?: string;
   completedAt?: string;
+  tasksListOrder?: number;
   createdAt: string;
   updatedAt: string;
 }

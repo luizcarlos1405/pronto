@@ -6,29 +6,49 @@ import {
   uncompleteTask,
   removeTask as deleteTask,
   updateTask,
-  getTask
+  getTask,
+  reorderTasks
 } from '$lib/db/task-repo';
 import { createGoal } from '$lib/db/goal-repo';
 import { createCare } from '$lib/db/care-repo';
 import type { TaskDoc } from '$lib/types';
 import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
+import { reorderItems } from '$lib/utils/reorderItems';
 
 function getToday(): string {
   return Temporal.Now.plainDateISO().toString();
 }
 
 export function getTasksPageState() {
-  let tasks = $state<TaskDoc[]>([]);
+  let allTasks = $state<TaskDoc[]>([]);
+  let displayedTasks = $state<TaskDoc[]>([]);
   let doneTodayList = $state<TaskDoc[]>([]);
   let newTitle = $state('');
   let loading = $state(true);
   let editingTask = $state<TaskDoc | null>(null);
   const toast = getToastState();
 
+  function computeDisplayed(): TaskDoc[] {
+    const standalone = allTasks.filter((t) => !t.goalId);
+    const goalTasks = allTasks.filter((t) => t.goalId);
+    const seen: Record<string, boolean> = {};
+    const firstPerGoal: TaskDoc[] = [];
+    for (const t of goalTasks.toSorted(
+      (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
+    )) {
+      if (t.status !== 'TODO') continue;
+      if (seen[t.goalId!]) continue;
+      seen[t.goalId!] = true;
+      firstPerGoal.push(t);
+    }
+    return [...standalone, ...firstPerGoal];
+  }
+
   async function load() {
     const today = getToday();
-    [tasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
+    [allTasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
+    displayedTasks = computeDisplayed();
     loading = false;
   }
 
@@ -41,7 +61,7 @@ export function getTasksPageState() {
   }
 
   async function toggleComplete(id: string) {
-    const task = tasks.find((t) => t._id === id) || doneTodayList.find((t) => t._id === id);
+    const task = allTasks.find((t) => t._id === id) || doneTodayList.find((t) => t._id === id);
     if (!task) return;
     if (task.status === 'TODO') {
       await completeTask(id);
@@ -52,7 +72,7 @@ export function getTasksPageState() {
   }
 
   async function postponeTask(id: string) {
-    const task = tasks.find((t) => t._id === id);
+    const task = allTasks.find((t) => t._id === id);
     if (!task) return;
 
     const originalDoAt = task.doAt;
@@ -76,7 +96,7 @@ export function getTasksPageState() {
   }
 
   async function removeTask(id: string) {
-    const task = tasks.find((t) => t._id === id);
+    const task = allTasks.find((t) => t._id === id);
     if (!task) return;
 
     const backup: Omit<TaskDoc, '_id' | '_rev' | 'updatedAt'> = {
@@ -90,6 +110,7 @@ export function getTasksPageState() {
       careId: task.careId,
       taskPlanId: task.taskPlanId,
       completedAt: task.completedAt,
+      tasksListOrder: task.tasksListOrder,
       createdAt: task.createdAt
     };
 
@@ -106,7 +127,8 @@ export function getTasksPageState() {
   }
 
   function openEdit(taskId: string) {
-    const task = tasks.find((t) => t._id === taskId) || doneTodayList.find((t) => t._id === taskId);
+    const task =
+      allTasks.find((t) => t._id === taskId) || doneTodayList.find((t) => t._id === taskId);
     if (task) editingTask = { ...task };
   }
 
@@ -138,6 +160,7 @@ export function getTasksPageState() {
       careId: task.careId,
       taskPlanId: task.taskPlanId,
       completedAt: task.completedAt,
+      tasksListOrder: task.tasksListOrder,
       createdAt: task.createdAt
     };
     await createGoal(task.title);
@@ -167,6 +190,7 @@ export function getTasksPageState() {
       careId: task.careId,
       taskPlanId: task.taskPlanId,
       completedAt: task.completedAt,
+      tasksListOrder: task.tasksListOrder,
       createdAt: task.createdAt
     };
     await createCare(task.title, []);
@@ -182,21 +206,20 @@ export function getTasksPageState() {
     });
   }
 
+  function reorder(fromIndex: number, toIndex: number) {
+    displayedTasks = reorderItems(displayedTasks, fromIndex, toIndex, (item, i) => {
+      item.tasksListOrder = i;
+    });
+  }
+
+  async function persistOrder() {
+    const itemIds = displayedTasks.map((t) => t._id);
+    await reorderTasks(itemIds);
+  }
+
   return {
     get tasks() {
-      const standalone = tasks.filter((t) => !t.goalId);
-      const goalTasks = tasks.filter((t) => t.goalId);
-      const seen: Record<string, boolean> = {};
-      const firstPerGoal: TaskDoc[] = [];
-      for (const t of goalTasks.toSorted(
-        (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
-      )) {
-        if (t.status !== 'TODO') continue;
-        if (seen[t.goalId!]) continue;
-        seen[t.goalId!] = true;
-        firstPerGoal.push(t);
-      }
-      return [...standalone, ...firstPerGoal];
+      return displayedTasks;
     },
     get doneToday() {
       return doneTodayList;
@@ -222,6 +245,8 @@ export function getTasksPageState() {
     closeEdit,
     saveEdit,
     transformToGoal,
-    transformToCare
+    transformToCare,
+    reorder,
+    persistOrder
   };
 }

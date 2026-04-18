@@ -10,6 +10,7 @@ export async function createTask(data: {
   originInboxItemId?: string;
   careId?: string;
   taskPlanId?: string;
+  tasksListOrder?: number;
 }): Promise<TaskDoc> {
   const now = new Date().toISOString();
   let stepOrder = data.stepOrder;
@@ -17,6 +18,19 @@ export async function createTask(data: {
     const existing = await getTasksByGoal(data.goalId);
     const maxOrder = existing.reduce((max, t) => Math.max(max, t.stepOrder ?? 0), 0);
     stepOrder = existing.length > 0 ? maxOrder + 1 : 0;
+  }
+  let tasksListOrder = data.tasksListOrder;
+  if (tasksListOrder == null) {
+    const db = await getDb();
+    const result = await db.find({
+      selector: { type: 'Task' },
+      fields: ['tasksListOrder']
+    });
+    const maxListOrder = (result.docs as TaskDoc[]).reduce(
+      (max, t) => Math.max(max, t.tasksListOrder ?? -1),
+      -1
+    );
+    tasksListOrder = maxListOrder + 1;
   }
   const doc: TaskDoc = {
     _id: `task_${nanoid()}`,
@@ -29,6 +43,7 @@ export async function createTask(data: {
     originInboxItemId: data.originInboxItemId,
     careId: data.careId,
     taskPlanId: data.taskPlanId,
+    tasksListOrder,
     createdAt: now,
     updatedAt: now
   };
@@ -67,7 +82,12 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
     },
     sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }]
   });
-  return result.docs as TaskDoc[];
+  return (result.docs as TaskDoc[]).toSorted((a, b) => {
+    const orderA = a.tasksListOrder ?? Infinity;
+    const orderB = b.tasksListOrder ?? Infinity;
+    if (orderA !== orderB) return orderA - orderB;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
 }
 
 export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
@@ -160,5 +180,15 @@ export async function assignStepOrder(goalId: string): Promise<void> {
       sorted[i].updatedAt = new Date().toISOString();
       await db.put(sorted[i]);
     }
+  }
+}
+
+export async function reorderTasks(taskIds: string[]): Promise<void> {
+  const db = await getDb();
+  for (let i = 0; i < taskIds.length; i++) {
+    const doc = await db.get<TaskDoc>(taskIds[i]);
+    doc.tasksListOrder = i;
+    doc.updatedAt = new Date().toISOString();
+    await db.put(doc);
   }
 }
