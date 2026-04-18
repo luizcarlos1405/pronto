@@ -183,6 +183,16 @@ export async function assignStepOrder(goalId: string): Promise<void> {
   }
 }
 
+export async function updateTasksCareForPlan(taskPlanId: string, newCareId: string): Promise<void> {
+  const tasks = await getTasksByTaskPlan(taskPlanId);
+  const db = await getDb();
+  for (const task of tasks) {
+    task.careId = newCareId;
+    task.updatedAt = new Date().toISOString();
+    await db.put(task);
+  }
+}
+
 export async function reorderTasks(taskIds: string[]): Promise<void> {
   const db = await getDb();
   for (let i = 0; i < taskIds.length; i++) {

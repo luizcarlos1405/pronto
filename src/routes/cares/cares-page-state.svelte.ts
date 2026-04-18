@@ -7,8 +7,10 @@ import {
   updateCare,
   updateTaskPlan as updateTaskPlanRepo,
   reorderCares as reorderCaresRepo,
-  reorderTaskPlans as reorderTaskPlansRepo
+  reorderTaskPlans as reorderTaskPlansRepo,
+  moveTaskPlan as moveTaskPlanRepo
 } from '$lib/db/care-repo';
+import { updateTasksCareForPlan } from '$lib/db/task-repo';
 import { SvelteDate } from 'svelte/reactivity';
 import { reorderItems } from '$lib/utils/reorderItems';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
@@ -143,18 +145,37 @@ export function getCareDetailState(careId: string) {
 
 export function getTaskPlanEditState(careId: string, planId: string) {
   let care = $state<CareDoc | null>(null);
+  let allCares = $state<CareDoc[]>([]);
   let loading = $state(true);
 
   const plan = $derived(care?.taskPlans.find((tp) => tp._id === planId) ?? null);
 
   async function load() {
     care = await getCare(careId);
+    allCares = await getAllCares();
     loading = false;
   }
 
   async function update(updates: { title: string; recurrence: Recurrence }) {
     await updateTaskPlanRepo(careId, planId, updates);
     await load();
+  }
+
+  async function saveAndMove(
+    updates: { title: string; recurrence: Recurrence },
+    newCareId: string
+  ): Promise<string> {
+    if (newCareId === careId) {
+      await updateTaskPlanRepo(careId, planId, updates);
+      await load();
+      return careId;
+    }
+
+    await moveTaskPlanRepo(careId, newCareId, planId);
+    await updateTasksCareForPlan(planId, newCareId);
+    await updateTaskPlanRepo(newCareId, planId, updates);
+
+    return newCareId;
   }
 
   async function deletePlan() {
@@ -165,6 +186,9 @@ export function getTaskPlanEditState(careId: string, planId: string) {
     get care() {
       return care;
     },
+    get allCares() {
+      return allCares;
+    },
     get plan() {
       return plan;
     },
@@ -173,6 +197,7 @@ export function getTaskPlanEditState(careId: string, planId: string) {
     },
     load,
     update,
+    saveAndMove,
     deletePlan
   };
 }

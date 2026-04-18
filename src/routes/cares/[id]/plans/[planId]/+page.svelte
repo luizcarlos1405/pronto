@@ -22,6 +22,7 @@
   ];
 
   let title: string = $state('');
+  let selectedCareId: string = $state(careId);
   let planType: 'INTERVAL_FIXED' | 'INTERVAL_AFTER_DONE' | 'FIXED_DAYS' = $state('INTERVAL_FIXED');
   let planInterval: { years: number; months: number; weeks: number; days: number } = $state({
     years: 0,
@@ -43,6 +44,7 @@
     if (plan && !initialized) {
       initialized = true;
       title = plan.title;
+      selectedCareId = careId;
       planStartDate = plan.recurrence.startDate;
 
       if (plan.recurrence.type === 'INTERVAL' && plan.recurrence.subtype === 'FIXED') {
@@ -130,7 +132,7 @@
   }
 
   async function handleSave() {
-    await ctrl.update({ title: title.trim(), recurrence: buildRecurrence() });
+    await ctrl.saveAndMove({ title: title.trim(), recurrence: buildRecurrence() }, selectedCareId);
     goto(resolve(`/cares/${careId}`));
   }
 
@@ -177,6 +179,15 @@
           placeholder="e.g. Water plants"
           bind:value={title}
         />
+
+        <label class="label" for="plan-care">
+          <span class="label-text">Care</span>
+        </label>
+        <select id="plan-care" class="select select-sm" bind:value={selectedCareId}>
+          {#each ctrl.allCares as c (c._id)}
+            <option value={c._id}>{c.title}</option>
+          {/each}
+        </select>
 
         <label class="label" for="plan-schedule-type">
           <span class="label-text">Schedule type</span>

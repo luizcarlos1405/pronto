@@ -104,6 +104,28 @@ export async function reorderTaskPlans(careId: string, planIds: string[]): Promi
   return updateCare(doc);
 }
 
+export async function moveTaskPlan(
+  sourceCareId: string,
+  destCareId: string,
+  planId: string
+): Promise<void> {
+  if (sourceCareId === destCareId) return;
+
+  const sourceDoc = await getCare(sourceCareId);
+  const planIndex = sourceDoc.taskPlans.findIndex((tp) => tp._id === planId);
+  if (planIndex === -1) {
+    throw new Error(`TaskPlan ${planId} not found in Care ${sourceCareId}`);
+  }
+
+  const [plan] = sourceDoc.taskPlans.splice(planIndex, 1);
+
+  const destDoc = await getCare(destCareId);
+  destDoc.taskPlans.push(plan);
+
+  await updateCare(sourceDoc);
+  await updateCare(destDoc);
+}
+
 export async function updateTaskPlan(
   careId: string,
   planId: string,
