@@ -97,6 +97,7 @@
       <ul
         class="list"
         use:orderableChildren={{
+          startEvents: ['mousedown', 'touchstart'],
           handleSelector: '.drag-handle',
           onStart: () => {
             isDragging = true;

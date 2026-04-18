@@ -37,7 +37,7 @@ export interface OrderableMoveContext extends OrderableContext {
 }
 
 export interface OrderableOptions {
-  startEvent?: string;
+  startEvents?: string[];
   handleSelector?: string;
   preventClickWhenReleasing?: boolean;
   onStart?: (ctx: OrderableContext) => void;
@@ -48,7 +48,7 @@ export interface OrderableOptions {
 export function orderableChildren(
   containerNode: HTMLElement,
   {
-    startEvent = 'mousedown',
+    startEvents = ['mousedown'],
     handleSelector,
     preventClickWhenReleasing = false,
     onStart,
@@ -62,6 +62,7 @@ export function orderableChildren(
   let itemNodeIndex = -1;
   let lastOverNode: HTMLElement | null = null;
   let translateOffset = { x: 0, y: 0 };
+  let activeStartEvent: string | null = null;
 
   const makeStopPropagationOnce = (useCapture: boolean): EventListener => {
     const handler: EventListener = (event) => {
@@ -71,7 +72,12 @@ export function orderableChildren(
     return handler;
   };
 
+  const startEventHandlers = new Map<HTMLElement, Map<string, EventListener>>();
+
   const handleStartEvent = (event: Event) => {
+    if (activeStartEvent) return;
+    activeStartEvent = event.type;
+
     if (handleSelector) {
       const target = event.target as HTMLElement;
       if (!target.closest(handleSelector)) return;
@@ -175,6 +181,7 @@ export function orderableChildren(
     itemNodeCopy.remove();
     itemNodeCopy = null;
     lastOverNode = null;
+    activeStartEvent = null;
 
     containerNode.style.removeProperty('user-select');
     document.body.style.removeProperty('cursor');
@@ -190,13 +197,25 @@ export function orderableChildren(
   };
 
   const addEventListeners = (node: HTMLElement) => {
-    node.addEventListener(startEvent, handleStartEvent);
+    const handlers = new Map<string, EventListener>();
+    for (const eventName of startEvents) {
+      const handler: EventListener = (event) => handleStartEvent(event);
+      node.addEventListener(eventName, handler);
+      handlers.set(eventName, handler);
+    }
+    startEventHandlers.set(node, handlers);
     moveEvents.forEach((eventName) => window.addEventListener(eventName, handleMoveEvent));
     endEvents.forEach((eventName) => window.addEventListener(eventName, handleEndEvent));
   };
 
   const removeEventListeners = (node: HTMLElement) => {
-    node.removeEventListener(startEvent, handleStartEvent);
+    const handlers = startEventHandlers.get(node);
+    if (handlers) {
+      for (const [eventName, handler] of handlers) {
+        node.removeEventListener(eventName, handler);
+      }
+      startEventHandlers.delete(node);
+    }
     moveEvents.forEach((eventName) => window.removeEventListener(eventName, handleMoveEvent));
     endEvents.forEach((eventName) => window.removeEventListener(eventName, handleEndEvent));
   };
