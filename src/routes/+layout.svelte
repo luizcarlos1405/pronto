@@ -57,12 +57,7 @@
 
   <nav class="dock dock-md absolute bottom-0 left-0 right-0 z-50">
     {#each navItems as item (item.href)}
-      <a
-        href={resolve(item.href)}
-        class={page.url.pathname === item.href || page.url.pathname.startsWith(item.href + '/')
-          ? 'dock-active'
-          : ''}
-      >
+      <a href={resolve(item.href)} class:dock-active={page.url.hash.startsWith(`#${item.href}`)}>
         <item.icon class="size-5" />
         <span class="dock-label">{item.label}</span>
       </a>
