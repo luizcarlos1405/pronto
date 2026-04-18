@@ -3,9 +3,9 @@
   themes: all;
 }
 
-
-body, html {
-    @apply w-full h-full;
+body,
+html {
+  @apply w-full h-full;
 }
 
 body {
