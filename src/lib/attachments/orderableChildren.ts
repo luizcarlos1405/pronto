@@ -219,6 +219,8 @@ export function orderableChildren({
     };
 
     const handleEndEvent = (event: Event) => {
+      if (!activeStartEvent) return;
+
       event.stopPropagation();
       event.stopImmediatePropagation();
       const position = extractEventClientPosition(event);
