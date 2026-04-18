@@ -174,7 +174,7 @@ export function orderableChildren({
     };
 
     const handleMoveEvent = (event: Event) => {
-      if (!itemNodeCopy) return;
+      if (!activeStartEvent) return;
 
       event.preventDefault();
 
