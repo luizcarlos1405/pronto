@@ -12,7 +12,7 @@
   import GripVertical from 'lucide-svelte/icons/grip-vertical';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
-  import { orderableChildren } from '$lib/actions/orderableChildren';
+  import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { flip } from 'svelte/animate';
 
   const goalId = page.params.id!;
@@ -94,7 +94,7 @@
     {:else}
       <ul
         class="list"
-        use:orderableChildren={{
+        {@attach orderableChildren({
           startEvents: ['mousedown', 'touchstart'],
           handleSelector: '.drag-handle',
           onStart: () => {
@@ -107,7 +107,7 @@
           onMove: ({ fromIndex, toIndex }) => {
             ctrl.reorder(fromIndex, toIndex);
           }
-        }}
+        })}
       >
         {#each ctrl.tasks as task (task._id)}
           <li class="list-row bg-base-100" animate:flip={{ duration: 200 }}>
