@@ -19,6 +19,7 @@ nix-shell shell.nix
 - `bun run lint` — prettier + eslint (run both, not just one)
 - `bun run test` — vitest (single run)
 - `bun run test -- src/lib/engines/__tests__/care-engine.test.ts` — single test file
+- `bun run test:e2e` — Playwright integration tests (headless browser)
 
 No build step needed before check/lint/test.
 
@@ -54,6 +55,9 @@ empty states, error messages, notifications, onboarding text), read it for tone 
 
 [Reordering lists](./docs/reordering-lists.md): when adding or modifying drag-to-reorder
 on a list page, read it for the full pattern (type, repo, state, component).
+
+[Integration tests](./docs/integration-tests.md): when adding or modifying browser-level
+tests, read it for setup details and conventions.
 
 ## Style
 
