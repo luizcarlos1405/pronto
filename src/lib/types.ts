@@ -87,6 +87,7 @@ export interface GoalDoc {
   type: 'Goal';
   title: string;
   status: GoalStatus;
+  goalsListOrder?: number;
   originInboxItemId?: string;
   createdAt: string;
   updatedAt: string;

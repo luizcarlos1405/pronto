@@ -5,13 +5,18 @@
   import Target from 'lucide-svelte/icons/target';
   import Plus from 'lucide-svelte/icons/plus';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import GripVertical from 'lucide-svelte/icons/grip-vertical';
+  import { orderableChildren } from '$lib/attachments/orderableChildren';
+  import { flip } from 'svelte/animate';
 
-  const state = getGoalsPageState();
+  const ctrl = getGoalsPageState();
 
-  onMount(() => state.load());
+  let isDragging = $state(false);
+
+  onMount(() => ctrl.load());
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') state.add();
+    if (e.key === 'Enter') ctrl.add();
   }
 
   const statusBadge: Record<string, string> = {
@@ -37,41 +42,61 @@
       type="text"
       class="input join-item flex-1"
       placeholder="Add a goal..."
-      bind:value={state.newTitle}
+      bind:value={ctrl.newTitle}
       onkeydown={handleKeydown}
     />
-    <button class="btn btn-primary join-item" onclick={state.add}>
+    <button class="btn btn-primary join-item" onclick={ctrl.add}>
       <Plus class="size-4" />
       Add
     </button>
   </div>
 
-  {#if state.loading}
+  {#if ctrl.loading}
     <div class="flex justify-center py-8">
       <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
-  {:else if state.goals.length === 0}
+  {:else if ctrl.goals.length === 0}
     <div class="text-center py-12 text-base-content/50">
       <Target class="size-12 mx-auto mb-3 opacity-40" />
       <p>No goals yet. Add one above.</p>
     </div>
   {:else}
-    <div class="grid gap-3">
-      {#each state.goals as goal (goal._id)}
-        <a
-          href={resolve(`/goals/${goal._id}`)}
-          class="card card-border hover:bg-base-200 transition-colors"
-        >
-          <div class="card-body flex-row items-center gap-3 p-4">
-            <div class="flex-1">
-              <div class="font-semibold">{goal.title}</div>
-              <span class="badge badge-sm {statusBadge[goal.status]}"
-                >{statusLabel[goal.status]}</span
-              >
-            </div>
+    <ul
+      class="list"
+      {@attach orderableChildren({
+        startEvents: ['mousedown', 'touchstart'],
+        handleSelector: '.drag-handle',
+        onStart: () => {
+          isDragging = true;
+        },
+        onEnd: () => {
+          isDragging = false;
+          ctrl.persistOrder();
+        },
+        onMove: ({ fromIndex, toIndex }) => {
+          ctrl.reorder(fromIndex, toIndex);
+        }
+      })}
+    >
+      {#each ctrl.goals as goal (goal._id)}
+        <li class="list-row bg-base-100 w-full" animate:flip={{ duration: 200 }}>
+          <a
+            href={resolve(`/goals/${goal._id}`)}
+            class="list-col-grow hover:bg-base-200 transition-colors rounded-lg p-2 -m-2"
+          >
+            <div class="font-semibold">{goal.title}</div>
+            <span class="badge badge-sm {statusBadge[goal.status]}">{statusLabel[goal.status]}</span
+            >
+          </a>
+          <div
+            class:cursor-grab={!isDragging}
+            class:cursor-grabbing={isDragging}
+            class="drag-handle flex pr-2 ml-auto items-center"
+          >
+            <GripVertical class="size-6 text-base-content/30" />
           </div>
-        </a>
+        </li>
       {/each}
-    </div>
+    </ul>
   {/if}
 </div>

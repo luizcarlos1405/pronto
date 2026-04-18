@@ -3,7 +3,8 @@ import {
   createGoal,
   updateGoal,
   getGoal,
-  removeGoal as removeGoalRepo
+  removeGoal as removeGoalRepo,
+  reorderGoals
 } from '$lib/db/goal-repo';
 import {
   getTasksByGoal,
@@ -14,6 +15,7 @@ import {
   assignStepOrder
 } from '$lib/db/task-repo';
 import { calculateGoalStatus } from '$lib/engines/goal-engine';
+import { reorderItems } from '$lib/utils/reorderItems';
 import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
@@ -60,6 +62,17 @@ export function getGoalsPageState() {
     await recalcGoalStatus(id);
   }
 
+  function reorder(fromIndex: number, toIndex: number) {
+    goals = reorderItems(goals, fromIndex, toIndex, (g, i) => {
+      g.goalsListOrder = i;
+    });
+  }
+
+  async function persistOrder() {
+    const goalIds = goals.map((g) => g._id);
+    await reorderGoals(goalIds);
+  }
+
   return {
     get goals() {
       return goals;
@@ -76,7 +89,9 @@ export function getGoalsPageState() {
     load,
     add,
     markCompleted,
-    recalcStatus
+    recalcStatus,
+    reorder,
+    persistOrder
   };
 }
 
@@ -127,13 +142,9 @@ export function getGoalDetailState(goalId: string) {
   }
 
   function reorder(fromIndex: number, toIndex: number) {
-    const reordered = [...tasks];
-    const [moved] = reordered.splice(fromIndex, 1);
-    reordered.splice(toIndex, 0, moved);
-    reordered.forEach((t, i) => {
+    tasks = reorderItems(tasks, fromIndex, toIndex, (t, i) => {
       t.stepOrder = i;
     });
-    tasks = reordered;
   }
 
   async function persistOrder() {
