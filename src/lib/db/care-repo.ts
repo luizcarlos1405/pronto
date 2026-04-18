@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
 import type { CareDoc, TaskPlan } from '$lib/types';
@@ -7,7 +8,7 @@ export async function createCare(
   taskPlans: Omit<TaskPlan, '_id' | 'createdAt' | 'updatedAt'>[],
   originInboxItemId?: string
 ): Promise<CareDoc> {
-  const now = new Date().toISOString();
+  const now = Temporal.Now.instant().toString();
   const existing = await getAllCares();
   const maxOrder = existing.reduce((max, c) => Math.max(max, c.caresListOrder ?? -1), -1);
   const doc: CareDoc = {
@@ -38,7 +39,7 @@ export async function getCare(id: string): Promise<CareDoc> {
 
 export async function updateCare(doc: CareDoc): Promise<CareDoc> {
   const db = await getDb();
-  doc.updatedAt = new Date().toISOString();
+  doc.updatedAt = Temporal.Now.instant().toString();
   const result = await db.put(doc);
   doc._rev = result.rev;
   return doc;
@@ -70,7 +71,7 @@ export async function reorderCares(careIds: string[]): Promise<void> {
   for (let i = 0; i < careIds.length; i++) {
     const doc = await db.get<CareDoc>(careIds[i]);
     doc.caresListOrder = i;
-    doc.updatedAt = new Date().toISOString();
+    doc.updatedAt = Temporal.Now.instant().toString();
     await db.put(doc);
   }
 }
@@ -80,7 +81,7 @@ export async function addTaskPlan(
   plan: Omit<TaskPlan, '_id' | 'createdAt' | 'updatedAt'>
 ): Promise<CareDoc> {
   const doc = await getCare(careId);
-  const now = new Date().toISOString();
+  const now = Temporal.Now.instant().toString();
   doc.taskPlans.push({
     ...plan,
     _id: `tp_${nanoid()}`,
@@ -138,7 +139,7 @@ export async function updateTaskPlan(
   doc.taskPlans[idx] = {
     ...doc.taskPlans[idx],
     ...updates,
-    updatedAt: new Date().toISOString()
+    updatedAt: Temporal.Now.instant().toString()
   };
   return updateCare(doc);
 }

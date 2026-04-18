@@ -1,9 +1,10 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
 import type { GoalDoc } from '$lib/types';
 
 export async function createGoal(title: string, originInboxItemId?: string): Promise<GoalDoc> {
-  const now = new Date().toISOString();
+  const now = Temporal.Now.instant().toString();
   const existing = await getAllGoals();
   const maxOrder = existing.reduce((max, g) => Math.max(max, g.goalsListOrder ?? -1), -1);
   const doc: GoalDoc = {
@@ -29,7 +30,7 @@ export async function getGoal(id: string): Promise<GoalDoc> {
 
 export async function updateGoal(doc: GoalDoc): Promise<GoalDoc> {
   const db = await getDb();
-  doc.updatedAt = new Date().toISOString();
+  doc.updatedAt = Temporal.Now.instant().toString();
   const result = await db.put(doc);
   doc._rev = result.rev;
   return doc;
@@ -61,7 +62,7 @@ export async function reorderGoals(goalIds: string[]): Promise<void> {
   for (let i = 0; i < goalIds.length; i++) {
     const doc = await db.get<GoalDoc>(goalIds[i]);
     doc.goalsListOrder = i;
-    doc.updatedAt = new Date().toISOString();
+    doc.updatedAt = Temporal.Now.instant().toString();
     await db.put(doc);
   }
 }

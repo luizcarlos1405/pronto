@@ -28,7 +28,7 @@ No build step needed before check/lint/test.
 - **Svelte 5 runes mode** — enabled for all non-node_modules files via `svelte.config.js` `compilerOptions.runes`. Use `$state`, `$derived`, `$props`, `$effect` — not legacy `export let` or stores.
 - **SPA / static** — `adapter-static` with `fallback: '200.html'`. SSR disabled (`+layout.ts`: `ssr = false`). Uses hash router (`router.type: 'hash'` in `svelte.config.js`) so all URLs use `#/path` format — this ensures refresh works on dynamic routes like `/goals/[id]` without server-side routing.
 - **Client-only DB** — PouchDB (`pouchdb-browser`) in `src/lib/db/database.ts`. Singleton via `getDb()`. All data lives in browser IndexedDB.
-- **Temporal API** — date logic uses `@js-temporal/polyfill` (`Temporal.PlainDate`). Do not use native `Date` for date arithmetic.
+- **Temporal API** — all date/time logic uses `@js-temporal/polyfill`. Never use the legacy `Date` object. Use `Temporal.Now.instant().toString()` for timestamps, `Temporal.Now.plainDateISO().toString()` for today's date, and `Temporal.PlainDate` / `Temporal.Instant` for all date arithmetic and formatting.
 
 ### Key domains (`src/lib/`)
 
@@ -68,4 +68,5 @@ tests, read it for setup details and conventions.
 - Icons: `lucide-svelte`
 - UI: DaisyUI components (dock nav, etc.)
 - **Modals** — Always render `<dialog class="modal">` in the DOM; toggle visibility with `class:modal-open={open}`. Never wrap a `<dialog>` in `{#if}` — destroying the element skips DaisyUI's CSS transition animations. Pass an `open` boolean prop instead.
+- **No `Date`** — Never use `new Date()` or the native `Date` object anywhere. Always use `@js-temporal/polyfill` (`Temporal`) for all date/time operations: timestamps, date arithmetic, and formatting.
 - No `index.ts` barrel files — every file gets a meaningful, specific name

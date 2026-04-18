@@ -5,6 +5,7 @@
   import Inbox from 'lucide-svelte/icons/inbox';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
   import ArrowRight from 'lucide-svelte/icons/arrow-right';
+  import { Temporal } from '@js-temporal/polyfill';
 
   const state = getInboxPageState();
 
@@ -53,7 +54,7 @@
           <div class="list-col-grow">
             <div>{item.title}</div>
             <div class="text-xs text-base-content/50">
-              {new Date(item.createdAt).toLocaleString()}
+              {Temporal.Instant.from(item.createdAt).toLocaleString()}
             </div>
           </div>
           <button

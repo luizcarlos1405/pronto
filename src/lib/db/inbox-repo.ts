@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
 import type { InboxItemDoc } from '$lib/types';
@@ -8,7 +9,7 @@ export async function createInboxItem(title: string): Promise<InboxItemDoc> {
     type: 'InboxItem',
     title,
     isProcessed: false,
-    createdAt: new Date().toISOString()
+    createdAt: Temporal.Now.instant().toString()
   };
   const db = await getDb();
   const result = await db.put(doc);

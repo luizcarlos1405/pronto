@@ -11,7 +11,7 @@ import {
   moveTaskPlan as moveTaskPlanRepo
 } from '$lib/db/care-repo';
 import { updateTasksCareForPlan } from '$lib/db/task-repo';
-import { SvelteDate } from 'svelte/reactivity';
+import { Temporal } from '@js-temporal/polyfill';
 import { reorderItems } from '$lib/utils/reorderItems';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
 
@@ -94,7 +94,7 @@ export function getCareDetailState(careId: string) {
 
   async function addTaskPlan(plan: { title: string; recurrence: Recurrence }) {
     const doc = await getCare(careId);
-    const now = new SvelteDate().toISOString();
+    const now = Temporal.Now.instant().toString();
     const { nanoid } = await import('nanoid');
     doc.taskPlans.push({
       _id: `tp_${nanoid()}`,

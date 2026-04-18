@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import {
   getAllGoals,
   createGoal,
@@ -19,7 +20,7 @@ import { reorderItems } from '$lib/utils/reorderItems';
 import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
-  return new Date().toISOString().slice(0, 10);
+  return Temporal.Now.plainDateISO().toString();
 }
 
 async function recalcGoalStatus(goalId: string): Promise<void> {

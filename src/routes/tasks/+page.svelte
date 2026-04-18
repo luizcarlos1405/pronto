@@ -11,6 +11,7 @@
   import SwipeableItem from '$lib/components/swipeable-item.svelte';
   import TaskEditModal from '$lib/components/task-edit-modal.svelte';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
+  import { formatFriendlyDate } from '$lib/utils/format-date';
   import { flip } from 'svelte/animate';
 
   const ctrl = getTasksPageState();
@@ -102,7 +103,7 @@
                   }}
                 >
                   <div>{task.title}</div>
-                  <div class="text-xs text-base-content/50">{task.doAt}</div>
+                  <div class="text-xs text-base-content/50">{formatFriendlyDate(task.doAt)}</div>
                 </div>
               </div>
             </SwipeableItem>
@@ -136,7 +137,7 @@
               }}
             >
               <div class="line-through">{task.title}</div>
-              <div class="text-xs text-base-content/50">{task.doAt}</div>
+              <div class="text-xs text-base-content/50">{formatFriendlyDate(task.doAt)}</div>
             </div>
           </li>
         {/each}

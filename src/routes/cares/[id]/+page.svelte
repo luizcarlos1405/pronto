@@ -14,6 +14,7 @@
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import { Temporal } from '@js-temporal/polyfill';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { flip } from 'svelte/animate';
 
@@ -75,7 +76,7 @@
   let planDaysOfWeek: number[] = $state([]);
   let planDaysOfMonth: number[] = $state([]);
   let planYearDates: { month: number; day: number }[] = $state([]);
-  let planStartDate: string = $state(new Date().toISOString().slice(0, 10));
+  let planStartDate: string = $state(Temporal.Now.plainDateISO().toString());
 
   function resetWizard() {
     newPlanTitle = '';
@@ -86,7 +87,7 @@
     planDaysOfWeek = [];
     planDaysOfMonth = [];
     planYearDates = [];
-    planStartDate = new Date().toISOString().slice(0, 10);
+    planStartDate = Temporal.Now.plainDateISO().toString();
   }
 
   function buildRecurrence(): Recurrence {

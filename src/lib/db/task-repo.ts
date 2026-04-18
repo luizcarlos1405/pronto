@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
 import type { TaskDoc } from '$lib/types';
@@ -12,7 +13,7 @@ export async function createTask(data: {
   taskPlanId?: string;
   tasksListOrder?: number;
 }): Promise<TaskDoc> {
-  const now = new Date().toISOString();
+  const now = Temporal.Now.instant().toString();
   let stepOrder = data.stepOrder;
   if (data.goalId && stepOrder == null) {
     const existing = await getTasksByGoal(data.goalId);
@@ -60,7 +61,7 @@ export async function getTask(id: string): Promise<TaskDoc> {
 
 export async function updateTask(doc: TaskDoc): Promise<TaskDoc> {
   const db = await getDb();
-  doc.updatedAt = new Date().toISOString();
+  doc.updatedAt = Temporal.Now.instant().toString();
   const result = await db.put(doc);
   doc._rev = result.rev;
   return doc;
@@ -142,7 +143,7 @@ export async function getActiveTasksForPlan(taskPlanId: string): Promise<TaskDoc
 export async function completeTask(id: string): Promise<TaskDoc> {
   const doc = await getTask(id);
   doc.status = 'DONE';
-  doc.completedAt = new Date().toISOString();
+  doc.completedAt = Temporal.Now.instant().toString();
   return updateTask(doc);
 }
 
@@ -158,7 +159,7 @@ export async function reorderGoalTasks(goalId: string, taskIds: string[]): Promi
   for (let i = 0; i < taskIds.length; i++) {
     const doc = await db.get<TaskDoc>(taskIds[i]);
     doc.stepOrder = i;
-    doc.updatedAt = new Date().toISOString();
+    doc.updatedAt = Temporal.Now.instant().toString();
     await db.put(doc);
   }
 }
@@ -178,7 +179,7 @@ export async function assignStepOrder(goalId: string): Promise<void> {
   for (let i = 0; i < sorted.length; i++) {
     if (sorted[i].stepOrder !== i) {
       sorted[i].stepOrder = i;
-      sorted[i].updatedAt = new Date().toISOString();
+      sorted[i].updatedAt = Temporal.Now.instant().toString();
       await db.put(sorted[i]);
     }
   }
@@ -189,7 +190,7 @@ export async function updateTasksCareForPlan(taskPlanId: string, newCareId: stri
   const db = await getDb();
   for (const task of tasks) {
     task.careId = newCareId;
-    task.updatedAt = new Date().toISOString();
+    task.updatedAt = Temporal.Now.instant().toString();
     await db.put(task);
   }
 }
@@ -199,7 +200,7 @@ export async function reorderTasks(taskIds: string[]): Promise<void> {
   for (let i = 0; i < taskIds.length; i++) {
     const doc = await db.get<TaskDoc>(taskIds[i]);
     doc.tasksListOrder = i;
-    doc.updatedAt = new Date().toISOString();
+    doc.updatedAt = Temporal.Now.instant().toString();
     await db.put(doc);
   }
 }

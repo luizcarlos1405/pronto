@@ -1,3 +1,4 @@
+import { Temporal } from '@js-temporal/polyfill';
 import { getDb, resetDb } from './database';
 
 export interface FazExport {
@@ -14,7 +15,7 @@ export async function exportAllData(): Promise<FazExport> {
     .map((row) => row.doc as unknown as Record<string, unknown>);
   return {
     app: 'faz',
-    exportedAt: new Date().toISOString(),
+    exportedAt: Temporal.Now.instant().toString(),
     docs
   };
 }

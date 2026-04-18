@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getInboxProcessorState, type CreatedEntity } from './inbox-processor-state.svelte';
   import type { InboxItemDoc, Recurrence } from '$lib/types';
+  import { Temporal } from '@js-temporal/polyfill';
   import SquareCheckBig from 'lucide-svelte/icons/square-check-big';
   import Target from 'lucide-svelte/icons/target';
   import Heart from 'lucide-svelte/icons/heart';
@@ -52,7 +53,7 @@
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval,
-      startDate: new Date().toISOString().slice(0, 10)
+      startDate: Temporal.Now.plainDateISO().toString()
     };
     await ctrl.createCare([{ title: carePlanTitle.trim(), recurrence }]);
     carePlanTitle = '';

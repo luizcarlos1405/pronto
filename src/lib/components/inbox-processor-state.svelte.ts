@@ -2,7 +2,7 @@ import { createTask } from '$lib/db/task-repo';
 import { createGoal } from '$lib/db/goal-repo';
 import { createCare } from '$lib/db/care-repo';
 import { markProcessed, getInboxItem } from '$lib/db/inbox-repo';
-import { SvelteDate } from 'svelte/reactivity';
+import { Temporal } from '@js-temporal/polyfill';
 import type { InboxItemDoc, Recurrence } from '$lib/types';
 
 export type CreatedEntity = { type: 'task' | 'goal' | 'care'; title: string };
@@ -10,7 +10,7 @@ export type CreatedEntity = { type: 'task' | 'goal' | 'care'; title: string };
 export function getInboxProcessorState(inboxItem: InboxItemDoc) {
   let mode = $state<'choose' | 'task' | 'goal' | 'care'>('choose');
   let taskTitle = $state(inboxItem.title);
-  let taskDoAt = $state(new SvelteDate().toISOString().slice(0, 10));
+  let taskDoAt = $state(Temporal.Now.plainDateISO().toString());
   let goalTitle = $state(inboxItem.title);
   let careTitle = $state(inboxItem.title);
   let created = $state<CreatedEntity[]>([]);

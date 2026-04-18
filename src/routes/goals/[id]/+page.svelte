@@ -15,6 +15,7 @@
   import { tick } from 'svelte';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import { formatFriendlyDate } from '$lib/utils/format-date';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { flip } from 'svelte/animate';
 
@@ -170,7 +171,7 @@
               <div class={task.status === 'DONE' ? 'line-through opacity-60' : ''}>
                 {task.title}
               </div>
-              <div class="text-xs text-base-content/50">{task.doAt}</div>
+              <div class="text-xs text-base-content/50">{formatFriendlyDate(task.doAt)}</div>
             </div>
             <div
               class:cursor-grab={!isDragging}

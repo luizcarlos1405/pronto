@@ -142,8 +142,8 @@ function makeTask(plan: TaskPlan, doAt: string): TaskDoc {
     status: 'TODO',
     careId: undefined,
     taskPlanId: plan._id,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: Temporal.Now.instant().toString(),
+    updatedAt: Temporal.Now.instant().toString()
   };
 }
 
