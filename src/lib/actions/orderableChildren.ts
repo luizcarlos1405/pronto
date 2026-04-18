@@ -58,7 +58,7 @@ export function orderableChildren(
 ): { update: () => void; destroy: () => void } {
   let itemNodes = Array.from(containerNode?.children || []) as HTMLElement[];
   let itemNode: HTMLElement | null = null;
-  let itemNodeCopy: HTMLElement | null = null;
+  let itemNodeCopy: HTMLElement;
   let itemNodeIndex = -1;
   let lastOverNode: HTMLElement | null = null;
   let translateOffset = { x: 0, y: 0 };
@@ -167,10 +167,6 @@ export function orderableChildren(
   };
 
   const handleEndEvent = (event: Event) => {
-    if (!itemNodeCopy) {
-      activeStartEvent = null;
-      return;
-    }
     event.stopPropagation();
     event.stopImmediatePropagation();
     const position = extractEventClientPosition(event);
@@ -180,7 +176,6 @@ export function orderableChildren(
       itemNode.style.removeProperty('touch-action');
     }
     itemNodeCopy.remove();
-    itemNodeCopy = null;
     lastOverNode = null;
     activeStartEvent = null;
 
@@ -192,7 +187,7 @@ export function orderableChildren(
       itemNode: itemNode!,
       position,
       containerNode,
-      itemNodeCopy: null as unknown as HTMLElement,
+      itemNodeCopy,
       itemNodes
     });
   };
