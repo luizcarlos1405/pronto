@@ -81,6 +81,15 @@ export function getCareDetailState(careId: string) {
     await removeCareRepo(careId);
   }
 
+  async function renameCare(newTitle: string) {
+    if (!care) return;
+    const trimmed = newTitle.trim();
+    if (!trimmed || trimmed === care.title) return;
+    care.title = trimmed;
+    await updateCare(care);
+    await load();
+  }
+
   async function addTaskPlan(plan: { title: string; recurrence: Recurrence }) {
     const doc = await getCare(careId);
     const now = new SvelteDate().toISOString();
@@ -124,6 +133,7 @@ export function getCareDetailState(careId: string) {
     },
     load,
     deleteCare,
+    renameCare,
     removeTaskPlan,
     addTaskPlan,
     reorderPlans,

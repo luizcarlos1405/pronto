@@ -139,6 +139,15 @@ export function getGoalDetailState(goalId: string) {
     await removeGoalRepo(goalId);
   }
 
+  async function renameGoal(newTitle: string) {
+    if (!goal) return;
+    const trimmed = newTitle.trim();
+    if (!trimmed || trimmed === goal.title) return;
+    goal.title = trimmed;
+    await updateGoal(goal);
+    await load();
+  }
+
   function reorder(fromIndex: number, toIndex: number) {
     tasks = reorderItems(tasks, fromIndex, toIndex, (t, i) => {
       t.stepOrder = i;
@@ -179,6 +188,7 @@ export function getGoalDetailState(goalId: string) {
     toggleTask,
     markCompleted,
     deleteGoal,
+    renameGoal,
     reorder,
     persistOrder
   };

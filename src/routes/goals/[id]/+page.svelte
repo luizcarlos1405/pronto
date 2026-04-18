@@ -10,6 +10,9 @@
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
   import GripVertical from 'lucide-svelte/icons/grip-vertical';
+  import Pencil from 'lucide-svelte/icons/pencil';
+  import Check from 'lucide-svelte/icons/check';
+  import { tick } from 'svelte';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
@@ -19,6 +22,31 @@
   const ctrl = getGoalDetailState(goalId);
 
   let isDragging = $state(false);
+  let editingTitle = $state(false);
+  let draftTitle = $state('');
+  let titleInput: HTMLInputElement | undefined = $state();
+
+  async function startEditTitle() {
+    if (!ctrl.goal) return;
+    draftTitle = ctrl.goal.title;
+    editingTitle = true;
+    await tick();
+    titleInput?.focus();
+    titleInput?.select();
+  }
+
+  function saveTitle() {
+    if (!ctrl.goal) return;
+    const trimmed = draftTitle.trim();
+    if (trimmed && trimmed !== ctrl.goal.title) {
+      ctrl.renameGoal(trimmed);
+    }
+    editingTitle = false;
+  }
+
+  function cancelTitle() {
+    editingTitle = false;
+  }
 
   onMount(() => ctrl.load());
 
@@ -68,7 +96,27 @@
     </div>
   {:else if ctrl.goal}
     <div class="flex items-center gap-3 mb-4">
-      <h1 class="text-2xl font-bold flex-1">{ctrl.goal.title}</h1>
+      {#if editingTitle}
+        <input
+          bind:this={titleInput}
+          type="text"
+          class="input input-sm text-2xl font-bold flex-1"
+          bind:value={draftTitle}
+          onkeydown={(e) => {
+            if (e.key === 'Enter') saveTitle();
+            if (e.key === 'Escape') cancelTitle();
+          }}
+          onblur={() => setTimeout(cancelTitle, 0)}
+        />
+        <button class="btn btn-ghost btn-sm" onmousedown={saveTitle}>
+          <Check class="size-4" />
+        </button>
+      {:else}
+        <h1 class="text-2xl font-bold flex-1">{ctrl.goal.title}</h1>
+        <button class="btn btn-ghost btn-sm" onclick={startEditTitle}>
+          <Pencil class="size-4" />
+        </button>
+      {/if}
       <span class="badge {statusBadge[ctrl.goal.status]}">{statusLabel[ctrl.goal.status]}</span>
     </div>
 

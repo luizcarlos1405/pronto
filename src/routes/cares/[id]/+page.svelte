@@ -8,6 +8,9 @@
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
   import GripVertical from 'lucide-svelte/icons/grip-vertical';
+  import Pencil from 'lucide-svelte/icons/pencil';
+  import Check from 'lucide-svelte/icons/check';
+  import { tick } from 'svelte';
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
@@ -24,6 +27,31 @@
   ];
 
   let isDragging = $state(false);
+  let editingTitle = $state(false);
+  let draftTitle = $state('');
+  let titleInput: HTMLInputElement | undefined = $state();
+
+  async function startEditTitle() {
+    if (!ctrl.care) return;
+    draftTitle = ctrl.care.title;
+    editingTitle = true;
+    await tick();
+    titleInput?.focus();
+    titleInput?.select();
+  }
+
+  function saveTitle() {
+    if (!ctrl.care) return;
+    const trimmed = draftTitle.trim();
+    if (trimmed && trimmed !== ctrl.care.title) {
+      ctrl.renameCare(trimmed);
+    }
+    editingTitle = false;
+  }
+
+  function cancelTitle() {
+    editingTitle = false;
+  }
 
   onMount(() => ctrl.load());
 
@@ -140,7 +168,29 @@
       <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if ctrl.care}
-    <h1 class="text-2xl font-bold mb-4">{ctrl.care.title}</h1>
+    <div class="flex items-center gap-2 mb-4">
+      {#if editingTitle}
+        <input
+          bind:this={titleInput}
+          type="text"
+          class="input input-sm text-2xl font-bold flex-1"
+          bind:value={draftTitle}
+          onkeydown={(e) => {
+            if (e.key === 'Enter') saveTitle();
+            if (e.key === 'Escape') cancelTitle();
+          }}
+          onblur={() => setTimeout(cancelTitle, 0)}
+        />
+        <button class="btn btn-ghost btn-sm" onmousedown={saveTitle}>
+          <Check class="size-4" />
+        </button>
+      {:else}
+        <h1 class="text-2xl font-bold flex-1">{ctrl.care.title}</h1>
+        <button class="btn btn-ghost btn-sm" onclick={startEditTitle}>
+          <Pencil class="size-4" />
+        </button>
+      {/if}
+    </div>
 
     {#if ctrl.care.taskPlans.length > 0}
       <h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Task plans</h2>
