@@ -25,7 +25,7 @@ No build step needed before check/lint/test.
 ## Architecture
 
 - **Svelte 5 runes mode** — enabled for all non-node_modules files via `svelte.config.js` `compilerOptions.runes`. Use `$state`, `$derived`, `$props`, `$effect` — not legacy `export let` or stores.
-- **SPA / static** — `adapter-static` with `fallback: '200.html'`. SSR disabled (`+layout.ts`: `ssr = false`, `prerender = true`).
+- **SPA / static** — `adapter-static` with `fallback: '200.html'`. SSR disabled (`+layout.ts`: `ssr = false`). Uses hash router (`router.type: 'hash'` in `svelte.config.js`) so all URLs use `#/path` format — this ensures refresh works on dynamic routes like `/goals/[id]` without server-side routing.
 - **Client-only DB** — PouchDB (`pouchdb-browser`) in `src/lib/db/database.ts`. Singleton via `getDb()`. All data lives in browser IndexedDB.
 - **Temporal API** — date logic uses `@js-temporal/polyfill` (`Temporal.PlainDate`). Do not use native `Date` for date arithmetic.
 
