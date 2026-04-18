@@ -1,7 +1,11 @@
 <script lang="ts">
   import { getInboxProcessorState, type CreatedEntity } from './inbox-processor-state.svelte';
   import type { InboxItemDoc, Recurrence } from '$lib/types';
-  import { CheckSquare, Target, Heart, Plus, Loader2 } from 'lucide-svelte';
+  import SquareCheckBig from 'lucide-svelte/icons/square-check-big';
+  import Target from 'lucide-svelte/icons/target';
+  import Heart from 'lucide-svelte/icons/heart';
+  import Plus from 'lucide-svelte/icons/plus';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
   let { open, inboxItem, onDone }: { open: boolean; inboxItem?: InboxItemDoc; onDone: () => void } =
     $props();
@@ -55,9 +59,8 @@
     carePlanInterval = { years: 0, months: 0, weeks: 0, days: 0 };
     showCarePlan = false;
   }
-
-  const entityIcon: Record<string, typeof CheckSquare> = {
-    task: CheckSquare,
+  const entityIcon: Record<string, typeof SquareCheckBig> = {
+    task: SquareCheckBig,
     goal: Target,
     care: Heart
   };
@@ -88,7 +91,7 @@
       {#if ctrl.mode === 'choose'}
         <div class="flex flex-col gap-2">
           <button class="btn btn-outline btn-sm" onclick={() => (ctrl!.mode = 'task')}>
-            <CheckSquare class="size-4" /> Add task
+            <SquareCheckBig class="size-4" /> Add task
           </button>
           <button class="btn btn-outline btn-sm" onclick={() => (ctrl!.mode = 'goal')}>
             <Target class="size-4" /> Add goal
@@ -115,7 +118,7 @@
               onclick={ctrl.createTask}
               disabled={ctrl.processing || !ctrl.taskTitle.trim()}
             >
-              {#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
+              {#if ctrl.processing}<LoaderCircle class="size-4 animate-spin" />{:else}<Plus
                   class="size-4"
                 />{/if}
               Add task
@@ -139,7 +142,7 @@
               onclick={ctrl.createGoal}
               disabled={ctrl.processing || !ctrl.goalTitle.trim()}
             >
-              {#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
+              {#if ctrl.processing}<LoaderCircle class="size-4 animate-spin" />{:else}<Plus
                   class="size-4"
                 />{/if}
               Add goal
@@ -196,7 +199,7 @@
               onclick={() => ctrl!.createCare([])}
               disabled={ctrl.processing || !ctrl.careTitle.trim()}
             >
-              {#if ctrl.processing}<Loader2 class="size-4 animate-spin" />{:else}<Plus
+              {#if ctrl.processing}<LoaderCircle class="size-4 animate-spin" />{:else}<Plus
                   class="size-4"
                 />{/if}
               Add care

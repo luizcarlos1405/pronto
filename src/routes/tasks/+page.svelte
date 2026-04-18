@@ -1,7 +1,12 @@
 <script lang="ts">
   import { getTasksPageState } from './tasks-page-state.svelte';
   import { onMount } from 'svelte';
-  import { CheckSquare, Square, Plus, Loader2, CalendarClock, Trash2 } from 'lucide-svelte';
+  import SquareCheckBig from 'lucide-svelte/icons/square-check-big';
+  import Square from 'lucide-svelte/icons/square';
+  import Plus from 'lucide-svelte/icons/plus';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import CalendarClock from 'lucide-svelte/icons/calendar-clock';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
   import SwipeableItem from '$lib/components/swipeable-item.svelte';
   import TaskEditModal from '$lib/components/task-edit-modal.svelte';
 
@@ -33,11 +38,11 @@
 
   {#if state.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if state.tasks.length === 0 && state.doneToday.length === 0}
     <div class="text-center py-12 text-base-content/50">
-      <CheckSquare class="size-12 mx-auto mb-3 opacity-40" />
+      <SquareCheckBig class="size-12 mx-auto mb-3 opacity-40" />
       <p>No tasks for today. Enjoy the quiet — or add something new.</p>
     </div>
   {:else}
@@ -89,7 +94,7 @@
         {#each state.doneToday as task (task._id)}
           <li class="list-row opacity-60">
             <button class="btn btn-ghost btn-sm" onclick={() => state.toggleComplete(task._id)}>
-              <CheckSquare class="size-5 text-success" />
+              <SquareCheckBig class="size-5 text-success" />
             </button>
             <div
               class="list-col-grow cursor-pointer"

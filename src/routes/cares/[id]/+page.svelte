@@ -3,7 +3,10 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
-  import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-svelte';
+  import ArrowLeft from 'lucide-svelte/icons/arrow-left';
+  import Plus from 'lucide-svelte/icons/plus';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
@@ -129,7 +132,7 @@
 
   {#if ctrl.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if ctrl.care}
     <h1 class="text-2xl font-bold mb-4">{ctrl.care.title}</h1>

@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { Download, Upload, Trash2, AlertTriangle, ListChecks } from 'lucide-svelte';
+  import Download from 'lucide-svelte/icons/download';
+  import Upload from 'lucide-svelte/icons/upload';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
+  import AlertTriangle from 'lucide-svelte/icons/alert-triangle';
+  import ListChecks from 'lucide-svelte/icons/list-checks';
   import { exportAllData, importData, clearAllData, type FazExport } from '$lib/db/data-manager';
   import {
     importGoogleTasksFromFile,

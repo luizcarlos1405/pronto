@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { MoreVertical, Palette, Database } from 'lucide-svelte';
+  import MoreVertical from 'lucide-svelte/icons/more-vertical';
+  import Palette from 'lucide-svelte/icons/palette';
+  import Database from 'lucide-svelte/icons/database';
   import DataModal from './data-modal.svelte';
 
   let showThemeModal = $state(false);

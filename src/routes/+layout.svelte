@@ -3,7 +3,10 @@
   import '../app.css';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
-  import { ListChecks, Inbox, Target, Heart } from 'lucide-svelte';
+  import ListChecks from 'lucide-svelte/icons/list-checks';
+  import Inbox from 'lucide-svelte/icons/inbox';
+  import Target from 'lucide-svelte/icons/target';
+  import Heart from 'lucide-svelte/icons/heart';
   import { onMount } from 'svelte';
   import { runSchedulerNow } from '$lib/scheduler';
   import TopBar from '$lib/components/top-bar.svelte';

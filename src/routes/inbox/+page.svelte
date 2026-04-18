@@ -2,7 +2,9 @@
   import { getInboxPageState } from './inbox-page-state.svelte';
   import InboxProcessor from '$lib/components/inbox-processor.svelte';
   import { onMount } from 'svelte';
-  import { Inbox, Loader2, ArrowRight } from 'lucide-svelte';
+  import Inbox from 'lucide-svelte/icons/inbox';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import ArrowRight from 'lucide-svelte/icons/arrow-right';
 
   const state = getInboxPageState();
 
@@ -37,7 +39,7 @@
 
   {#if state.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if state.items.length === 0}
     <div class="text-center py-12 text-base-content/50">

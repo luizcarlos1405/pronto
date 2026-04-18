@@ -3,15 +3,13 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { page } from '$app/state';
-  import {
-    ArrowLeft,
-    CheckSquare,
-    Square,
-    Plus,
-    Trash2,
-    Loader2,
-    GripVertical
-  } from 'lucide-svelte';
+  import ArrowLeft from 'lucide-svelte/icons/arrow-left';
+  import SquareCheckBig from 'lucide-svelte/icons/square-check-big';
+  import Square from 'lucide-svelte/icons/square';
+  import Plus from 'lucide-svelte/icons/plus';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import GripVertical from 'lucide-svelte/icons/grip-vertical';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
   import { orderableChildren } from '$lib/actions/orderableChildren';
@@ -66,7 +64,7 @@
 
   {#if ctrl.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if ctrl.goal}
     <div class="flex items-center gap-3 mb-4">
@@ -115,7 +113,7 @@
           <li class="list-row bg-base-100" animate:flip={{ duration: 200 }}>
             <button class="btn btn-ghost btn-sm" onclick={() => ctrl.toggleTask(task._id)}>
               {#if task.status === 'DONE'}
-                <CheckSquare class="size-5 text-success" />
+                <SquareCheckBig class="size-5 text-success" />
               {:else}
                 <Square class="size-5" />
               {/if}

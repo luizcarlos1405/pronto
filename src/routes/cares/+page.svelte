@@ -2,7 +2,9 @@
   import { getCaresPageState } from './cares-page-state.svelte';
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
-  import { Heart, Plus, Loader2 } from 'lucide-svelte';
+  import Heart from 'lucide-svelte/icons/heart';
+  import Plus from 'lucide-svelte/icons/plus';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
   const state = getCaresPageState();
 
@@ -32,7 +34,7 @@
 
   {#if state.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if state.cares.length === 0}
     <div class="text-center py-12 text-base-content/50">

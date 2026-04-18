@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getConfirmState } from './confirm-state.svelte';
-  import { AlertTriangle } from 'lucide-svelte';
+  import AlertTriangle from 'lucide-svelte/icons/alert-triangle';
 
   const ctrl = getConfirmState();
 

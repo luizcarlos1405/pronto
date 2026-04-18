@@ -2,7 +2,9 @@
   import { getGoalsPageState } from './goals-page-state.svelte';
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
-  import { Target, Plus, Loader2 } from 'lucide-svelte';
+  import Target from 'lucide-svelte/icons/target';
+  import Plus from 'lucide-svelte/icons/plus';
+  import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
   const state = getGoalsPageState();
 
@@ -46,7 +48,7 @@
 
   {#if state.loading}
     <div class="flex justify-center py-8">
-      <Loader2 class="size-6 animate-spin text-base-content/40" />
+      <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
   {:else if state.goals.length === 0}
     <div class="text-center py-12 text-base-content/50">
