@@ -38,7 +38,6 @@ export function getGoalsPageState() {
   let loading = $state(true);
 
   async function load() {
-    loading = true;
     goals = await getAllGoals();
     loading = false;
   }
@@ -102,7 +101,6 @@ export function getGoalDetailState(goalId: string) {
   let loading = $state(true);
 
   async function load() {
-    loading = true;
     await assignStepOrder(goalId);
     goal = await getGoal(goalId);
     tasks = await getTasksByGoal(goalId);

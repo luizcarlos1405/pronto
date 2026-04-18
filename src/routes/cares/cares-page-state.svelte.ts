@@ -17,7 +17,6 @@ export function getCaresPageState() {
   let loading = $state(true);
 
   async function load() {
-    loading = true;
     cares = await getAllCares();
     loading = false;
   }
@@ -67,7 +66,6 @@ export function getCareDetailState(careId: string) {
   let showWizard = $state(false);
 
   async function load() {
-    loading = true;
     care = await getCare(careId);
     loading = false;
   }

@@ -8,7 +8,6 @@ export function getInboxPageState() {
   let processingItemId = $state<string | null>(null);
 
   async function load() {
-    loading = true;
     items = await getUnprocessed();
     loading = false;
   }
