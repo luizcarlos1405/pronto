@@ -81,7 +81,8 @@
   }
 
   function updateThemeColor() {
-    const computed = getComputedStyle(document.getElementById('layout'))['background-color'];
+    const layoutEl = document.getElementById('layout');
+    const computed = layoutEl ? getComputedStyle(layoutEl).backgroundColor : '';
 
     let meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) {
@@ -111,6 +112,7 @@
       </button>
       <ul
         tabindex="0"
+        role="menu"
         class="dropdown-content menu bg-base-100 rounded-box shadow-lg border border-base-300 z-[1] w-44 p-1"
       >
         <li>

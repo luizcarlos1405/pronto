@@ -39,16 +39,19 @@ function extractEventClientPosition(event: Event): { x: number; y: number } {
   return position;
 }
 
-export interface OrderableContext {
+export interface OrderableEndContext {
   event: Event;
   position: { x: number; y: number };
   containerNode: HTMLElement;
-  itemNodeCopy: HTMLElement;
   itemNode: HTMLElement;
   itemNodes: HTMLElement[];
 }
 
-export interface OrderableMoveContext extends OrderableContext {
+export interface OrderableStartContext extends OrderableEndContext {
+  itemNodeCopy: HTMLElement;
+}
+
+export interface OrderableMoveContext extends OrderableStartContext {
   fromIndex: number;
   toIndex: number;
   toNode: HTMLElement;
@@ -58,9 +61,9 @@ export interface OrderableOptions {
   startEvents?: string[];
   handleSelector?: string;
   preventClickWhenReleasing?: boolean;
-  onStart?: (ctx: OrderableContext) => void;
+  onStart?: (ctx: OrderableStartContext) => void;
   onMove?: (ctx: OrderableMoveContext) => void;
-  onEnd?: (ctx: OrderableContext) => void;
+  onEnd?: (ctx: OrderableEndContext) => void;
 }
 
 export function orderableChildren({
@@ -84,8 +87,10 @@ export function orderableChildren({
 
     const makeStopPropagationOnce = (useCapture: boolean): EventListener => {
       const handler: EventListener = (event) => {
+        if (!event.currentTarget) return;
+
         event.stopPropagation();
-        event.currentTarget!.removeEventListener(event.type, handler, useCapture);
+        event.currentTarget.removeEventListener(event.type, handler, useCapture);
       };
       return handler;
     };
@@ -147,11 +152,10 @@ export function orderableChildren({
     };
 
     const autoScrollNearEdges = (position: { x: number; y: number }) => {
-      cancelAnimationFrame(scrollRafId);
-      scrollRafId = 0;
-
       if (!scrollContainer) return;
 
+      cancelAnimationFrame(scrollRafId);
+      scrollRafId = 0;
       const rect = scrollContainer.getBoundingClientRect();
       const distTop = position.y - rect.top;
       const distBottom = rect.bottom - position.y;
@@ -159,13 +163,21 @@ export function orderableChildren({
       if (distTop >= 0 && distTop < EDGE_ZONE) {
         const speed = MAX_SCROLL_SPEED * (1 - distTop / EDGE_ZONE);
         const step = () => {
-          scrollContainer!.scrollTop -= speed;
+          if (!scrollContainer) return;
+
+          scrollContainer.scrollTop -= speed;
           scrollRafId = requestAnimationFrame(step);
         };
         scrollRafId = requestAnimationFrame(step);
-      } else if (distBottom >= 0 && distBottom < EDGE_ZONE) {
+
+        return;
+      }
+
+      if (distBottom >= 0 && distBottom < EDGE_ZONE) {
         const speed = MAX_SCROLL_SPEED * (1 - distBottom / EDGE_ZONE);
         const step = () => {
+          if (!scrollContainer) return;
+
           scrollContainer!.scrollTop += speed;
           scrollRafId = requestAnimationFrame(step);
         };
@@ -174,7 +186,7 @@ export function orderableChildren({
     };
 
     const handleMoveEvent = (event: Event) => {
-      if (!activeStartEvent) return;
+      if (!(activeStartEvent && itemNode && itemNodeCopy)) return;
 
       event.preventDefault();
 
@@ -197,7 +209,7 @@ export function orderableChildren({
         (node) => node?.parentNode === containerNode && node !== itemNodeCopy
       ) as HTMLElement | undefined;
 
-      if (overNode === lastOverNode) return;
+      if (!overNode || overNode === lastOverNode) return;
 
       const overNodeIndex = itemNodes.findIndex((node) => node === overNode);
       lastOverNode = overNode ?? null;
@@ -208,10 +220,10 @@ export function orderableChildren({
           position,
           fromIndex: itemNodeIndex,
           toIndex: overNodeIndex,
-          toNode: overNode!,
+          toNode: overNode,
           containerNode,
           itemNodeCopy,
-          itemNode: itemNode!,
+          itemNode: itemNode,
           itemNodes
         });
         itemNodeIndex = overNodeIndex;
@@ -219,19 +231,15 @@ export function orderableChildren({
     };
 
     const handleEndEvent = (event: Event) => {
-      if (!activeStartEvent) return;
+      if (!(activeStartEvent && itemNode && itemNodeCopy)) return;
 
       event.stopPropagation();
       event.stopImmediatePropagation();
       const position = extractEventClientPosition(event);
 
-      if (itemNode) {
-        itemNode.style.removeProperty('pointer-events');
-        itemNode.style.removeProperty('touch-action');
-      }
-      if (itemNodeCopy) {
-        itemNodeCopy.remove();
-      }
+      itemNode.style.removeProperty('pointer-events');
+      itemNode.style.removeProperty('touch-action');
+      itemNodeCopy.remove();
 
       itemNodeCopy = null;
       lastOverNode = null;
@@ -245,10 +253,9 @@ export function orderableChildren({
 
       onEnd?.({
         event,
-        itemNode: itemNode!,
+        itemNode: itemNode,
         position,
         containerNode,
-        itemNodeCopy,
         itemNodes
       });
     };

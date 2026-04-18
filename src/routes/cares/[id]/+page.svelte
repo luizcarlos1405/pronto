@@ -181,10 +181,11 @@
           <h3 class="font-semibold">New task plan</h3>
 
           {#if planStep >= 0}
-            <label class="label">
+            <label class="label" for="plan-title">
               <span class="label-text">Task title</span>
             </label>
             <input
+              id="plan-title"
               type="text"
               class="input input-sm"
               placeholder="e.g. Water plants"
@@ -193,10 +194,10 @@
           {/if}
 
           {#if planStep >= 1}
-            <label class="label">
+            <label class="label" for="plan-schedule-type">
               <span class="label-text">Schedule type</span>
             </label>
-            <select class="select select-sm" bind:value={planType}>
+            <select id="plan-schedule-type" class="select select-sm" bind:value={planType}>
               <option value="INTERVAL_FIXED">Fixed interval (e.g. every 2 weeks)</option>
               <option value="INTERVAL_AFTER_DONE">After completion (e.g. 3 days after done)</option>
               <option value="FIXED_DAYS">Specific days</option>
@@ -205,7 +206,7 @@
 
           {#if planStep >= 2}
             {#if planType.startsWith('INTERVAL')}
-              <label class="label">
+              <label class="label" for="plan-interval">
                 <span class="label-text">Interval</span>
               </label>
               <div class="flex gap-2 flex-wrap">
@@ -222,10 +223,10 @@
                 {/each}
               </div>
             {:else}
-              <label class="label">
+              <label class="label" for="plan-day-type">
                 <span class="label-text">Day type</span>
               </label>
-              <select class="select select-sm" bind:value={planDaysSubtype}>
+              <select id="plan-day-type" class="select select-sm" bind:value={planDaysSubtype}>
                 <option value="WEEKDAYS">Days of the week</option>
                 <option value="MONTHDAYS">Days of the month</option>
                 <option value="YEARDAYS">Specific dates</option>
@@ -284,10 +285,15 @@
           {/if}
 
           {#if planStep >= 4}
-            <label class="label">
+            <label class="label" for="plan-start-date">
               <span class="label-text">Start date</span>
             </label>
-            <input type="date" class="input input-sm" bind:value={planStartDate} />
+            <input
+              id="plan-start-date"
+              type="date"
+              class="input input-sm"
+              bind:value={planStartDate}
+            />
           {/if}
 
           <div class="flex gap-2 mt-2">
