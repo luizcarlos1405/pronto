@@ -8,6 +8,15 @@ declare global {
     // interface PageState {}
     // interface Platform {}
   }
+
+  interface Window {
+    addSampleData?: () => Promise<{
+      inboxItems: number;
+      goals: number;
+      tasks: number;
+      cares: number;
+    }>;
+  }
 }
 
 export {};

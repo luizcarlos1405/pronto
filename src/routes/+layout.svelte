@@ -36,6 +36,13 @@
       });
     }
 
+    if (import.meta.env.DEV) {
+      import('$lib/sample-data').then(({ addSampleData }) => {
+        window.addSampleData = addSampleData;
+        console.info('Dev: window.addSampleData() is available');
+      });
+    }
+
     return () => clearInterval(interval);
   });
 </script>

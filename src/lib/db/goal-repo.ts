@@ -17,7 +17,8 @@ export async function createGoal(title: string, originInboxItemId?: string): Pro
     updatedAt: now
   };
   const db = await getDb();
-  await db.put(doc);
+  const result = await db.put(doc);
+  doc._rev = result.rev;
   return doc;
 }
 
