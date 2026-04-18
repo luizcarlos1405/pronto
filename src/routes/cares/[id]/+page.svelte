@@ -7,12 +7,23 @@
   import Plus from 'lucide-svelte/icons/plus';
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import GripVertical from 'lucide-svelte/icons/grip-vertical';
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import { orderableChildren } from '$lib/attachments/orderableChildren';
+  import { flip } from 'svelte/animate';
 
   const careId = page.params.id!;
   const ctrl = getCareDetailState(careId);
+  const intervalFields = [
+    { key: 'years' as const, label: 'Years' },
+    { key: 'months' as const, label: 'Months' },
+    { key: 'weeks' as const, label: 'Weeks' },
+    { key: 'days' as const, label: 'Days' }
+  ];
+
+  let isDragging = $state(false);
 
   onMount(() => ctrl.load());
 
@@ -20,12 +31,6 @@
     if (await getConfirmState().confirm({ message: 'Remove this care and all its task plans?' })) {
       await ctrl.deleteCare();
       goto(resolve('/cares'));
-    }
-  }
-
-  async function handleDeletePlan(planId: string) {
-    if (await getConfirmState().confirm({ message: 'Remove this task plan?' })) {
-      await ctrl.removeTaskPlan(planId);
     }
   }
 
@@ -139,22 +144,39 @@
 
     {#if ctrl.care.taskPlans.length > 0}
       <h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Task plans</h2>
-      <ul class="list mb-6">
+      <ul
+        class="list mb-6"
+        {@attach orderableChildren({
+          startEvents: ['mousedown', 'touchstart'],
+          handleSelector: '.drag-handle',
+          onStart: () => {
+            isDragging = true;
+          },
+          onEnd: () => {
+            isDragging = false;
+            ctrl.persistPlansOrder();
+          },
+          onMove: ({ fromIndex, toIndex }) => {
+            ctrl.reorderPlans(fromIndex, toIndex);
+          }
+        })}
+      >
         {#each ctrl.care.taskPlans as plan (plan._id)}
-          <li class="list-row">
-            <div class="list-col-grow">
+          <li class="list-row bg-base-100 w-full" animate:flip={{ duration: 200 }}>
+            <a href={resolve(`/cares/${careId}/plans/${plan._id}`)} class="list-col-grow">
               <div class="font-medium">{plan.title}</div>
               <div class="text-xs text-base-content/50">{describeRecurrence(plan.recurrence)}</div>
               {#if plan.lastDoAtDate}
                 <div class="text-xs text-base-content/40">Last generated: {plan.lastDoAtDate}</div>
               {/if}
-            </div>
-            <button
-              class="btn btn-ghost btn-sm text-error"
-              onclick={() => handleDeletePlan(plan._id)}
+            </a>
+            <div
+              class:cursor-grab={!isDragging}
+              class:cursor-grabbing={isDragging}
+              class="drag-handle flex pr-2 ml-auto items-center"
             >
-              <Trash2 class="size-4" />
-            </button>
+              <GripVertical class="size-6 text-base-content/30" />
+            </div>
           </li>
         {/each}
       </ul>
@@ -209,14 +231,14 @@
               <label class="label" for="plan-interval">
                 <span class="label-text">Interval</span>
               </label>
-              <div class="flex gap-2 flex-wrap">
-                {#each [{ key: 'years' as const, label: 'Years' }, { key: 'months' as const, label: 'Months' }, { key: 'weeks' as const, label: 'Weeks' }, { key: 'days' as const, label: 'Days' }] as field (field.key)}
+              <div class="grid grid-cols-2 gap-2 flex-wrap">
+                {#each intervalFields as field (field.key)}
                   <label class="input input-sm flex items-center gap-1">
                     <span class="text-xs">{field.label}</span>
                     <input
                       type="number"
                       min="0"
-                      class="w-12"
+                      class="w-full"
                       bind:value={planInterval[field.key]}
                     />
                   </label>

@@ -95,6 +95,15 @@ export async function removeTaskPlan(careId: string, planId: string): Promise<Ca
   return updateCare(doc);
 }
 
+export async function reorderTaskPlans(careId: string, planIds: string[]): Promise<CareDoc> {
+  const doc = await getCare(careId);
+  const ordered = planIds
+    .map((id) => doc.taskPlans.find((tp) => tp._id === id))
+    .filter((tp): tp is TaskPlan => tp !== undefined);
+  doc.taskPlans = ordered;
+  return updateCare(doc);
+}
+
 export async function updateTaskPlan(
   careId: string,
   planId: string,

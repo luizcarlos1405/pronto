@@ -17,6 +17,11 @@ body {
   @apply mx-auto;
 }
 
+.input,
+.select {
+  @apply w-full;
+}
+
 @keyframes slide-up {
   from {
     opacity: 0;

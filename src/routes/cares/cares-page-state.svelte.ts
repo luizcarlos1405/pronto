@@ -5,7 +5,9 @@ import {
   removeCare as removeCareRepo,
   getCare,
   updateCare,
-  reorderCares as reorderCaresRepo
+  updateTaskPlan as updateTaskPlanRepo,
+  reorderCares as reorderCaresRepo,
+  reorderTaskPlans as reorderTaskPlansRepo
 } from '$lib/db/care-repo';
 import { SvelteDate } from 'svelte/reactivity';
 import { reorderItems } from '$lib/utils/reorderItems';
@@ -95,6 +97,18 @@ export function getCareDetailState(careId: string) {
     await load();
   }
 
+  function reorderPlans(fromIndex: number, toIndex: number) {
+    if (!care) return;
+    const plans = [...care.taskPlans];
+    care.taskPlans = reorderItems(plans, fromIndex, toIndex, (_p, i) => {});
+  }
+
+  async function persistPlansOrder() {
+    if (!care) return;
+    const planIds = care.taskPlans.map((tp) => tp._id);
+    await reorderTaskPlansRepo(careId, planIds);
+  }
+
   return {
     get care() {
       return care;
@@ -111,7 +125,45 @@ export function getCareDetailState(careId: string) {
     load,
     deleteCare,
     removeTaskPlan,
-    addTaskPlan
+    addTaskPlan,
+    reorderPlans,
+    persistPlansOrder
+  };
+}
+
+export function getTaskPlanEditState(careId: string, planId: string) {
+  let care = $state<CareDoc | null>(null);
+  let loading = $state(true);
+
+  const plan = $derived(care?.taskPlans.find((tp) => tp._id === planId) ?? null);
+
+  async function load() {
+    care = await getCare(careId);
+    loading = false;
+  }
+
+  async function update(updates: { title: string; recurrence: Recurrence }) {
+    await updateTaskPlanRepo(careId, planId, updates);
+    await load();
+  }
+
+  async function deletePlan() {
+    await removeTaskPlanRepo(careId, planId);
+  }
+
+  return {
+    get care() {
+      return care;
+    },
+    get plan() {
+      return plan;
+    },
+    get loading() {
+      return loading;
+    },
+    load,
+    update,
+    deletePlan
   };
 }
 
