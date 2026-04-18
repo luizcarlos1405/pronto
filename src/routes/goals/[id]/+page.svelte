@@ -127,7 +127,7 @@
             <div
               class:cursor-grab={!isDragging}
               class:cursor-grabbing={isDragging}
-              class="drag-handle flex px-2 items-center"
+              class="drag-handle flex pr-2 items-center"
             >
               <GripVertical class="size-6 text-base-content/30" />
             </div>
