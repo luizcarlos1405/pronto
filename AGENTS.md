@@ -59,6 +59,8 @@ on a list page, read it for the full pattern (type, repo, state, component).
 [Integration tests](./docs/integration-tests.md): when adding or modifying browser-level
 tests, read it for setup details and conventions.
 
+[DaisyUI](https://daisyui.com/llms.txt): when doing UI work.
+
 ## Style
 
 - Spaces, single quotes, no trailing commas, 100 char width (`.prettierrc`)
