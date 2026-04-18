@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { TaskDoc } from '$lib/types';
+  import { Temporal } from '@js-temporal/polyfill';
   import Target from 'lucide-svelte/icons/target';
   import Heart from 'lucide-svelte/icons/heart';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -24,11 +25,13 @@
   let editTitle = $state('');
   let editDate = $state('');
   let showConvert = $state(false);
+  let tomorrowOffset = $state(0);
 
   $effect(() => {
     if (task) {
       editTitle = task.title;
       editDate = task.doAt;
+      tomorrowOffset = 0;
     }
   });
 
@@ -39,6 +42,11 @@
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') handleSave();
+  }
+
+  function setTomorrow() {
+    tomorrowOffset += 1;
+    editDate = Temporal.Now.plainDateISO().add({ days: tomorrowOffset }).toString();
   }
 </script>
 
@@ -54,7 +62,24 @@
         bind:value={editTitle}
         onkeydown={handleKeydown}
       />
-      <input type="date" class="input input-bordered w-full" bind:value={editDate} />
+      <div class="join w-full">
+        <input
+          type="date"
+          class="input input-bordered join-item flex-1"
+          bind:value={editDate}
+          oninput={() => (tomorrowOffset = 0)}
+        />
+        <div class="indicator">
+          {#if tomorrowOffset > 1}
+            <span class="indicator-item indicator-start badge badge-accent"
+              >+{tomorrowOffset} days</span
+            >
+          {/if}
+          <button class="btn join-item" class:btn-secondary={!!tomorrowOffset} onclick={setTomorrow}
+            >Tomorrow</button
+          >
+        </div>
+      </div>
 
       <button class="btn btn-ghost btn-sm w-full" onclick={() => (showConvert = !showConvert)}>
         <span class="transition-transform duration-200" class:rotate-180={showConvert}>
