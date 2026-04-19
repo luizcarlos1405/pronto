@@ -15,6 +15,7 @@
   import { tick } from 'svelte';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import TaskEditModal from '$lib/components/task-edit-modal.svelte';
   import { formatFriendlyDate } from '$lib/utils/format-date';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { flip } from 'svelte/animate';
@@ -167,7 +168,15 @@
                 <Square class="size-5" />
               {/if}
             </button>
-            <div class="list-col-grow">
+            <div
+              class="list-col-grow cursor-pointer"
+              onclick={() => ctrl.openEdit(task._id)}
+              role="button"
+              tabindex="0"
+              onkeydown={(e) => {
+                if (e.key === 'Enter') ctrl.openEdit(task._id);
+              }}
+            >
               <div class={task.status === 'DONE' ? 'line-through opacity-60' : ''}>
                 {task.title}
               </div>
@@ -186,3 +195,12 @@
     {/if}
   {/if}
 </div>
+
+<TaskEditModal
+  open={!!ctrl.editingTask}
+  task={ctrl.editingTask}
+  onclose={ctrl.closeEdit}
+  onsave={ctrl.saveEdit}
+  ontransformgoal={ctrl.transformToGoal}
+  ontransformcare={ctrl.transformToCare}
+/>
