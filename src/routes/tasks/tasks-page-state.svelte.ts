@@ -9,9 +9,16 @@ import {
   getTask,
   reorderTasks
 } from '$lib/db/task-repo';
-import { createGoal } from '$lib/db/goal-repo';
-import { createCare } from '$lib/db/care-repo';
+import { createGoal, getGoal } from '$lib/db/goal-repo';
+import { createCare, getCare } from '$lib/db/care-repo';
 import type { TaskDoc } from '$lib/types';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+
+interface OriginInfo {
+  type: 'goal' | 'care';
+  id: string;
+  title: string;
+}
 import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { reorderItems } from '$lib/utils/reorderItems';
@@ -25,6 +32,7 @@ export function getTasksPageState() {
   let allTasks = $state<TaskDoc[]>([]);
   let displayedTasks = $state<TaskDoc[]>([]);
   let doneTodayList = $state<TaskDoc[]>([]);
+  let originTitles = new SvelteMap<string, string>();
   let newTitle = $state('');
   let loading = $state(true);
   let editingTask = $state<TaskDoc | null>(null);
@@ -34,7 +42,51 @@ export function getTasksPageState() {
     const today = getToday();
     [allTasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
     displayedTasks = allTasks;
+    await loadOrigins();
     loading = false;
+  }
+
+  async function loadOrigins() {
+    const allDocs = [...allTasks, ...doneTodayList];
+    const ids = new SvelteSet<string>();
+    for (const t of allDocs) {
+      if (t.goalId) ids.add(t.goalId);
+      if (t.careId) ids.add(t.careId);
+    }
+    const entries = await Promise.all(
+      [...ids].map(async (id) => {
+        try {
+          if (id.startsWith('goal_')) {
+            const doc = await getGoal(id);
+            return [id, doc.title] as const;
+          }
+          if (id.startsWith('care_')) {
+            const doc = await getCare(id);
+            return [id, doc.title] as const;
+          }
+        } catch {
+          return undefined;
+        }
+        return undefined;
+      })
+    );
+    const map = new SvelteMap<string, string>();
+    for (const entry of entries) {
+      if (entry) map.set(entry[0], entry[1]);
+    }
+    originTitles = map;
+  }
+
+  function getOriginInfo(task: TaskDoc): OriginInfo | null {
+    if (task.goalId) {
+      const title = originTitles.get(task.goalId);
+      if (title) return { type: 'goal', id: task.goalId, title };
+    }
+    if (task.careId) {
+      const title = originTitles.get(task.careId);
+      if (title) return { type: 'care', id: task.careId, title };
+    }
+    return null;
   }
 
   async function add() {
@@ -193,6 +245,7 @@ export function getTasksPageState() {
     transformToGoal,
     transformToCare,
     reorder,
-    persistOrder
+    persistOrder,
+    getOriginInfo
   };
 }

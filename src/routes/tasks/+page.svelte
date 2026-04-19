@@ -13,6 +13,7 @@
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { formatFriendlyDate } from '$lib/utils/format-date';
   import { flip } from 'svelte/animate';
+  import { resolve } from '$app/paths';
 
   const ctrl = getTasksPageState();
   let isDragging = $state(false);
@@ -71,6 +72,7 @@
         })}
       >
         {#each ctrl.tasks as task (task._id)}
+          {@const origin = ctrl.getOriginInfo(task)}
           <li class="list-row bg-base-100 w-full" animate:flip={{ duration: 200 }}>
             <SwipeableItem
               class="list-col-grow"
@@ -94,7 +96,7 @@
                   <Square class="size-5" />
                 </button>
                 <div
-                  class="flex-1 cursor-pointer"
+                  class="flex-1 min-w-0 cursor-pointer"
                   onclick={() => ctrl.openEdit(task._id)}
                   role="button"
                   tabindex="0"
@@ -103,7 +105,18 @@
                   }}
                 >
                   <div>{task.title}</div>
-                  <div class="text-xs text-base-content/50">{formatFriendlyDate(task.doAt)}</div>
+                  <div class="text-xs text-base-content/50 truncate">
+                    {formatFriendlyDate(task.doAt)}
+                    {#if origin}
+                      &ensp;&middot;&ensp;<a
+                        href={resolve(
+                          origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`
+                        )}
+                        class="hover:underline"
+                        onclick={(e) => e.stopPropagation()}>{origin.title}</a
+                      >
+                    {/if}
+                  </div>
                 </div>
               </div>
             </SwipeableItem>
@@ -123,6 +136,7 @@
       <h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">Done Today</h2>
       <ul class="list">
         {#each ctrl.doneToday as task (task._id)}
+          {@const origin = ctrl.getOriginInfo(task)}
           <li class="list-row opacity-60">
             <button class="btn btn-ghost btn-sm" onclick={() => ctrl.toggleComplete(task._id)}>
               <SquareCheckBig class="size-5 text-success" />
@@ -137,7 +151,18 @@
               }}
             >
               <div class="line-through">{task.title}</div>
-              <div class="text-xs text-base-content/50">{formatFriendlyDate(task.doAt)}</div>
+              <div class="text-xs text-base-content/50 truncate">
+                {formatFriendlyDate(task.doAt)}
+                {#if origin}
+                  &ensp;&middot;&ensp;<a
+                    href={resolve(
+                      origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`
+                    )}
+                    class="hover:underline"
+                    onclick={(e) => e.stopPropagation()}>{origin.title}</a
+                  >
+                {/if}
+              </div>
             </div>
           </li>
         {/each}
