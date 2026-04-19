@@ -23,6 +23,7 @@ import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { reorderItems } from '$lib/utils/reorderItems';
 import { snapshotTask, undoDeleteTask } from '$lib/utils/task-undo';
+import { filterToTopTaskPerGoal } from '$lib/engines/goal-engine';
 
 function getToday(): string {
   return Temporal.Now.plainDateISO().toString();
@@ -41,7 +42,7 @@ export function getTasksPageState() {
   async function load() {
     const today = getToday();
     [allTasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
-    displayedTasks = allTasks;
+    displayedTasks = filterToTopTaskPerGoal(allTasks);
     await loadOrigins();
     loading = false;
   }
