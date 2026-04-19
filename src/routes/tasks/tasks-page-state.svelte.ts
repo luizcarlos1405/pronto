@@ -29,26 +29,10 @@ export function getTasksPageState() {
   let editingTask = $state<TaskDoc | null>(null);
   const toast = getToastState();
 
-  function computeDisplayed(): TaskDoc[] {
-    const standalone = allTasks.filter((t) => !t.goalId);
-    const goalTasks = allTasks.filter((t) => t.goalId);
-    const seen: Record<string, boolean> = {};
-    const firstPerGoal: TaskDoc[] = [];
-    for (const t of goalTasks.toSorted(
-      (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
-    )) {
-      if (t.status !== 'TODO') continue;
-      if (seen[t.goalId!]) continue;
-      seen[t.goalId!] = true;
-      firstPerGoal.push(t);
-    }
-    return [...standalone, ...firstPerGoal];
-  }
-
   async function load() {
     const today = getToday();
     [allTasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
-    displayedTasks = computeDisplayed();
+    displayedTasks = allTasks;
     loading = false;
   }
 
