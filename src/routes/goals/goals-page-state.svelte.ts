@@ -22,6 +22,7 @@ import { createCare } from '$lib/db/care-repo';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { calculateGoalStatus } from '$lib/engines/goal-engine';
 import { reorderItems } from '$lib/utils/reorderItems';
+import { snapshotTask, undoDeleteTask } from '$lib/utils/task-undo';
 import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
@@ -201,20 +202,7 @@ export function getGoalDetailState(goalId: string) {
   async function transformToGoal() {
     if (!editingTask) return;
     const task = await getTask(editingTask._id);
-    const backup: Omit<TaskDoc, '_id' | '_rev' | 'updatedAt'> = {
-      type: task.type,
-      title: task.title,
-      doAt: task.doAt,
-      status: task.status,
-      goalId: task.goalId,
-      stepOrder: task.stepOrder,
-      originInboxItemId: task.originInboxItemId,
-      careId: task.careId,
-      taskPlanId: task.taskPlanId,
-      completedAt: task.completedAt,
-      tasksListOrder: task.tasksListOrder,
-      createdAt: task.createdAt
-    };
+    const backup = snapshotTask(task);
     await createGoal(task.title);
     await deleteTask(task._id);
     editingTask = null;
@@ -223,7 +211,7 @@ export function getGoalDetailState(goalId: string) {
     toast.notify('Converted to goal', {
       label: 'Undo',
       fn: async () => {
-        await createTask(backup);
+        await undoDeleteTask(backup);
         await recalcGoalStatus(goalId);
         await load();
       }
@@ -233,20 +221,7 @@ export function getGoalDetailState(goalId: string) {
   async function transformToCare() {
     if (!editingTask) return;
     const task = await getTask(editingTask._id);
-    const backup: Omit<TaskDoc, '_id' | '_rev' | 'updatedAt'> = {
-      type: task.type,
-      title: task.title,
-      doAt: task.doAt,
-      status: task.status,
-      goalId: task.goalId,
-      stepOrder: task.stepOrder,
-      originInboxItemId: task.originInboxItemId,
-      careId: task.careId,
-      taskPlanId: task.taskPlanId,
-      completedAt: task.completedAt,
-      tasksListOrder: task.tasksListOrder,
-      createdAt: task.createdAt
-    };
+    const backup = snapshotTask(task);
     await createCare(task.title, []);
     await deleteTask(task._id);
     editingTask = null;
@@ -255,7 +230,7 @@ export function getGoalDetailState(goalId: string) {
     toast.notify('Converted to care', {
       label: 'Undo',
       fn: async () => {
-        await createTask(backup);
+        await undoDeleteTask(backup);
         await recalcGoalStatus(goalId);
         await load();
       }

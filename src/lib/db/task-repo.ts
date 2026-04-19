@@ -67,6 +67,16 @@ export async function updateTask(doc: TaskDoc): Promise<TaskDoc> {
   return doc;
 }
 
+export async function restoreTask(doc: TaskDoc): Promise<TaskDoc> {
+  const db = await getDb();
+  const toPut: TaskDoc = { ...doc };
+  delete toPut._rev;
+  toPut.updatedAt = Temporal.Now.instant().toString();
+  const result = await db.put(toPut);
+  toPut._rev = result.rev;
+  return toPut;
+}
+
 export async function removeTask(id: string): Promise<void> {
   const db = await getDb();
   const doc = await db.get<TaskDoc>(id);
