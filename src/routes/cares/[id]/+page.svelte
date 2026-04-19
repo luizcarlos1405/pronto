@@ -270,7 +270,14 @@
             <label class="label" for="plan-schedule-type">
               <span class="label-text">Schedule type</span>
             </label>
-            <select id="plan-schedule-type" class="select select-sm" bind:value={planType}>
+            <select
+              id="plan-schedule-type"
+              class="select select-sm"
+              bind:value={planType}
+              onchange={() => {
+                planStep = Math.max(planStep, 2);
+              }}
+            >
               <option value="INTERVAL_FIXED">Fixed interval (e.g. every 2 weeks)</option>
               <option value="INTERVAL_AFTER_DONE">After completion (e.g. 3 days after done)</option>
               <option value="FIXED_DAYS">Specific days</option>
@@ -299,7 +306,14 @@
               <label class="label" for="plan-day-type">
                 <span class="label-text">Day type</span>
               </label>
-              <select id="plan-day-type" class="select select-sm" bind:value={planDaysSubtype}>
+              <select
+                id="plan-day-type"
+                class="select select-sm"
+                bind:value={planDaysSubtype}
+                onchange={() => {
+                  planStep = Math.max(planStep, 3);
+                }}
+              >
                 <option value="WEEKDAYS">Days of the week</option>
                 <option value="MONTHDAYS">Days of the month</option>
                 <option value="YEARDAYS">Specific dates</option>
