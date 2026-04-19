@@ -100,6 +100,14 @@ export function getGoalsPageState() {
   };
 }
 
+function sortWithDoneAtEnd(list: TaskDoc[]): TaskDoc[] {
+  return list.toSorted((a, b) => {
+    if (a.status === 'DONE' && b.status !== 'DONE') return 1;
+    if (a.status !== 'DONE' && b.status === 'DONE') return -1;
+    return (a.stepOrder ?? 0) - (b.stepOrder ?? 0);
+  });
+}
+
 export function getGoalDetailState(goalId: string) {
   let goal = $state<GoalDoc | null>(null);
   let tasks = $state<TaskDoc[]>([]);
@@ -111,8 +119,21 @@ export function getGoalDetailState(goalId: string) {
   async function load() {
     await assignStepOrder(goalId);
     goal = await getGoal(goalId);
-    tasks = await getTasksByGoal(goalId);
+    const raw = await getTasksByGoal(goalId);
+    tasks = sortWithDoneAtEnd(raw);
     loading = false;
+  }
+
+  async function persistCurrentOrder() {
+    const sorted = sortWithDoneAtEnd(tasks);
+    sorted.forEach((t, i) => {
+      t.stepOrder = i;
+    });
+    tasks = sorted;
+    await reorderGoalTasks(
+      goalId,
+      sorted.map((t) => t._id)
+    );
   }
 
   async function addTask() {
@@ -122,6 +143,7 @@ export function getGoalDetailState(goalId: string) {
     newTaskTitle = '';
     await recalcGoalStatus(goalId);
     await load();
+    await persistCurrentOrder();
   }
 
   async function toggleTask(taskId: string) {
@@ -134,6 +156,7 @@ export function getGoalDetailState(goalId: string) {
     }
     await recalcGoalStatus(goalId);
     await load();
+    await persistCurrentOrder();
   }
 
   async function markCompleted() {
@@ -246,16 +269,7 @@ export function getGoalDetailState(goalId: string) {
   }
 
   async function persistOrder() {
-    const sortedTasks = tasks.toSorted((a, b) => {
-      if (a.status === 'DONE' && b.status !== 'DONE') return 1;
-      if (a.status !== 'DONE' && b.status === 'DONE') return -1;
-      return (a.stepOrder ?? 0) - (b.stepOrder ?? 0);
-    });
-
-    tasks = sortedTasks;
-
-    const sortedTaskIds = sortedTasks.map((t) => t._id);
-    await reorderGoalTasks(goalId, sortedTaskIds);
+    await persistCurrentOrder();
   }
 
   return {
