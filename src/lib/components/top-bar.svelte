@@ -8,6 +8,7 @@
   let showThemeModal = $state(false);
   let showDataModal = $state(false);
   let currentTheme = $state('light');
+  let themeTab = $state<'all' | 'dark' | 'light'>('all');
 
   const darkThemes = new Set([
     'dark',
@@ -131,10 +132,30 @@
 </div>
 
 <dialog class="modal modal-bottom" class:modal-open={showThemeModal}>
-  <div class="modal-box max-w-lg">
+  <div class="modal-box max-w-lg h-10/12 flex flex-col">
     <h3 class="font-bold text-lg mb-4">Choose theme</h3>
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[60vh] overflow-y-auto">
-      {#each themes as theme (theme)}
+    <div role="tablist" class="tabs tabs-box mb-4">
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={themeTab === 'all'}
+        onclick={() => (themeTab = 'all')}>All</button
+      >
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={themeTab === 'dark'}
+        onclick={() => (themeTab = 'dark')}>Dark</button
+      >
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={themeTab === 'light'}
+        onclick={() => (themeTab = 'light')}>Light</button
+      >
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto">
+      {#each themes.filter((t) => themeTab === 'all' || (themeTab === 'dark' ? darkThemes.has(t) : !darkThemes.has(t))) as theme (theme)}
         <button
           class="btn btn-sm flex capitalize"
           class:btn-primary={currentTheme === theme}
@@ -142,13 +163,10 @@
           onclick={() => selectTheme(theme)}
         >
           {theme}
-          <span class="badge badge-xs ml-auto">
-            {darkThemes.has(theme) ? 'dark' : 'light'}
-          </span>
         </button>
       {/each}
     </div>
-    <div class="modal-action">
+    <div class="modal-action mt-auto">
       <button class="btn btn-sm" onclick={() => (showThemeModal = false)}>Close</button>
     </div>
   </div>
