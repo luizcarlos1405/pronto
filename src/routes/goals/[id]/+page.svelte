@@ -27,6 +27,7 @@
   let editingTitle = $state(false);
   let draftTitle = $state('');
   let titleInput: HTMLInputElement | undefined = $state();
+  let taskList: HTMLUListElement | undefined = $state();
 
   async function startEditTitle() {
     if (!ctrl.goal) return;
@@ -52,22 +53,29 @@
 
   onMount(() => ctrl.load());
 
+  async function addTaskAndScroll() {
+    await ctrl.addTask();
+    await tick();
+    const last = taskList?.lastElementChild;
+    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') ctrl.addTask();
+    if (e.key === 'Enter') addTaskAndScroll();
   }
 
   const statusBadge: Record<string, string> = {
     NOT_STARTED: 'badge-neutral',
     IN_PROGRESS: 'badge-info',
     REVIEW: 'badge-warning',
-    COMPLETED: 'badge-success'
+    COMPLETED: 'badge-success',
   };
 
   const statusLabel: Record<string, string> = {
     NOT_STARTED: 'Not started',
     IN_PROGRESS: 'In progress',
     REVIEW: 'Review',
-    COMPLETED: 'Done'
+    COMPLETED: 'Done',
   };
 
   async function handleDelete() {
@@ -129,12 +137,12 @@
     <div class="join w-full mb-6">
       <input
         type="text"
-        class="input join-item flex-1"
+        class="input join-item flex-1 sticky top-4 z-50"
         placeholder="Add a task..."
         bind:value={ctrl.newTaskTitle}
         onkeydown={handleKeydown}
       />
-      <button class="btn btn-primary join-item" onclick={ctrl.addTask}>
+      <button class="btn btn-primary join-item" onclick={addTaskAndScroll}>
         <Plus class="size-4" />
       </button>
     </div>
@@ -144,6 +152,7 @@
     {:else}
       <ul
         class="list"
+        bind:this={taskList}
         {@attach orderableChildren({
           startEvents: ['mousedown', 'touchstart'],
           handleSelector: '.drag-handle',
@@ -156,7 +165,7 @@
           },
           onMove: ({ fromIndex, toIndex }) => {
             ctrl.reorder(fromIndex, toIndex);
-          }
+          },
         })}
       >
         {#each ctrl.tasks as task (task._id)}

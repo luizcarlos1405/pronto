@@ -13,19 +13,28 @@
   import { formatFriendlyDate } from '$lib/utils/format-date';
   import { flip } from 'svelte/animate';
   import { resolve } from '$app/paths';
+  import { tick } from 'svelte';
 
   const ctrl = getTasksPageState();
   let isDragging = $state(false);
+  let taskList: HTMLUListElement | undefined = $state();
+
+  async function addAndScroll() {
+    await ctrl.add();
+    await tick();
+    const last = taskList?.lastElementChild;
+    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') ctrl.add();
+    if (e.key === 'Enter') addAndScroll();
   }
 </script>
 
-<div class="p-4">
+<div class="p-4 relative">
   <h1 class="text-2xl font-bold mb-4">Tasks</h1>
 
-  <div class="join w-full mb-6">
+  <div class="join w-full mb-6 sticky top-4 z-50">
     <input
       type="text"
       class="input join-item flex-1"
@@ -33,7 +42,7 @@
       bind:value={ctrl.newTitle}
       onkeydown={handleKeydown}
     />
-    <button class="btn btn-primary join-item" onclick={ctrl.add}>
+    <button class="btn btn-primary join-item" onclick={addAndScroll}>
       <Plus class="size-4" />
       Add
     </button>
@@ -53,6 +62,7 @@
       <h2 class="text-sm font-semibold text-base-content/60 uppercase mb-2">To Do</h2>
       <ul
         class="list mb-6"
+        bind:this={taskList}
         {@attach orderableChildren({
           startEvents: ['mousedown', 'touchstart'],
           handleSelector: '.drag-handle',
