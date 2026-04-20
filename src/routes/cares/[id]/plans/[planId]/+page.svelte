@@ -15,10 +15,10 @@
   const planId = page.params.planId!;
   const ctrl = getTaskPlanEditState(careId, planId);
   const intervalFields = [
-    { key: 'years' as const, label: 'Years' },
-    { key: 'months' as const, label: 'Months' },
+    { key: 'days' as const, label: 'Days' },
     { key: 'weeks' as const, label: 'Weeks' },
-    { key: 'days' as const, label: 'Days' }
+    { key: 'months' as const, label: 'Months' },
+    { key: 'years' as const, label: 'Years' },
   ];
 
   let title: string = $state('');
@@ -28,7 +28,7 @@
     years: 0,
     months: 0,
     weeks: 0,
-    days: 0
+    days: 0,
   });
   let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
   let planDaysOfWeek: number[] = $state([]);
@@ -72,7 +72,7 @@
           planDaysOfMonth = [...plan.recurrence.daysOfMonth];
         } else {
           planYearDates = plan.recurrence.dates.map((d: { month: number; day: number }) => ({
-            ...d
+            ...d,
           }));
         }
       }
@@ -85,7 +85,7 @@
         type: 'INTERVAL',
         subtype: 'FIXED',
         interval: planInterval,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planType === 'INTERVAL_AFTER_DONE') {
@@ -93,7 +93,7 @@
         type: 'INTERVAL',
         subtype: 'AFTER_DONE',
         interval: planInterval,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planDaysSubtype === 'WEEKDAYS') {
@@ -101,7 +101,7 @@
         type: 'FIXED_DAYS',
         subtype: 'WEEKDAYS',
         daysOfWeek: planDaysOfWeek,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planDaysSubtype === 'MONTHDAYS') {
@@ -109,14 +109,14 @@
         type: 'FIXED_DAYS',
         subtype: 'MONTHDAYS',
         daysOfMonth: planDaysOfMonth,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     return {
       type: 'FIXED_DAYS',
       subtype: 'YEARDAYS',
       dates: planYearDates,
-      startDate: planStartDate
+      startDate: planStartDate,
     };
   }
 

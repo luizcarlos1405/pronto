@@ -21,10 +21,10 @@
   const careId = page.params.id!;
   const ctrl = getCareDetailState(careId);
   const intervalFields = [
-    { key: 'years' as const, label: 'Years' },
-    { key: 'months' as const, label: 'Months' },
+    { key: 'days' as const, label: 'Days' },
     { key: 'weeks' as const, label: 'Weeks' },
-    { key: 'days' as const, label: 'Days' }
+    { key: 'months' as const, label: 'Months' },
+    { key: 'years' as const, label: 'Years' },
   ];
 
   let isDragging = $state(false);
@@ -70,7 +70,7 @@
     years: 0,
     months: 0,
     weeks: 0,
-    days: 0
+    days: 0,
   });
   let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
   let planDaysOfWeek: number[] = $state([]);
@@ -96,7 +96,7 @@
         type: 'INTERVAL',
         subtype: 'FIXED',
         interval: planInterval,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planType === 'INTERVAL_AFTER_DONE') {
@@ -104,7 +104,7 @@
         type: 'INTERVAL',
         subtype: 'AFTER_DONE',
         interval: planInterval,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planDaysSubtype === 'WEEKDAYS') {
@@ -112,7 +112,7 @@
         type: 'FIXED_DAYS',
         subtype: 'WEEKDAYS',
         daysOfWeek: planDaysOfWeek,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     if (planDaysSubtype === 'MONTHDAYS') {
@@ -120,14 +120,14 @@
         type: 'FIXED_DAYS',
         subtype: 'MONTHDAYS',
         daysOfMonth: planDaysOfMonth,
-        startDate: planStartDate
+        startDate: planStartDate,
       };
     }
     return {
       type: 'FIXED_DAYS',
       subtype: 'YEARDAYS',
       dates: planYearDates,
-      startDate: planStartDate
+      startDate: planStartDate,
     };
   }
 
@@ -209,7 +209,7 @@
           },
           onMove: ({ fromIndex, toIndex }) => {
             ctrl.reorderPlans(fromIndex, toIndex);
-          }
+          },
         })}
       >
         {#each ctrl.care.taskPlans as plan (plan._id)}
