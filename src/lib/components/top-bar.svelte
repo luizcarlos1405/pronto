@@ -157,12 +157,17 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto">
       {#each themes.filter((t) => themeTab === 'all' || (themeTab === 'dark' ? darkThemes.has(t) : !darkThemes.has(t))) as theme (theme)}
         <button
-          class="btn btn-sm flex capitalize"
+          class="btn btn-sm flex capitalize justify-start"
           class:btn-primary={currentTheme === theme}
           class:btn-outline={currentTheme !== theme}
           onclick={() => selectTheme(theme)}
         >
           {theme}
+          {#if themeTab === 'all'}
+            <span class="badge badge-xs ml-auto">
+              {darkThemes.has(theme) ? 'dark' : 'light'}
+            </span>
+          {/if}
         </button>
       {/each}
     </div>
