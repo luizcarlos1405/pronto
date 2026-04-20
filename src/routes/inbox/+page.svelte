@@ -6,18 +6,27 @@
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
   import ArrowRight from 'lucide-svelte/icons/arrow-right';
   import { Temporal } from '@js-temporal/polyfill';
+  import { tick } from 'svelte';
 
-  const state = getInboxPageState();
+  const ctrl = getInboxPageState();
+  let itemList: HTMLUListElement | undefined = $state();
 
-  onMount(() => state.load());
+  onMount(() => ctrl.load());
+
+  async function addAndScroll() {
+    await ctrl.add();
+    await tick();
+    const last = itemList?.lastElementChild;
+    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') state.add();
+    if (e.key === 'Enter') addAndScroll();
   }
 
   async function handleProcessingDone() {
-    state.stopProcessing();
-    await state.load();
+    ctrl.stopProcessing();
+    await ctrl.load();
   }
 </script>
 
@@ -29,27 +38,27 @@
       type="text"
       class="input join-item flex-1"
       placeholder="Capture a thought..."
-      bind:value={state.newTitle}
+      bind:value={ctrl.newTitle}
       onkeydown={handleKeydown}
     />
-    <button class="btn btn-primary join-item" onclick={state.add}>
+    <button class="btn btn-primary join-item" onclick={addAndScroll}>
       <Inbox class="size-4" />
       Add
     </button>
   </div>
 
-  {#if state.loading}
+  {#if ctrl.loading}
     <div class="flex justify-center py-8">
       <LoaderCircle class="size-6 animate-spin text-base-content/40" />
     </div>
-  {:else if state.items.length === 0}
+  {:else if ctrl.items.length === 0}
     <div class="text-center py-12 text-base-content/50">
       <Inbox class="size-12 mx-auto mb-3 opacity-40" />
       <p>Your inbox is empty. Nice.</p>
     </div>
   {:else}
-    <ul class="list">
-      {#each state.items as item (item._id)}
+    <ul class="list" bind:this={itemList}>
+      {#each ctrl.items as item (item._id)}
         <li class="list-row">
           <div class="list-col-grow">
             <div>{item.title}</div>
@@ -59,7 +68,7 @@
           </div>
           <button
             class="btn btn-ghost btn-sm btn-primary"
-            onclick={() => state.startProcessing(item._id)}
+            onclick={() => ctrl.startProcessing(item._id)}
           >
             <ArrowRight class="size-4" />
           </button>
@@ -69,9 +78,9 @@
   {/if}
 </div>
 
-{#each state.items as item (item._id)}
+{#each ctrl.items as item (item._id)}
   <InboxProcessor
-    open={state.processingItemId === item._id}
+    open={ctrl.processingItemId === item._id}
     inboxItem={item}
     onDone={handleProcessingDone}
   />

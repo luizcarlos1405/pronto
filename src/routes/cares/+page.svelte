@@ -8,15 +8,24 @@
   import GripVertical from 'lucide-svelte/icons/grip-vertical';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import { flip } from 'svelte/animate';
+  import { tick } from 'svelte';
 
   const ctrl = getCaresPageState();
 
   let isDragging = $state(false);
+  let careList: HTMLUListElement | undefined = $state();
 
   onMount(() => ctrl.load());
 
+  async function addAndScroll() {
+    await ctrl.add();
+    await tick();
+    const last = careList?.lastElementChild;
+    last?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') ctrl.add();
+    if (e.key === 'Enter') addAndScroll();
   }
 </script>
 
@@ -31,7 +40,7 @@
       bind:value={ctrl.newTitle}
       onkeydown={handleKeydown}
     />
-    <button class="btn btn-primary join-item" onclick={ctrl.add}>
+    <button class="btn btn-primary join-item" onclick={addAndScroll}>
       <Plus class="size-4" />
       Add
     </button>
@@ -49,6 +58,7 @@
   {:else}
     <ul
       class="list"
+      bind:this={careList}
       {@attach orderableChildren({
         startEvents: ['mousedown', 'touchstart'],
         handleSelector: '.drag-handle',
