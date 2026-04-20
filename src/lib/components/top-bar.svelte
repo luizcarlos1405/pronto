@@ -132,9 +132,9 @@
 </div>
 
 <dialog class="modal modal-bottom" class:modal-open={showThemeModal}>
-  <div class="modal-box max-w-lg h-10/12 flex flex-col">
-    <h3 class="font-bold text-lg mb-4">Choose theme</h3>
-    <div role="tablist" class="tabs tabs-box mb-4">
+  <div class="modal-box max-w-lg h-10/12 flex flex-col gap-4">
+    <h3 class="font-bold text-lg">Choose theme</h3>
+    <div role="tablist" class="tabs tabs-box">
       <button
         role="tab"
         class="tab"
