@@ -29,10 +29,10 @@
   }
 </script>
 
-<div class="p-4">
+<div class="p-4 relative">
   <h1 class="text-2xl font-bold mb-4">Cares</h1>
 
-  <div class="join w-full mb-6">
+  <div class="join w-full mb-6 sticky top-4 z-50">
     <input
       type="text"
       class="input join-item flex-1"
