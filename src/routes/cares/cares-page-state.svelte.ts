@@ -8,12 +8,14 @@ import {
   updateTaskPlan as updateTaskPlanRepo,
   reorderCares as reorderCaresRepo,
   reorderTaskPlans as reorderTaskPlansRepo,
-  moveTaskPlan as moveTaskPlanRepo
+  moveTaskPlan as moveTaskPlanRepo,
 } from '$lib/db/care-repo';
 import { updateTasksCareForPlan } from '$lib/db/task-repo';
 import { Temporal } from '@js-temporal/polyfill';
 import { reorderItems } from '$lib/utils/reorderItems';
 import type { CareDoc, TaskPlan, Recurrence } from '$lib/types';
+import { runSchedulerNow } from '$lib/scheduler';
+import { bumpTaskRefresh } from '$lib/scheduler-refresh.svelte';
 
 export function getCaresPageState() {
   let cares = $state<CareDoc[]>([]);
@@ -60,7 +62,7 @@ export function getCaresPageState() {
     load,
     add,
     reorder,
-    persistOrder
+    persistOrder,
   };
 }
 
@@ -101,11 +103,13 @@ export function getCareDetailState(careId: string) {
       title: plan.title,
       recurrence: plan.recurrence,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     });
     await updateCare(doc);
     showWizard = false;
     await load();
+    await runSchedulerNow();
+    bumpTaskRefresh();
   }
 
   function reorderPlans(fromIndex: number, toIndex: number) {
@@ -139,7 +143,7 @@ export function getCareDetailState(careId: string) {
     removeTaskPlan,
     addTaskPlan,
     reorderPlans,
-    persistPlansOrder
+    persistPlansOrder,
   };
 }
 
@@ -159,21 +163,27 @@ export function getTaskPlanEditState(careId: string, planId: string) {
   async function update(updates: { title: string; recurrence: Recurrence }) {
     await updateTaskPlanRepo(careId, planId, updates);
     await load();
+    await runSchedulerNow();
+    bumpTaskRefresh();
   }
 
   async function saveAndMove(
     updates: { title: string; recurrence: Recurrence },
-    newCareId: string
+    newCareId: string,
   ): Promise<string> {
     if (newCareId === careId) {
       await updateTaskPlanRepo(careId, planId, updates);
       await load();
+      await runSchedulerNow();
+      bumpTaskRefresh();
       return careId;
     }
 
     await moveTaskPlanRepo(careId, newCareId, planId);
     await updateTasksCareForPlan(planId, newCareId);
     await updateTaskPlanRepo(newCareId, planId, updates);
+    await runSchedulerNow();
+    bumpTaskRefresh();
 
     return newCareId;
   }
@@ -198,7 +208,7 @@ export function getTaskPlanEditState(careId: string, planId: string) {
     load,
     update,
     saveAndMove,
-    deletePlan
+    deletePlan,
   };
 }
 
@@ -236,7 +246,7 @@ export function describeRecurrence(r: Recurrence): string {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return r.dates.map(({ month, day }) => `${months[month]} ${day}`).join(' and ');
   }

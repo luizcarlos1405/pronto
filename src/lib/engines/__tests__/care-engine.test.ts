@@ -5,19 +5,20 @@ import {
   evaluateIntervalAfterDone,
   evaluateFixedDays,
   evaluateTaskPlan,
-  runScheduler
+  runScheduler,
 } from '../care-engine';
+import { filterToTopTaskPerGoal } from '../goal-engine';
 import type { TaskPlan, TaskDoc, CareDoc } from '$lib/types';
 
 function makePlan(
-  overrides: Partial<TaskPlan['recurrence']> & { type: TaskPlan['recurrence']['type'] }
+  overrides: Partial<TaskPlan['recurrence']> & { type: TaskPlan['recurrence']['type'] },
 ): TaskPlan {
   const base: TaskPlan = {
     _id: 'tp_test',
     title: 'Test Task',
     recurrence: overrides as TaskPlan['recurrence'],
     createdAt: '2026-01-01T00:00:00Z',
-    updatedAt: '2026-01-01T00:00:00Z'
+    updatedAt: '2026-01-01T00:00:00Z',
   };
   return base;
 }
@@ -31,7 +32,7 @@ function makeTask(overrides: Partial<TaskDoc>): TaskDoc {
     status: 'TODO',
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -41,7 +42,7 @@ describe('evaluateIntervalFixed', () => {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 7 },
-      startDate: '2026-01-15'
+      startDate: '2026-01-15',
     });
     const today = Temporal.PlainDate.from('2026-01-15');
     const result = evaluateIntervalFixed(plan, today);
@@ -54,7 +55,7 @@ describe('evaluateIntervalFixed', () => {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 7 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-20');
     const result = evaluateIntervalFixed(plan, today);
@@ -66,7 +67,7 @@ describe('evaluateIntervalFixed', () => {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 7 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     plan.lastDoAtDate = '2026-01-15';
     const today = Temporal.PlainDate.from('2026-01-22');
@@ -79,7 +80,7 @@ describe('evaluateIntervalFixed', () => {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { months: 1 },
-      startDate: '2026-01-15'
+      startDate: '2026-01-15',
     });
     const today = Temporal.PlainDate.from('2026-01-10');
     const result = evaluateIntervalFixed(plan, today);
@@ -93,7 +94,7 @@ describe('evaluateIntervalAfterDone', () => {
       type: 'INTERVAL',
       subtype: 'AFTER_DONE',
       interval: { days: 3 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-10');
     const existing = [makeTask({ taskPlanId: 'tp_test', status: 'TODO' })];
@@ -106,7 +107,7 @@ describe('evaluateIntervalAfterDone', () => {
       type: 'INTERVAL',
       subtype: 'AFTER_DONE',
       interval: { days: 3 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     plan.lastDoneDate = '2026-01-10';
     const today = Temporal.PlainDate.from('2026-01-13');
@@ -120,7 +121,7 @@ describe('evaluateIntervalAfterDone', () => {
       type: 'INTERVAL',
       subtype: 'AFTER_DONE',
       interval: { days: 3 },
-      startDate: '2026-01-10'
+      startDate: '2026-01-10',
     });
     const today = Temporal.PlainDate.from('2026-01-15');
     const result = evaluateIntervalAfterDone(plan, today, []);
@@ -132,7 +133,7 @@ describe('evaluateIntervalAfterDone', () => {
       type: 'INTERVAL',
       subtype: 'AFTER_DONE',
       interval: { days: 3 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     plan.lastDoneDate = '2026-01-05';
     const today = Temporal.PlainDate.from('2026-01-08');
@@ -149,7 +150,7 @@ describe('evaluateFixedDays', () => {
       type: 'FIXED_DAYS',
       subtype: 'WEEKDAYS',
       daysOfWeek: [1, 5],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-12');
     const result = evaluateFixedDays(plan, today, []);
@@ -164,7 +165,7 @@ describe('evaluateFixedDays', () => {
       type: 'FIXED_DAYS',
       subtype: 'MONTHDAYS',
       daysOfMonth: [1, 15],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-10');
     const result = evaluateFixedDays(plan, today, []);
@@ -179,7 +180,7 @@ describe('evaluateFixedDays', () => {
       type: 'FIXED_DAYS',
       subtype: 'MONTHDAYS',
       daysOfMonth: [31],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-02-01');
     const result = evaluateFixedDays(plan, today, []);
@@ -193,9 +194,9 @@ describe('evaluateFixedDays', () => {
       subtype: 'YEARDAYS',
       dates: [
         { month: 12, day: 25 },
-        { month: 7, day: 4 }
+        { month: 7, day: 4 },
       ],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-06-01');
     const result = evaluateFixedDays(plan, today, []);
@@ -209,7 +210,7 @@ describe('evaluateFixedDays', () => {
       type: 'FIXED_DAYS',
       subtype: 'MONTHDAYS',
       daysOfMonth: [1],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-01');
     const existing = [makeTask({ taskPlanId: 'tp_test', doAt: '2026-01-01' })];
@@ -222,7 +223,7 @@ describe('evaluateFixedDays', () => {
       type: 'FIXED_DAYS',
       subtype: 'WEEKDAYS',
       daysOfWeek: [1],
-      startDate: '2026-01-15'
+      startDate: '2026-01-15',
     });
     const today = Temporal.PlainDate.from('2026-01-05');
     const result = evaluateFixedDays(plan, today, []);
@@ -230,8 +231,8 @@ describe('evaluateFixedDays', () => {
     expect(
       Temporal.PlainDate.compare(
         Temporal.PlainDate.from(result[0].doAt),
-        Temporal.PlainDate.from('2026-01-15')
-      ) >= 0
+        Temporal.PlainDate.from('2026-01-15'),
+      ) >= 0,
     ).toBe(true);
   });
 });
@@ -242,7 +243,7 @@ describe('evaluateTaskPlan', () => {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 7 },
-      startDate: '2026-01-15'
+      startDate: '2026-01-15',
     });
     const today = Temporal.PlainDate.from('2026-01-15');
     const result = evaluateTaskPlan(plan, today, []);
@@ -255,7 +256,7 @@ describe('evaluateTaskPlan', () => {
       type: 'INTERVAL',
       subtype: 'AFTER_DONE',
       interval: { days: 3 },
-      startDate: '2026-01-10'
+      startDate: '2026-01-10',
     });
     const today = Temporal.PlainDate.from('2026-01-15');
     const result = evaluateTaskPlan(plan, today, []);
@@ -268,7 +269,7 @@ describe('evaluateTaskPlan', () => {
       type: 'FIXED_DAYS',
       subtype: 'WEEKDAYS',
       daysOfWeek: [1],
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
     const today = Temporal.PlainDate.from('2026-01-12');
     const result = evaluateTaskPlan(plan, today, []);
@@ -277,6 +278,73 @@ describe('evaluateTaskPlan', () => {
 });
 
 describe('runScheduler', () => {
+  it('generates a task for today when a new plan starts today', () => {
+    const plan: TaskPlan = {
+      _id: 'tp_new',
+      title: 'Daily standup',
+      recurrence: {
+        type: 'INTERVAL',
+        subtype: 'FIXED',
+        interval: { days: 1 },
+        startDate: '2026-01-15',
+      },
+      createdAt: '2026-01-15T00:00:00Z',
+      updatedAt: '2026-01-15T00:00:00Z',
+    };
+    const care: CareDoc = {
+      _id: 'care_1',
+      type: 'Care',
+      title: 'Work',
+      taskPlans: [plan],
+      createdAt: '2026-01-15T00:00:00Z',
+      updatedAt: '2026-01-15T00:00:00Z',
+    };
+    const today = Temporal.PlainDate.from('2026-01-15');
+    const result = runScheduler([care], today, () => []);
+
+    expect(result.tasks.length).toBe(1);
+    expect(result.tasks[0].doAt).toBe('2026-01-15');
+    expect(result.tasks[0].status).toBe('TODO');
+    expect(result.tasks[0].taskPlanId).toBe('tp_new');
+    expect(result.tasks[0].careId).toBe('care_1');
+
+    const visible = filterToTopTaskPerGoal(result.tasks);
+    expect(visible).toHaveLength(1);
+    expect(visible[0]._id).toBe(result.tasks[0]._id);
+  });
+
+  it('generates a task for today with FIXED_DAYS/WEEKDAYS when today matches', () => {
+    const plan: TaskPlan = {
+      _id: 'tp_weekly',
+      title: 'Grocery shopping',
+      recurrence: {
+        type: 'FIXED_DAYS',
+        subtype: 'WEEKDAYS',
+        daysOfWeek: [1],
+        startDate: '2026-01-01',
+      },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const care: CareDoc = {
+      _id: 'care_2',
+      type: 'Care',
+      title: 'Home',
+      taskPlans: [plan],
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const today = Temporal.PlainDate.from('2026-01-12');
+    const result = runScheduler([care], today, () => []);
+
+    expect(result.tasks.length).toBe(1);
+    expect(result.tasks[0].doAt).toBe('2026-01-12');
+    expect(result.tasks[0].status).toBe('TODO');
+
+    const visible = filterToTopTaskPerGoal(result.tasks);
+    expect(visible).toHaveLength(1);
+  });
+
   it('sets careId on generated tasks', () => {
     const plan: TaskPlan = {
       _id: 'tp_1',
@@ -285,10 +353,10 @@ describe('runScheduler', () => {
         type: 'INTERVAL',
         subtype: 'FIXED',
         interval: { days: 7 },
-        startDate: '2026-01-15'
+        startDate: '2026-01-15',
       },
       createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z'
+      updatedAt: '2026-01-01T00:00:00Z',
     };
     const care: CareDoc = {
       _id: 'care_1',
@@ -296,7 +364,7 @@ describe('runScheduler', () => {
       title: 'Plants',
       taskPlans: [plan],
       createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z'
+      updatedAt: '2026-01-01T00:00:00Z',
     };
     const today = Temporal.PlainDate.from('2026-01-15');
     const result = runScheduler([care], today, () => []);

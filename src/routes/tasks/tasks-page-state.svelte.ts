@@ -7,12 +7,13 @@ import {
   removeTask as deleteTask,
   updateTask,
   getTask,
-  reorderTasks
+  reorderTasks,
 } from '$lib/db/task-repo';
 import { createGoal, getGoal } from '$lib/db/goal-repo';
 import { createCare, getCare } from '$lib/db/care-repo';
 import type { TaskDoc } from '$lib/types';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
+import { getTaskRefreshVersion } from '$lib/scheduler-refresh.svelte';
 
 interface OriginInfo {
   type: 'goal' | 'care';
@@ -38,6 +39,11 @@ export function getTasksPageState() {
   let loading = $state(true);
   let editingTask = $state<TaskDoc | null>(null);
   const toast = getToastState();
+
+  $effect(() => {
+    getTaskRefreshVersion();
+    load();
+  });
 
   async function load() {
     const today = getToday();
@@ -69,7 +75,7 @@ export function getTasksPageState() {
           return undefined;
         }
         return undefined;
-      })
+      }),
     );
     const map = new SvelteMap<string, string>();
     for (const entry of entries) {
@@ -129,7 +135,7 @@ export function getTasksPageState() {
           await updateTask(current);
           await load();
         }
-      }
+      },
     });
   }
 
@@ -147,7 +153,7 @@ export function getTasksPageState() {
       fn: async () => {
         await undoDeleteTask(backup);
         await load();
-      }
+      },
     });
   }
 
@@ -184,7 +190,7 @@ export function getTasksPageState() {
       fn: async () => {
         await undoDeleteTask(backup);
         await load();
-      }
+      },
     });
   }
 
@@ -201,7 +207,7 @@ export function getTasksPageState() {
       fn: async () => {
         await undoDeleteTask(backup);
         await load();
-      }
+      },
     });
   }
 
@@ -247,6 +253,6 @@ export function getTasksPageState() {
     transformToCare,
     reorder,
     persistOrder,
-    getOriginInfo
+    getOriginInfo,
   };
 }

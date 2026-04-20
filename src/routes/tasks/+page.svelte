@@ -1,6 +1,5 @@
 <script lang="ts">
   import { getTasksPageState } from './tasks-page-state.svelte';
-  import { onMount } from 'svelte';
   import SquareCheckBig from 'lucide-svelte/icons/square-check-big';
   import Square from 'lucide-svelte/icons/square';
   import Plus from 'lucide-svelte/icons/plus';
@@ -17,8 +16,6 @@
 
   const ctrl = getTasksPageState();
   let isDragging = $state(false);
-
-  onMount(() => ctrl.load());
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') ctrl.add();
@@ -68,7 +65,7 @@
           },
           onMove: ({ fromIndex, toIndex }) => {
             ctrl.reorder(fromIndex, toIndex);
-          }
+          },
         })}
       >
         {#each ctrl.tasks as task (task._id)}
@@ -110,7 +107,7 @@
                     {#if origin}
                       &ensp;&middot;&ensp;<a
                         href={resolve(
-                          origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`
+                          origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`,
                         )}
                         class="hover:underline"
                         onclick={(e) => e.stopPropagation()}>{origin.title}</a
@@ -156,7 +153,7 @@
                 {#if origin}
                   &ensp;&middot;&ensp;<a
                     href={resolve(
-                      origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`
+                      origin.type === 'goal' ? `/goals/${origin.id}` : `/cares/${origin.id}`,
                     )}
                     class="hover:underline"
                     onclick={(e) => e.stopPropagation()}>{origin.title}</a

@@ -1,5 +1,4 @@
 import { Temporal } from '@js-temporal/polyfill';
-import { getDb } from './db/database';
 import { getAllCares, updateCare } from './db/care-repo';
 import { createTask, getTasksByTaskPlan } from './db/task-repo';
 import { runScheduler } from './engines/care-engine';
@@ -12,12 +11,12 @@ export async function runSchedulerNow(): Promise<number> {
   await Promise.all(
     allPlanIds.map(async (planId) => {
       tasksByPlan.set(planId, await getTasksByTaskPlan(planId));
-    })
+    }),
   );
   const { tasks, updatedPlans } = runScheduler(
     cares,
     today,
-    (planId) => tasksByPlan.get(planId) ?? []
+    (planId) => tasksByPlan.get(planId) ?? [],
   );
 
   for (const task of tasks) {
@@ -25,7 +24,7 @@ export async function runSchedulerNow(): Promise<number> {
       title: task.title,
       doAt: task.doAt,
       careId: task.careId,
-      taskPlanId: task.taskPlanId
+      taskPlanId: task.taskPlanId,
     });
   }
 
@@ -40,7 +39,7 @@ export async function runSchedulerNow(): Promise<number> {
           return updatedPlan;
         }
         return tp;
-      })
+      }),
     };
     if (modified) {
       await updateCare(updated);
