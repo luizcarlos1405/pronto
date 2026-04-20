@@ -15,7 +15,7 @@ export async function createGoal(title: string, originInboxItemId?: string): Pro
     goalsListOrder: maxOrder + 1,
     originInboxItemId,
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
   const db = await getDb();
   const result = await db.put(doc);
@@ -46,7 +46,7 @@ export async function getAllGoals(): Promise<GoalDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Goal', createdAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { createdAt: 'desc' }]
+    sort: [{ type: 'asc' }, { createdAt: 'desc' }],
   });
   const goals = result.docs as GoalDoc[];
   return goals.toSorted((a, b) => {

@@ -26,7 +26,7 @@
     years: 0,
     months: 0,
     weeks: 0,
-    days: 0
+    days: 0,
   });
   let showCarePlan = $state(false);
 
@@ -53,7 +53,7 @@
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval,
-      startDate: Temporal.Now.plainDateISO().toString()
+      startDate: Temporal.Now.plainDateISO().toString(),
     };
     await ctrl.createCare([{ title: carePlanTitle.trim(), recurrence }]);
     carePlanTitle = '';
@@ -63,12 +63,12 @@
   const entityIcon: Record<string, typeof SquareCheckBig> = {
     task: SquareCheckBig,
     goal: Target,
-    care: Heart
+    care: Heart,
   };
   const entityLabel: Record<string, string> = {
     task: 'Task',
     goal: 'Goal',
-    care: 'Care'
+    care: 'Care',
   };
 </script>
 

@@ -9,7 +9,7 @@ export async function createInboxItem(title: string): Promise<InboxItemDoc> {
     type: 'InboxItem',
     title,
     isProcessed: false,
-    createdAt: Temporal.Now.instant().toString()
+    createdAt: Temporal.Now.instant().toString(),
   };
   const db = await getDb();
   const result = await db.put(doc);
@@ -34,7 +34,7 @@ export async function getUnprocessed(): Promise<InboxItemDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: false, createdAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }]
+    sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
   });
   return result.docs as InboxItemDoc[];
 }
@@ -43,7 +43,7 @@ export async function getProcessed(): Promise<InboxItemDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: true, createdAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }]
+    sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
   });
   return result.docs as InboxItemDoc[];
 }

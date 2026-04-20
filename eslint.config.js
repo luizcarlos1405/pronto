@@ -5,7 +5,7 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['build/', '.svelte-kit/', 'dist/']
+    ignores: ['build/', '.svelte-kit/', 'dist/'],
   },
   ...js.configs['flat/recommended'],
   {
@@ -13,27 +13,27 @@ export default [
     languageOptions: {
       parser: svelteParser,
       parserOptions: {
-        parser: tsParser
-      }
-    }
+        parser: tsParser,
+      },
+    },
   },
   {
     files: ['**/*.svelte'],
     languageOptions: {
       parserOptions: {
-        parser: tsParser
-      }
-    }
+        parser: tsParser,
+      },
+    },
   },
   {
     languageOptions: {
       globals: {
-        ...globals.browser
-      }
+        ...globals.browser,
+      },
     },
     rules: {
       'no-undef': 'error',
-      'no-console': ['error', { allow: ['warn', 'error', 'info'] }]
-    }
-  }
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+    },
+  },
 ];

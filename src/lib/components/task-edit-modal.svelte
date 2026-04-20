@@ -12,7 +12,7 @@
     onclose,
     onsave,
     ontransformgoal,
-    ontransformcare
+    ontransformcare,
   }: {
     open: boolean;
     task?: TaskDoc | null;

@@ -23,7 +23,7 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
     await createTask({
       title,
       doAt: taskDoAt,
-      originInboxItemId: inboxItem._id
+      originInboxItemId: inboxItem._id,
     });
     created = [...created, { type: 'task', title }];
     taskTitle = inboxItem.title;
@@ -41,7 +41,7 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
   }
 
   async function createCareFromItem(
-    plans: { title: string; recurrence: Recurrence }[]
+    plans: { title: string; recurrence: Recurrence }[],
   ): Promise<void> {
     const title = careTitle.trim();
     if (!title) return;
@@ -49,7 +49,7 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
     await createCare(
       title,
       plans.map((p) => ({ title: p.title, recurrence: p.recurrence })),
-      inboxItem._id
+      inboxItem._id,
     );
     created = [...created, { type: 'care', title }];
     careTitle = inboxItem.title;
@@ -108,6 +108,6 @@ export function getInboxProcessorState(inboxItem: InboxItemDoc) {
     createGoal: createGoalFromItem,
     createCare: createCareFromItem,
     finish,
-    resetMode
+    resetMode,
   };
 }

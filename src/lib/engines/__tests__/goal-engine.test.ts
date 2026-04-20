@@ -9,7 +9,7 @@ function makeGoal(status: GoalDoc['status'] = 'NOT_STARTED'): GoalDoc {
     title: 'Test Goal',
     status,
     createdAt: '2026-01-01T00:00:00Z',
-    updatedAt: '2026-01-01T00:00:00Z'
+    updatedAt: '2026-01-01T00:00:00Z',
   };
 }
 
@@ -23,7 +23,7 @@ function makeTask(status: TaskDoc['status'] = 'TODO', overrides: Partial<TaskDoc
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',
     goalId: 'goal_1',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -61,7 +61,7 @@ describe('filterToTopTaskPerGoal', () => {
   it('passes through tasks without a goalId', () => {
     const tasks = [
       makeTask('TODO', { _id: 't1', goalId: undefined }),
-      makeTask('TODO', { _id: 't2', goalId: undefined })
+      makeTask('TODO', { _id: 't2', goalId: undefined }),
     ];
     expect(filterToTopTaskPerGoal(tasks)).toEqual(tasks);
   });
@@ -70,7 +70,7 @@ describe('filterToTopTaskPerGoal', () => {
     const tasks = [
       makeTask('TODO', { _id: 't1', goalId: 'g1', stepOrder: 0 }),
       makeTask('TODO', { _id: 't2', goalId: 'g1', stepOrder: 1 }),
-      makeTask('TODO', { _id: 't3', goalId: 'g1', stepOrder: 2 })
+      makeTask('TODO', { _id: 't3', goalId: 'g1', stepOrder: 2 }),
     ];
     const result = filterToTopTaskPerGoal(tasks);
     expect(result).toHaveLength(1);
@@ -81,12 +81,12 @@ describe('filterToTopTaskPerGoal', () => {
     const tasks = [
       makeTask('TODO', { _id: 'A', goalId: 'g1', stepOrder: 0 }),
       makeTask('TODO', { _id: 'B', goalId: 'g1', stepOrder: 1 }),
-      makeTask('TODO', { _id: 'C', goalId: 'g1', stepOrder: 2 })
+      makeTask('TODO', { _id: 'C', goalId: 'g1', stepOrder: 2 }),
     ];
     const reordered = [
       makeTask('TODO', { _id: 'B', goalId: 'g1', stepOrder: 0 }),
       makeTask('TODO', { _id: 'A', goalId: 'g1', stepOrder: 1 }),
-      makeTask('TODO', { _id: 'C', goalId: 'g1', stepOrder: 2 })
+      makeTask('TODO', { _id: 'C', goalId: 'g1', stepOrder: 2 }),
     ];
     const result = filterToTopTaskPerGoal(reordered);
     expect(result).toHaveLength(1);
@@ -98,7 +98,7 @@ describe('filterToTopTaskPerGoal', () => {
       makeTask('TODO', { _id: 'a1', goalId: 'g1', stepOrder: 0 }),
       makeTask('TODO', { _id: 'a2', goalId: 'g1', stepOrder: 1 }),
       makeTask('TODO', { _id: 'b1', goalId: 'g2', stepOrder: 0 }),
-      makeTask('TODO', { _id: 'b2', goalId: 'g2', stepOrder: 1 })
+      makeTask('TODO', { _id: 'b2', goalId: 'g2', stepOrder: 1 }),
     ];
     const result = filterToTopTaskPerGoal(tasks);
     expect(result).toHaveLength(2);
@@ -115,7 +115,7 @@ describe('filterToTopTaskPerGoal', () => {
   it('treats undefined stepOrder as Infinity', () => {
     const tasks = [
       makeTask('TODO', { _id: 't1', goalId: 'g1', stepOrder: 0 }),
-      makeTask('TODO', { _id: 't2', goalId: 'g1' })
+      makeTask('TODO', { _id: 't2', goalId: 'g1' }),
     ];
     const result = filterToTopTaskPerGoal(tasks);
     expect(result).toHaveLength(1);
@@ -129,7 +129,7 @@ describe('filterToTopTaskPerGoal', () => {
       makeTask('TODO', { _id: 'a1', goalId: 'g1', stepOrder: 0 }),
       makeTask('TODO', { _id: 'a2', goalId: 'g1', stepOrder: 1 }),
       makeTask('TODO', { _id: 'b1', goalId: 'g2', stepOrder: 0 }),
-      makeTask('TODO', { _id: 'b2', goalId: 'g2', stepOrder: 1 })
+      makeTask('TODO', { _id: 'b2', goalId: 'g2', stepOrder: 1 }),
     ];
     const result = filterToTopTaskPerGoal(tasks);
     expect(result.map((t) => t._id)).toEqual(['s1', 's2', 'a1', 'b1']);

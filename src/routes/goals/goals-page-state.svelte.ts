@@ -5,7 +5,7 @@ import {
   updateGoal,
   getGoal,
   removeGoal as removeGoalRepo,
-  reorderGoals
+  reorderGoals,
 } from '$lib/db/goal-repo';
 import {
   getTasksByGoal,
@@ -16,7 +16,7 @@ import {
   updateTask,
   removeTask as deleteTask,
   reorderGoalTasks,
-  assignStepOrder
+  assignStepOrder,
 } from '$lib/db/task-repo';
 import { createCare } from '$lib/db/care-repo';
 import { getToastState } from '$lib/components/toast-state.svelte';
@@ -97,7 +97,7 @@ export function getGoalsPageState() {
     markCompleted,
     recalcStatus,
     reorder,
-    persistOrder
+    persistOrder,
   };
 }
 
@@ -133,7 +133,7 @@ export function getGoalDetailState(goalId: string) {
     tasks = sorted;
     await reorderGoalTasks(
       goalId,
-      sorted.map((t) => t._id)
+      sorted.map((t) => t._id),
     );
   }
 
@@ -214,7 +214,7 @@ export function getGoalDetailState(goalId: string) {
         await undoDeleteTask(backup);
         await recalcGoalStatus(goalId);
         await load();
-      }
+      },
     });
   }
 
@@ -233,7 +233,7 @@ export function getGoalDetailState(goalId: string) {
         await undoDeleteTask(backup);
         await recalcGoalStatus(goalId);
         await load();
-      }
+      },
     });
   }
 
@@ -278,6 +278,6 @@ export function getGoalDetailState(goalId: string) {
     transformToGoal,
     transformToCare,
     reorder,
-    persistOrder
+    persistOrder,
   };
 }

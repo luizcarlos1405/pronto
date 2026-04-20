@@ -29,7 +29,7 @@ function extractEventClientPosition(event: Event): { x: number; y: number } {
     y:
       e.clientY ??
       e.changedTouches?.[0]?.clientY ??
-      (e as unknown as { detail?: { clientY?: number } }).detail?.clientY
+      (e as unknown as { detail?: { clientY?: number } }).detail?.clientY,
   };
 
   if (position.x == null || position.y == null) {
@@ -72,7 +72,7 @@ export function orderableChildren({
   preventClickWhenReleasing = false,
   onStart,
   onMove,
-  onEnd
+  onEnd,
 }: OrderableOptions = {}): Attachment<HTMLElement> {
   return (containerNode: HTMLElement) => {
     let itemNodes = Array.from(containerNode?.children || []) as HTMLElement[];
@@ -147,7 +147,7 @@ export function orderableChildren({
         containerNode,
         itemNodeCopy,
         itemNode,
-        itemNodes
+        itemNodes,
       });
     };
 
@@ -193,11 +193,11 @@ export function orderableChildren({
       const position = extractEventClientPosition(event);
       const translate = {
         x: position.x + translateOffset.x,
-        y: position.y + translateOffset.y
+        y: position.y + translateOffset.y,
       };
 
       itemNodes = (Array.from(containerNode?.children || []) as HTMLElement[]).filter(
-        (node) => node !== itemNodeCopy
+        (node) => node !== itemNodeCopy,
       );
       itemNodeIndex = itemNodes.findIndex((node) => node === itemNode);
       itemNodeCopy.style.transform = `translate(${translate.x}px, ${translate.y}px)`;
@@ -206,7 +206,7 @@ export function orderableChildren({
 
       const elementsUnderPoint = document.elementsFromPoint(position.x, position.y);
       const overNode = elementsUnderPoint.find(
-        (node) => node?.parentNode === containerNode && node !== itemNodeCopy
+        (node) => node?.parentNode === containerNode && node !== itemNodeCopy,
       ) as HTMLElement | undefined;
 
       if (!overNode || overNode === lastOverNode) return;
@@ -224,7 +224,7 @@ export function orderableChildren({
           containerNode,
           itemNodeCopy,
           itemNode: itemNode,
-          itemNodes
+          itemNodes,
         });
         itemNodeIndex = overNodeIndex;
       }
@@ -256,7 +256,7 @@ export function orderableChildren({
         itemNode: itemNode,
         position,
         containerNode,
-        itemNodes
+        itemNodes,
       });
     };
 
@@ -264,10 +264,10 @@ export function orderableChildren({
       const startEventNode = (handleSelector && node.closest(handleSelector)) || node;
 
       startEvents.forEach((eventName) =>
-        startEventNode.addEventListener(eventName, handleStartEvent, { passive: false })
+        startEventNode.addEventListener(eventName, handleStartEvent, { passive: false }),
       );
       moveEvents.forEach((eventName) =>
-        window.addEventListener(eventName, handleMoveEvent, { passive: false })
+        window.addEventListener(eventName, handleMoveEvent, { passive: false }),
       );
       endEvents.forEach((eventName) => window.addEventListener(eventName, handleEndEvent));
     };
@@ -276,7 +276,7 @@ export function orderableChildren({
       const startEventNode = (handleSelector && node.closest(handleSelector)) || node;
 
       startEvents.forEach((eventName) =>
-        startEventNode.removeEventListener(eventName, handleStartEvent)
+        startEventNode.removeEventListener(eventName, handleStartEvent),
       );
       moveEvents.forEach((eventName) => window.removeEventListener(eventName, handleMoveEvent));
       endEvents.forEach((eventName) => window.removeEventListener(eventName, handleEndEvent));

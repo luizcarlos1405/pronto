@@ -26,7 +26,7 @@ export async function createGoal(title: string): Promise<GoalDoc> {
   const maxOrder = existing.reduce((max, g) => Math.max(max, g.goalsListOrder ?? -1), -1);
   const doc: GoalDoc = {
     // ...
-    goalsListOrder: maxOrder + 1
+    goalsListOrder: maxOrder + 1,
   };
   // ...
 }
@@ -112,7 +112,7 @@ Use a DaisyUI `<ul class="list">` with `<li class="list-row">` children. Attach 
     },
     onMove: ({ fromIndex, toIndex }) => {
       ctrl.reorder(fromIndex, toIndex);
-    }
+    },
   })}
 >
   {#each ctrl.items as item (item._id)}

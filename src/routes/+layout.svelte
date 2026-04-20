@@ -21,7 +21,7 @@
     { href: '/tasks', label: 'Tasks', icon: ListChecks },
     { href: '/inbox', label: 'Inbox', icon: Inbox },
     { href: '/goals', label: 'Goals', icon: Target },
-    { href: '/cares', label: 'Cares', icon: Heart }
+    { href: '/cares', label: 'Cares', icon: Heart },
   ] as const;
 
   const webManifestHref = pwaInfo?.webManifest.href ?? '';

@@ -29,6 +29,6 @@ export function getConfirmState() {
       return pending;
     },
     confirm,
-    respond
+    respond,
   };
 }

@@ -16,7 +16,7 @@ export async function exportAllData(): Promise<FazExport> {
   return {
     app: 'faz',
     exportedAt: Temporal.Now.instant().toString(),
-    docs
+    docs,
   };
 }
 

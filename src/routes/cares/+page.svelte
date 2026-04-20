@@ -61,7 +61,7 @@
         },
         onMove: ({ fromIndex, toIndex }) => {
           ctrl.reorder(fromIndex, toIndex);
-        }
+        },
       })}
     >
       {#each ctrl.cares as care (care._id)}

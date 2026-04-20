@@ -7,7 +7,7 @@
   import { exportAllData, importData, clearAllData, type FazExport } from '$lib/db/data-manager';
   import {
     importGoogleTasksFromFile,
-    InvalidGoogleTasksFileError
+    InvalidGoogleTasksFileError,
   } from '$lib/importers/google-tasks-import';
 
   let { open, onclose }: { open: boolean; onclose: () => void } = $props();
@@ -64,7 +64,7 @@
         if (result.skipped > 0) {
           status = {
             text: `Imported ${result.imported} items, ${result.skipped} already existed`,
-            ok: true
+            ok: true,
           };
         } else {
           status = { text: `Imported ${result.imported} items`, ok: true };
@@ -100,7 +100,7 @@
         if (result.tasks > 0) parts.push(`${result.tasks} tasks`);
         status = {
           text: parts.length > 0 ? `Imported ${parts.join(' and ')}` : 'Nothing to import',
-          ok: true
+          ok: true,
         };
       } catch (e) {
         if (e instanceof InvalidGoogleTasksFileError) {

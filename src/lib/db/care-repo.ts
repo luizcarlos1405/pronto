@@ -6,7 +6,7 @@ import type { CareDoc, TaskPlan } from '$lib/types';
 export async function createCare(
   title: string,
   taskPlans: Omit<TaskPlan, '_id' | 'createdAt' | 'updatedAt'>[],
-  originInboxItemId?: string
+  originInboxItemId?: string,
 ): Promise<CareDoc> {
   const now = Temporal.Now.instant().toString();
   const existing = await getAllCares();
@@ -19,12 +19,12 @@ export async function createCare(
       ...tp,
       _id: `tp_${nanoid()}`,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     })),
     caresListOrder: maxOrder + 1,
     originInboxItemId,
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
   const db = await getDb();
   const result = await db.put(doc);
@@ -55,7 +55,7 @@ export async function getAllCares(): Promise<CareDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Care', createdAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { createdAt: 'desc' }]
+    sort: [{ type: 'asc' }, { createdAt: 'desc' }],
   });
   const cares = result.docs as CareDoc[];
   return cares.toSorted((a, b) => {
@@ -78,7 +78,7 @@ export async function reorderCares(careIds: string[]): Promise<void> {
 
 export async function addTaskPlan(
   careId: string,
-  plan: Omit<TaskPlan, '_id' | 'createdAt' | 'updatedAt'>
+  plan: Omit<TaskPlan, '_id' | 'createdAt' | 'updatedAt'>,
 ): Promise<CareDoc> {
   const doc = await getCare(careId);
   const now = Temporal.Now.instant().toString();
@@ -86,7 +86,7 @@ export async function addTaskPlan(
     ...plan,
     _id: `tp_${nanoid()}`,
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   });
   return updateCare(doc);
 }
@@ -109,7 +109,7 @@ export async function reorderTaskPlans(careId: string, planIds: string[]): Promi
 export async function moveTaskPlan(
   sourceCareId: string,
   destCareId: string,
-  planId: string
+  planId: string,
 ): Promise<void> {
   if (sourceCareId === destCareId) return;
 
@@ -131,7 +131,7 @@ export async function moveTaskPlan(
 export async function updateTaskPlan(
   careId: string,
   planId: string,
-  updates: Partial<TaskPlan>
+  updates: Partial<TaskPlan>,
 ): Promise<CareDoc> {
   const doc = await getCare(careId);
   const idx = doc.taskPlans.findIndex((tp) => tp._id === planId);
@@ -139,7 +139,7 @@ export async function updateTaskPlan(
   doc.taskPlans[idx] = {
     ...doc.taskPlans[idx],
     ...updates,
-    updatedAt: Temporal.Now.instant().toString()
+    updatedAt: Temporal.Now.instant().toString(),
   };
   return updateCare(doc);
 }

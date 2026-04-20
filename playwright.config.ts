@@ -7,15 +7,15 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { browserName: 'chromium' }
-    }
+      use: { browserName: 'chromium' },
+    },
   ],
   webServer: {
     command: 'bun run dev',
     url: 'http://localhost:5173',
-    reuseExistingServer: true
+    reuseExistingServer: true,
   },
   use: {
-    baseURL: 'http://localhost:5173'
-  }
+    baseURL: 'http://localhost:5173',
+  },
 });

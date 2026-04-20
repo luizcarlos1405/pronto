@@ -47,6 +47,6 @@ export function getInboxPageState() {
     load,
     add,
     startProcessing,
-    stopProcessing
+    stopProcessing,
   };
 }

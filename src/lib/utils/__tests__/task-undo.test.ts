@@ -21,7 +21,7 @@ function makeTask(overrides: Partial<TaskDoc> = {}): TaskDoc {
     tasksListOrder: 5,
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -48,7 +48,7 @@ describe('snapshotTask', () => {
       careId: 'care_7',
       taskPlanId: 'tp_3',
       tasksListOrder: 100,
-      completedAt: '2026-04-19T12:00:00Z'
+      completedAt: '2026-04-19T12:00:00Z',
     });
     const snap = snapshotTask(task);
     expect(snap._id).toBe(task._id);

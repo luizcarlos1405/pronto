@@ -2,7 +2,7 @@ export function reorderItems<T>(
   items: T[],
   fromIndex: number,
   toIndex: number,
-  setOrder: (item: T, index: number) => void
+  setOrder: (item: T, index: number) => void,
 ): T[] {
   const reordered = [...items];
   const [moved] = reordered.splice(fromIndex, 1);

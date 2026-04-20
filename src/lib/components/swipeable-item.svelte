@@ -8,7 +8,7 @@
     onswipe,
     children,
     threshold = 80,
-    class: className = ''
+    class: className = '',
   }: {
     leftBackground?: Snippet;
     rightBackground?: Snippet;

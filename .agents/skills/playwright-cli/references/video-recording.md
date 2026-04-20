@@ -59,7 +59,7 @@ async (page) => {
   // overlay via await page.screencast.showOverlay().
   await page.screencast.showChapter('Adding Todo Items', {
     description: 'We will add several items to the todo list.',
-    duration: 2000
+    duration: 2000,
   });
 
   // Perform action
@@ -72,7 +72,7 @@ async (page) => {
   // Show next chapter
   await page.screencast.showChapter('Verifying Results', {
     description: 'Checking the item appeared in the list.',
-    duration: 2000
+    duration: 2000,
   });
 
   // Add a sticky annotation that stays while you perform actions.
@@ -117,7 +117,7 @@ async (page) => {
       color: white;">Check it out, it is right above this text
     </div>
   `,
-    { duration: 2000 }
+    { duration: 2000 },
   );
 
   await page.screencast.stop();

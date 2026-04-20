@@ -25,11 +25,11 @@ export async function createTask(data: {
     const db = await getDb();
     const result = await db.find({
       selector: { type: 'Task' },
-      fields: ['tasksListOrder']
+      fields: ['tasksListOrder'],
     });
     const maxListOrder = (result.docs as TaskDoc[]).reduce(
       (max, t) => Math.max(max, t.tasksListOrder ?? -1),
-      -1
+      -1,
     );
     tasksListOrder = maxListOrder + 1;
   }
@@ -46,7 +46,7 @@ export async function createTask(data: {
     taskPlanId: data.taskPlanId,
     tasksListOrder,
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
   const db = await getDb();
   const result = await db.put(doc);
@@ -90,9 +90,9 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
       type: 'Task',
       status: 'TODO',
       doAt: { $lte: today },
-      createdAt: { $gt: null }
+      createdAt: { $gt: null },
     },
-    sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }]
+    sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }],
   });
   return (result.docs as TaskDoc[]).toSorted((a, b) => {
     const orderA = a.tasksListOrder ?? Infinity;
@@ -105,7 +105,7 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
 export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const allDone = await db.find({
-    selector: { type: 'Task', status: 'DONE' }
+    selector: { type: 'Task', status: 'DONE' },
   });
   return (allDone.docs as TaskDoc[]).filter((t) => {
     if (!t.completedAt) return false;
@@ -118,10 +118,10 @@ export async function getTasksByGoal(goalId: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Task', goalId, doAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { goalId: 'asc' }, { doAt: 'asc' }]
+    sort: [{ type: 'asc' }, { goalId: 'asc' }, { doAt: 'asc' }],
   });
   return (result.docs as TaskDoc[]).toSorted(
-    (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity)
+    (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity),
   );
 }
 
@@ -129,7 +129,7 @@ export async function getTasksByCare(careId: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Task', careId, doAt: { $gt: null } },
-    sort: [{ type: 'asc' }, { careId: 'asc' }, { doAt: 'asc' }]
+    sort: [{ type: 'asc' }, { careId: 'asc' }, { doAt: 'asc' }],
   });
   return result.docs as TaskDoc[];
 }
@@ -137,7 +137,7 @@ export async function getTasksByCare(careId: string): Promise<TaskDoc[]> {
 export async function getTasksByTaskPlan(taskPlanId: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const result = await db.find({
-    selector: { type: 'Task', taskPlanId }
+    selector: { type: 'Task', taskPlanId },
   });
   return result.docs as TaskDoc[];
 }
@@ -145,7 +145,7 @@ export async function getTasksByTaskPlan(taskPlanId: string): Promise<TaskDoc[]>
 export async function getActiveTasksForPlan(taskPlanId: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const result = await db.find({
-    selector: { type: 'Task', taskPlanId, status: 'TODO' }
+    selector: { type: 'Task', taskPlanId, status: 'TODO' },
   });
   return result.docs as TaskDoc[];
 }

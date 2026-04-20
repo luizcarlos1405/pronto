@@ -4,7 +4,7 @@ import type { TaskDoc, TaskPlan, CareDoc, DurationLike } from '$lib/types';
 export function evaluateTaskPlan(
   plan: TaskPlan,
   today: Temporal.PlainDate,
-  existingTasks: TaskDoc[]
+  existingTasks: TaskDoc[],
 ): TaskDoc | null {
   const r = plan.recurrence;
   if (r.type === 'INTERVAL' && r.subtype === 'FIXED') {
@@ -42,7 +42,7 @@ export function evaluateIntervalFixed(plan: TaskPlan, today: Temporal.PlainDate)
 export function evaluateIntervalAfterDone(
   plan: TaskPlan,
   today: Temporal.PlainDate,
-  existingTasks: TaskDoc[]
+  existingTasks: TaskDoc[],
 ): TaskDoc | null {
   const r = plan.recurrence;
   if (r.type !== 'INTERVAL' || r.subtype !== 'AFTER_DONE') return null;
@@ -63,7 +63,7 @@ export function evaluateIntervalAfterDone(
 export function evaluateFixedDays(
   plan: TaskPlan,
   today: Temporal.PlainDate,
-  existingTasks: TaskDoc[]
+  existingTasks: TaskDoc[],
 ): TaskDoc[] {
   const r = plan.recurrence;
   if (r.type !== 'FIXED_DAYS') return [];
@@ -102,7 +102,7 @@ export function evaluateFixedDays(
 export function runScheduler(
   cares: CareDoc[],
   today: Temporal.PlainDate,
-  getTasksForPlan: (planId: string) => TaskDoc[]
+  getTasksForPlan: (planId: string) => TaskDoc[],
 ): { tasks: TaskDoc[]; updatedPlans: Map<string, TaskPlan> } {
   const generatedTasks: TaskDoc[] = [];
   const updatedPlans = new Map<string, TaskPlan>();
@@ -128,7 +128,7 @@ function addDuration(date: Temporal.PlainDate, duration: DurationLike): Temporal
     years: duration.years ?? 0,
     months: duration.months ?? 0,
     weeks: duration.weeks ?? 0,
-    days: duration.days ?? 0
+    days: duration.days ?? 0,
   });
   return date.add(d);
 }
@@ -143,7 +143,7 @@ function makeTask(plan: TaskPlan, doAt: string): TaskDoc {
     careId: undefined,
     taskPlanId: plan._id,
     createdAt: Temporal.Now.instant().toString(),
-    updatedAt: Temporal.Now.instant().toString()
+    updatedAt: Temporal.Now.instant().toString(),
   };
 }
 
@@ -172,7 +172,7 @@ function nextMonthday(from: Temporal.PlainDate, dayOfMonth: number): Temporal.Pl
   let candidate = Temporal.PlainDate.from({
     year: from.year,
     month: from.month,
-    day: clamp(from.year, from.month, dayOfMonth)
+    day: clamp(from.year, from.month, dayOfMonth),
   });
 
   if (Temporal.PlainDate.compare(candidate, from) >= 0) return candidate;
@@ -186,7 +186,7 @@ function nextMonthday(from: Temporal.PlainDate, dayOfMonth: number): Temporal.Pl
   return Temporal.PlainDate.from({
     year: nextYear,
     month: nextMonth,
-    day: clamp(nextYear, nextMonth, dayOfMonth)
+    day: clamp(nextYear, nextMonth, dayOfMonth),
   });
 }
 
@@ -202,7 +202,7 @@ function nextYearday(from: Temporal.PlainDate, month: number, day: number): Temp
   const thisYear = Temporal.PlainDate.from({
     year: from.year,
     month,
-    day: clampDay(from.year)
+    day: clampDay(from.year),
   });
 
   if (Temporal.PlainDate.compare(thisYear, from) >= 0) return thisYear;
@@ -210,6 +210,6 @@ function nextYearday(from: Temporal.PlainDate, month: number, day: number): Temp
   return Temporal.PlainDate.from({
     year: from.year + 1,
     month,
-    day: clampDay(from.year + 1)
+    day: clampDay(from.year + 1),
   });
 }

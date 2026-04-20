@@ -6,16 +6,16 @@ import {
   type GoogleTasksExport,
   type GoogleRecurrence,
   type GoogleTaskList,
-  type GoogleTask
+  type GoogleTask,
 } from '../google-tasks';
 
 function makeRecurrence(
-  overrides: Partial<GoogleRecurrence> & { schedule: GoogleRecurrence['schedule'] }
+  overrides: Partial<GoogleRecurrence> & { schedule: GoogleRecurrence['schedule'] },
 ): GoogleRecurrence {
   return {
     id: 'rec_1',
     title: 'Test recurrence',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -24,7 +24,7 @@ function makeTask(overrides: Partial<GoogleTask>): GoogleTask {
     id: 'task_1',
     title: 'Test task',
     status: 'needsAction',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -33,7 +33,7 @@ function makeList(overrides: Partial<GoogleTaskList>): GoogleTaskList {
     id: 'list_1',
     title: 'Test list',
     items: [],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -62,15 +62,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-01T00:00:00Z',
         interval: { daily: {}, interval_multiplier: 3 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 3 },
-      startDate: '2026-01-01'
+      startDate: '2026-01-01',
     });
   });
 
@@ -79,15 +79,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-16T00:00:00Z',
         interval: { daily: {}, interval_multiplier: 7 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: 7 },
-      startDate: '2026-01-16'
+      startDate: '2026-01-16',
     });
   });
 
@@ -96,15 +96,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-03-04T00:00:00Z',
         interval: { monthly: { day_of_month: 4 }, interval_multiplier: 1 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'FIXED_DAYS',
       subtype: 'MONTHDAYS',
       daysOfMonth: [4],
-      startDate: '2026-03-04'
+      startDate: '2026-03-04',
     });
   });
 
@@ -113,15 +113,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-04T00:00:00Z',
         interval: { monthly: { day_of_month: 4 }, interval_multiplier: 3 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { months: 3 },
-      startDate: '2026-01-04'
+      startDate: '2026-01-04',
     });
   });
 
@@ -131,17 +131,17 @@ describe('translateSchedule', () => {
         first_instance_date: '2025-01-01T00:00:00Z',
         interval: {
           yearly: { date_of_year: { month: 1, day: 1 } },
-          interval_multiplier: 1
+          interval_multiplier: 1,
         },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'FIXED_DAYS',
       subtype: 'YEARDAYS',
       dates: [{ month: 1, day: 1 }],
-      startDate: '2025-01-01'
+      startDate: '2025-01-01',
     });
   });
 
@@ -151,17 +151,17 @@ describe('translateSchedule', () => {
         first_instance_date: '2025-01-01T00:00:00Z',
         interval: {
           yearly: { date_of_year: { month: 7, day: 1 } },
-          interval_multiplier: 2
+          interval_multiplier: 2,
         },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { years: 2 },
-      startDate: '2025-01-01'
+      startDate: '2025-01-01',
     });
   });
 
@@ -170,15 +170,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-05T00:00:00Z',
         interval: { weekly: { days_of_week: [1, 3, 5] }, interval_multiplier: 1 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'FIXED_DAYS',
       subtype: 'WEEKDAYS',
       daysOfWeek: [1, 3, 5],
-      startDate: '2026-01-05'
+      startDate: '2026-01-05',
     });
   });
 
@@ -187,15 +187,15 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-05T00:00:00Z',
         interval: { weekly: {}, interval_multiplier: 2 },
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     const result = translateSchedule(rec)!;
     expect(result).toEqual({
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { weeks: 2 },
-      startDate: '2026-01-05'
+      startDate: '2026-01-05',
     });
   });
 
@@ -204,8 +204,8 @@ describe('translateSchedule', () => {
       schedule: {
         first_instance_date: '2026-01-01T00:00:00Z',
         interval: { interval_multiplier: 1 } as any,
-        time_zone: 'America/Campo_Grande'
-      }
+        time_zone: 'America/Campo_Grande',
+      },
     });
     expect(translateSchedule(rec)).toBeNull();
   });
@@ -222,10 +222,10 @@ describe('parseGoogleTasksExport', () => {
           title: 'My list',
           items: [
             makeTask({ title: 'Task A' }),
-            makeTask({ title: 'Task B', status: 'completed', completed: '2026-01-01T00:00:00Z' })
-          ]
-        })
-      ]
+            makeTask({ title: 'Task B', status: 'completed', completed: '2026-01-01T00:00:00Z' }),
+          ],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(0);
@@ -246,13 +246,13 @@ describe('parseGoogleTasksExport', () => {
               schedule: {
                 first_instance_date: '2026-01-16T00:00:00Z',
                 interval: { daily: {}, interval_multiplier: 7 },
-                time_zone: 'America/Campo_Grande'
-              }
-            })
+                time_zone: 'America/Campo_Grande',
+              },
+            }),
           ],
-          items: [makeTask({ title: 'Open task' })]
-        })
-      ]
+          items: [makeTask({ title: 'Open task' })],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(1);
@@ -270,10 +270,10 @@ describe('parseGoogleTasksExport', () => {
         makeList({
           items: [
             makeTask({ status: 'completed', completed: '2026-01-01T00:00:00Z' }),
-            makeTask({ status: 'needsAction' })
-          ]
-        })
-      ]
+            makeTask({ status: 'needsAction' }),
+          ],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.tasks).toHaveLength(1);
@@ -284,9 +284,12 @@ describe('parseGoogleTasksExport', () => {
       kind: 'tasks#taskLists',
       items: [
         makeList({
-          items: [makeTask({ task_recurrence_id: 'rec_1' }), makeTask({ title: 'Standalone task' })]
-        })
-      ]
+          items: [
+            makeTask({ task_recurrence_id: 'rec_1' }),
+            makeTask({ title: 'Standalone task' }),
+          ],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.tasks).toHaveLength(1);
@@ -306,13 +309,13 @@ describe('parseGoogleTasksExport', () => {
                 first_instance_date: '2025-01-01T00:00:00Z',
                 interval: { daily: {}, interval_multiplier: 1 },
                 end_condition: { date_boundary: '2026-01-24T00:00:00Z' },
-                time_zone: 'America/Campo_Grande'
-              }
-            })
+                time_zone: 'America/Campo_Grande',
+              },
+            }),
           ],
-          items: [makeTask({ title: 'Remaining task' })]
-        })
-      ]
+          items: [makeTask({ title: 'Remaining task' })],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(0);
@@ -332,13 +335,13 @@ describe('parseGoogleTasksExport', () => {
                 first_instance_date: '2026-01-01T00:00:00Z',
                 interval: { monthly: { day_of_month: 5 }, interval_multiplier: 1 },
                 end_condition: { date_boundary: '2027-01-01T00:00:00Z' },
-                time_zone: 'America/Campo_Grande'
-              }
-            })
+                time_zone: 'America/Campo_Grande',
+              },
+            }),
           ],
-          items: []
-        })
-      ]
+          items: [],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(1);
@@ -353,11 +356,11 @@ describe('parseGoogleTasksExport', () => {
           items: [
             makeTask({
               title: 'Scheduled',
-              scheduled_time: [{ current: true, start: '2026-03-12T04:00:00Z' }]
-            })
-          ]
-        })
-      ]
+              scheduled_time: [{ current: true, start: '2026-03-12T04:00:00Z' }],
+            }),
+          ],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.tasks[0].doAt).toBe('2026-03-12');
@@ -368,9 +371,9 @@ describe('parseGoogleTasksExport', () => {
       kind: 'tasks#taskLists',
       items: [
         makeList({
-          items: [makeTask({ title: 'Unscheduled' })]
-        })
-      ]
+          items: [makeTask({ title: 'Unscheduled' })],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.tasks[0].doAt).toBe(today);
@@ -379,7 +382,7 @@ describe('parseGoogleTasksExport', () => {
   it('handles empty lists', () => {
     const json: GoogleTasksExport = {
       kind: 'tasks#taskLists',
-      items: [makeList({ items: [] })]
+      items: [makeList({ items: [] })],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(0);
@@ -398,17 +401,17 @@ describe('parseGoogleTasksExport', () => {
               schedule: {
                 first_instance_date: '2026-01-01T00:00:00Z',
                 interval: { daily: {}, interval_multiplier: 1 },
-                time_zone: 'UTC'
-              }
-            })
+                time_zone: 'UTC',
+              },
+            }),
           ],
-          items: [makeTask({ title: 'Task A1' })]
+          items: [makeTask({ title: 'Task A1' })],
         }),
         makeList({
           title: 'List B',
-          items: [makeTask({ title: 'Task B1' }), makeTask({ title: 'Task B2' })]
-        })
-      ]
+          items: [makeTask({ title: 'Task B1' }), makeTask({ title: 'Task B2' })],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(1);
@@ -430,8 +433,8 @@ describe('parseGoogleTasksExport', () => {
               schedule: {
                 first_instance_date: '2026-01-05T00:00:00Z',
                 interval: { monthly: { day_of_month: 5 }, interval_multiplier: 1 },
-                time_zone: 'America/Campo_Grande'
-              }
+                time_zone: 'America/Campo_Grande',
+              },
             }),
             makeRecurrence({
               id: 'r2',
@@ -439,13 +442,13 @@ describe('parseGoogleTasksExport', () => {
               schedule: {
                 first_instance_date: '2026-01-05T00:00:00Z',
                 interval: { monthly: { day_of_month: 5 }, interval_multiplier: 1 },
-                time_zone: 'America/Campo_Grande'
-              }
-            })
+                time_zone: 'America/Campo_Grande',
+              },
+            }),
           ],
-          items: [makeTask({ title: 'Non-recurrent task' })]
-        })
-      ]
+          items: [makeTask({ title: 'Non-recurrent task' })],
+        }),
+      ],
     };
     const result = parseGoogleTasksExport(json, today);
     expect(result.cares).toHaveLength(1);

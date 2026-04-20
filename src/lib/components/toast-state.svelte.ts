@@ -48,6 +48,6 @@ export function getToastState() {
       return toasts;
     },
     notify,
-    dismiss
+    dismiss,
   };
 }

@@ -32,7 +32,7 @@ export async function importGoogleTasksFromFile(file: File): Promise<GoogleTasks
   for (const task of parsed.tasks) {
     await createTask({
       title: task.title,
-      doAt: task.doAt
+      doAt: task.doAt,
     });
   }
 

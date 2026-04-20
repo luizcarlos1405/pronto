@@ -23,14 +23,14 @@
     NOT_STARTED: 'badge-neutral',
     IN_PROGRESS: 'badge-info',
     REVIEW: 'badge-warning',
-    COMPLETED: 'badge-success'
+    COMPLETED: 'badge-success',
   };
 
   const statusLabel: Record<string, string> = {
     NOT_STARTED: 'Not started',
     IN_PROGRESS: 'In progress',
     REVIEW: 'Review',
-    COMPLETED: 'Done'
+    COMPLETED: 'Done',
   };
 </script>
 
@@ -75,7 +75,7 @@
         },
         onMove: ({ fromIndex, toIndex }) => {
           ctrl.reorder(fromIndex, toIndex);
-        }
+        },
       })}
     >
       {#each ctrl.goals as goal (goal._id)}

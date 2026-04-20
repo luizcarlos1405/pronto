@@ -14,6 +14,6 @@ export function formatFriendlyDate(isoDate: string): string {
   return date.toLocaleString(undefined, {
     month: 'short',
     day: 'numeric',
-    ...(sameYear ? {} : { year: 'numeric' })
+    ...(sameYear ? {} : { year: 'numeric' }),
   });
 }

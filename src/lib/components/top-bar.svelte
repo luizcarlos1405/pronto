@@ -24,7 +24,7 @@
     'dim',
     'nord',
     'sunset',
-    'abyss'
+    'abyss',
   ]);
 
   const themes = [
@@ -62,7 +62,7 @@
     'sunset',
     'caramellatte',
     'abyss',
-    'silk'
+    'silk',
   ].sort();
 
   onMount(() => {

@@ -4,7 +4,7 @@ const pages = [
   { path: '/tasks', name: 'Tasks' },
   { path: '/inbox', name: 'Inbox' },
   { path: '/goals', name: 'Goals' },
-  { path: '/cares', name: 'Cares' }
+  { path: '/cares', name: 'Cares' },
 ];
 
 for (const { path, name } of pages) {

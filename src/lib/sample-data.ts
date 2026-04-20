@@ -49,7 +49,7 @@ export async function addSampleData() {
   const g1t1 = await createTask({
     title: 'Research training plans',
     doAt: daysAgo(14),
-    goalId: goal1._id
+    goalId: goal1._id,
   });
   await completeAndBackdate(g1t1._id, 12);
   summary.tasks++;
@@ -57,7 +57,7 @@ export async function addSampleData() {
   const g1t2 = await createTask({
     title: 'Buy running shoes',
     doAt: daysAgo(10),
-    goalId: goal1._id
+    goalId: goal1._id,
   });
   await completeAndBackdate(g1t2._id, 8);
   summary.tasks++;
@@ -79,7 +79,7 @@ export async function addSampleData() {
   const g2t2 = await createTask({
     title: 'Buy cable organizers',
     doAt: daysAgo(5),
-    goalId: goal2._id
+    goalId: goal2._id,
   });
   await completeAndBackdate(g2t2._id, 4);
   summary.tasks++;
@@ -87,7 +87,7 @@ export async function addSampleData() {
   const g2t3 = await createTask({
     title: 'Set up monitor arm',
     doAt: daysAgo(3),
-    goalId: goal2._id
+    goalId: goal2._id,
   });
   await completeAndBackdate(g2t3._id, 2);
   summary.tasks++;
@@ -102,7 +102,7 @@ export async function addSampleData() {
   const g3t1 = await createTask({
     title: 'Download Duolingo',
     doAt: daysAgo(20),
-    goalId: goal3._id
+    goalId: goal3._id,
   });
   await completeAndBackdate(g3t1._id, 18);
   summary.tasks++;
@@ -116,7 +116,7 @@ export async function addSampleData() {
   await createTask({
     title: 'Watch Spanish movie with subtitles',
     doAt: daysFromNow(5),
-    goalId: goal3._id
+    goalId: goal3._id,
   });
   summary.tasks++;
 
@@ -142,7 +142,7 @@ export async function addSampleData() {
   summary.tasks++;
   const standaloneDone2 = await createTask({
     title: 'Drop off package at post office',
-    doAt: todayStr()
+    doAt: todayStr(),
   });
   await completeTask(standaloneDone2._id);
   summary.tasks++;
@@ -155,10 +155,10 @@ export async function addSampleData() {
         type: 'INTERVAL',
         subtype: 'FIXED',
         interval: { days: 3 },
-        startDate: daysAgo(14)
+        startDate: daysAgo(14),
       },
-      lastDoAtDate: daysAgo(3)
-    }
+      lastDoAtDate: daysAgo(3),
+    },
   ]);
   summary.cares++;
 
@@ -170,8 +170,8 @@ export async function addSampleData() {
         type: 'INTERVAL',
         subtype: 'AFTER_DONE',
         interval: { days: 1 },
-        startDate: daysAgo(30)
-      }
+        startDate: daysAgo(30),
+      },
     },
     {
       title: 'Clean litter box',
@@ -179,9 +179,9 @@ export async function addSampleData() {
         type: 'FIXED_DAYS',
         subtype: 'WEEKDAYS',
         daysOfWeek: [3, 6],
-        startDate: daysAgo(30)
-      }
-    }
+        startDate: daysAgo(30),
+      },
+    },
   ]);
   summary.cares++;
 
@@ -193,9 +193,9 @@ export async function addSampleData() {
         type: 'INTERVAL',
         subtype: 'FIXED',
         interval: { weeks: 2 },
-        startDate: daysAgo(60)
+        startDate: daysAgo(60),
       },
-      lastDoAtDate: daysAgo(12)
+      lastDoAtDate: daysAgo(12),
     },
     {
       title: 'Oil change',
@@ -203,10 +203,10 @@ export async function addSampleData() {
         type: 'INTERVAL',
         subtype: 'AFTER_DONE',
         interval: { months: 6 },
-        startDate: daysAgo(240)
+        startDate: daysAgo(240),
       },
-      lastDoneDate: daysAgo(150)
-    }
+      lastDoneDate: daysAgo(150),
+    },
   ]);
   summary.cares++;
 
@@ -216,7 +216,7 @@ export async function addSampleData() {
     title: 'Water plants',
     doAt: daysAgo(3),
     careId: care1._id,
-    taskPlanId: care1PlanId
+    taskPlanId: care1PlanId,
   });
   await completeAndBackdate(careTaskDone._id, 2);
   summary.tasks++;
@@ -227,7 +227,7 @@ export async function addSampleData() {
     title: 'Feed the cat',
     doAt: daysAgo(1),
     careId: care2._id,
-    taskPlanId: care2PlanId
+    taskPlanId: care2PlanId,
   });
   await completeAndBackdate(feedDone._id, 0);
   summary.tasks++;
@@ -238,7 +238,7 @@ export async function addSampleData() {
     title: 'Check tire pressure',
     doAt: daysAgo(12),
     careId: care3._id,
-    taskPlanId: care3PlanId
+    taskPlanId: care3PlanId,
   });
   await completeAndBackdate(tireDone._id, 11);
   summary.tasks++;

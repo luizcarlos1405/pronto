@@ -76,14 +76,14 @@ export function translateSchedule(recurrence: GoogleRecurrence): Recurrence | nu
         type: 'FIXED_DAYS',
         subtype: 'YEARDAYS',
         dates: [{ month, day }],
-        startDate
+        startDate,
       };
     }
     return {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { years: multiplier },
-      startDate
+      startDate,
     };
   }
 
@@ -93,14 +93,14 @@ export function translateSchedule(recurrence: GoogleRecurrence): Recurrence | nu
         type: 'FIXED_DAYS',
         subtype: 'MONTHDAYS',
         daysOfMonth: [interval.monthly.day_of_month],
-        startDate
+        startDate,
       };
     }
     return {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { months: multiplier },
-      startDate
+      startDate,
     };
   }
 
@@ -110,14 +110,14 @@ export function translateSchedule(recurrence: GoogleRecurrence): Recurrence | nu
         type: 'FIXED_DAYS',
         subtype: 'WEEKDAYS',
         daysOfWeek: interval.weekly.days_of_week,
-        startDate
+        startDate,
       };
     }
     return {
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { weeks: multiplier },
-      startDate
+      startDate,
     };
   }
 
@@ -126,7 +126,7 @@ export function translateSchedule(recurrence: GoogleRecurrence): Recurrence | nu
       type: 'INTERVAL',
       subtype: 'FIXED',
       interval: { days: multiplier },
-      startDate
+      startDate,
     };
   }
 
@@ -157,13 +157,13 @@ export interface ParsedImportResult {
 
 export function parseGoogleTasksExport(
   json: GoogleTasksExport,
-  todayIso: string
+  todayIso: string,
 ): ParsedImportResult {
   const result: ParsedImportResult = { cares: [], tasks: [] };
 
   for (const list of json.items) {
     const activeRecurrences = (list.recurrences ?? []).filter(
-      (r) => !isRecurrenceEnded(r.schedule, todayIso) && translateSchedule(r) !== null
+      (r) => !isRecurrenceEnded(r.schedule, todayIso) && translateSchedule(r) !== null,
     );
 
     const openTasks = list.items.filter(isOpenTask);
@@ -175,26 +175,26 @@ export function parseGoogleTasksExport(
         const recurrence = translateSchedule(rec)!;
         taskPlans.push({
           title: rec.title,
-          recurrence
+          recurrence,
         });
       }
 
       result.cares.push({
         title: list.title,
-        taskPlans
+        taskPlans,
       });
 
       for (const task of openTasks) {
         result.tasks.push({
           title: task.title,
-          doAt: getDoAt(task, todayIso)
+          doAt: getDoAt(task, todayIso),
         });
       }
     } else {
       for (const task of openTasks) {
         result.tasks.push({
           title: task.title,
-          doAt: getDoAt(task, todayIso)
+          doAt: getDoAt(task, todayIso),
         });
       }
     }
