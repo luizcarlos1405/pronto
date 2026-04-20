@@ -66,11 +66,11 @@
   let newPlanTitle: string = $state('');
   let planStep: number = $state(0);
   let planType: 'INTERVAL_FIXED' | 'INTERVAL_AFTER_DONE' | 'FIXED_DAYS' = $state('INTERVAL_FIXED');
-  let planInterval: { years: number; months: number; weeks: number; days: number } = $state({
-    years: 0,
-    months: 0,
-    weeks: 0,
-    days: 0,
+  let planInterval: { years: string; months: string; weeks: string; days: string } = $state({
+    years: '',
+    months: '',
+    weeks: '',
+    days: '',
   });
   let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
   let planDaysOfWeek: number[] = $state([]);
@@ -82,7 +82,7 @@
     newPlanTitle = '';
     planStep = 0;
     planType = 'INTERVAL_FIXED';
-    planInterval = { years: 0, months: 0, weeks: 0, days: 0 };
+    planInterval = { years: '', months: '', weeks: '', days: '' };
     planDaysSubtype = 'WEEKDAYS';
     planDaysOfWeek = [];
     planDaysOfMonth = [];
@@ -90,12 +90,21 @@
     planStartDate = Temporal.Now.plainDateISO().toString();
   }
 
+  function toDurationLike() {
+    return {
+      years: Number(planInterval.years) || undefined,
+      months: Number(planInterval.months) || undefined,
+      weeks: Number(planInterval.weeks) || undefined,
+      days: Number(planInterval.days) || undefined,
+    };
+  }
+
   function buildRecurrence(): Recurrence {
     if (planType === 'INTERVAL_FIXED') {
       return {
         type: 'INTERVAL',
         subtype: 'FIXED',
-        interval: planInterval,
+        interval: toDurationLike(),
         startDate: planStartDate,
       };
     }
@@ -103,7 +112,7 @@
       return {
         type: 'INTERVAL',
         subtype: 'AFTER_DONE',
-        interval: planInterval,
+        interval: toDurationLike(),
         startDate: planStartDate,
       };
     }
@@ -135,7 +144,10 @@
     if (!newPlanTitle.trim()) return false;
     if (planType.startsWith('INTERVAL')) {
       const { years, months, weeks, days } = planInterval;
-      return (years ?? 0) + (months ?? 0) + (weeks ?? 0) + (days ?? 0) > 0;
+      return (
+        (Number(years) || 0) + (Number(months) || 0) + (Number(weeks) || 0) + (Number(days) || 0) >
+        0
+      );
     }
     if (planDaysSubtype === 'WEEKDAYS') return planDaysOfWeek.length > 0;
     if (planDaysSubtype === 'MONTHDAYS') return planDaysOfMonth.length > 0;
