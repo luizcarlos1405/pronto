@@ -51,7 +51,7 @@
 </script>
 
 <dialog class="modal modal-bottom" class:modal-open={open}>
-  <div class="modal-box max-w-lg">
+  <div class="modal-box">
     <h3 class="font-bold text-lg mb-4">Edit task</h3>
 
     <div class="flex flex-col gap-3">

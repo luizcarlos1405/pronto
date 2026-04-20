@@ -14,7 +14,7 @@ body {
 }
 
 .modal-box {
-  @apply mx-auto;
+  @apply mx-auto max-w-md;
 }
 
 .input,

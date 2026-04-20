@@ -74,7 +74,7 @@
 
 <dialog class="modal modal-bottom" class:modal-open={open}>
   {#if ctrl}
-    <div class="modal-box max-w-lg">
+    <div class="modal-box">
       <h3 class="font-bold text-lg mb-1">Process inbox item</h3>
       <p class="text-base-content/60 mb-4">{inboxItem!.title}</p>
 
