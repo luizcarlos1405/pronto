@@ -65,6 +65,7 @@ tests, read it for setup details and conventions.
 
 - Spaces, single quotes, no trailing commas, 100 char width (`.prettierrc`)
 - No comments unless explicitly asked
+- Primary actions to the right: `cancel | save` never `save | cancel`.
 - Icons: `lucide-svelte`
 - UI: DaisyUI components (dock nav, etc.)
 - **Modals** — Always render `<dialog class="modal">` in the DOM; toggle visibility with `class:modal-open={open}`. Never wrap a `<dialog>` in `{#if}` — destroying the element skips DaisyUI's CSS transition animations. Pass an `open` boolean prop instead.
