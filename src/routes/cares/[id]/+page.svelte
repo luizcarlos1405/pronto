@@ -17,17 +17,11 @@
   import { Temporal } from '@js-temporal/polyfill';
   import { orderableChildren } from '$lib/attachments/orderableChildren';
   import WheelSelect from '$lib/components/wheel-select.svelte';
+  import IntervalPicker from '$lib/components/interval-picker.svelte';
   import { flip } from 'svelte/animate';
 
   const careId = page.params.id!;
   const ctrl = getCareDetailState(careId);
-  const intervalFields = [
-    { key: 'days' as const, label: 'Days' },
-    { key: 'weeks' as const, label: 'Weeks' },
-    { key: 'months' as const, label: 'Months' },
-    { key: 'years' as const, label: 'Years' },
-  ];
-
   let isDragging = $state(false);
   let editingTitle = $state(false);
   let draftTitle = $state('');
@@ -67,16 +61,17 @@
   let newPlanTitle: string = $state('');
   let planStep: number = $state(0);
   let planType: 'INTERVAL_FIXED' | 'INTERVAL_AFTER_DONE' | 'FIXED_DAYS' = $state('INTERVAL_FIXED');
-  let planInterval: { years: string; months: string; weeks: string; days: string } = $state({
-    years: '',
-    months: '',
-    weeks: '',
-    days: '',
+  let planInterval: { years: number; months: number; weeks: number; days: number } = $state({
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
   });
   let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
   let planDaysOfWeek: number[] = $state([]);
   let planDaysOfMonth: number[] = $state([]);
   let planYearDates: { month: number; day: number }[] = $state([]);
+  let intervalPickerOpen = $state(false);
   let wheelOpen = $state(false);
   let editIdx = $state(-1);
   let wheelMonth: string | number = $state(1);
@@ -140,21 +135,22 @@
     newPlanTitle = '';
     planStep = 0;
     planType = 'INTERVAL_FIXED';
-    planInterval = { years: '', months: '', weeks: '', days: '' };
+    planInterval = { years: 0, months: 0, weeks: 0, days: 0 };
     planDaysSubtype = 'WEEKDAYS';
     planDaysOfWeek = [];
     planDaysOfMonth = [];
     planYearDates = [];
     planStartDate = Temporal.Now.plainDateISO().toString();
+    intervalPickerOpen = false;
     wheelOpen = false;
   }
 
   function toDurationLike() {
     return {
-      years: Number(planInterval.years) || undefined,
-      months: Number(planInterval.months) || undefined,
-      weeks: Number(planInterval.weeks) || undefined,
-      days: Number(planInterval.days) || undefined,
+      years: planInterval.years || undefined,
+      months: planInterval.months || undefined,
+      weeks: planInterval.weeks || undefined,
+      days: planInterval.days || undefined,
     };
   }
 
@@ -203,10 +199,7 @@
     if (!newPlanTitle.trim()) return false;
     if (planType.startsWith('INTERVAL')) {
       const { years, months, weeks, days } = planInterval;
-      return (
-        (Number(years) || 0) + (Number(months) || 0) + (Number(weeks) || 0) + (Number(days) || 0) >
-        0
-      );
+      return years + months + weeks + days > 0;
     }
     if (planDaysSubtype === 'WEEKDAYS') return planDaysOfWeek.length > 0;
     if (planDaysSubtype === 'MONTHDAYS') return planDaysOfMonth.length > 0;
@@ -347,6 +340,7 @@
               bind:value={planType}
               onchange={() => {
                 planStep = Math.max(planStep, 2);
+                if (planType.startsWith('INTERVAL')) intervalPickerOpen = true;
               }}
             >
               <option value="INTERVAL_FIXED">Fixed interval (e.g. every 2 weeks)</option>
@@ -360,19 +354,7 @@
               <label class="label" for="plan-interval">
                 <span class="label-text">Interval</span>
               </label>
-              <div class="grid grid-cols-2 gap-2 flex-wrap">
-                {#each intervalFields as field (field.key)}
-                  <label class="input input-sm flex items-center gap-1">
-                    <span class="text-xs">{field.label}</span>
-                    <input
-                      type="number"
-                      min="0"
-                      class="w-full"
-                      bind:value={planInterval[field.key]}
-                    />
-                  </label>
-                {/each}
-              </div>
+              <IntervalPicker bind:interval={planInterval} bind:open={intervalPickerOpen} />
             {:else}
               <label class="label" for="plan-day-type">
                 <span class="label-text">Day type</span>
@@ -464,7 +446,13 @@
               <button class="btn btn-ghost btn-sm" onclick={() => planStep--}>Back</button>
             {/if}
             {#if planStep < 4}
-              <button class="btn btn-sm" onclick={() => planStep++}>Next</button>
+              <button
+                class="btn btn-sm"
+                onclick={() => {
+                  planStep++;
+                  if (planStep === 2 && planType.startsWith('INTERVAL')) intervalPickerOpen = true;
+                }}>Next</button
+              >
             {/if}
             {#if planStep === 4}
               <button class="btn btn-primary btn-sm" disabled={!canCreate()} onclick={handleCreate}>

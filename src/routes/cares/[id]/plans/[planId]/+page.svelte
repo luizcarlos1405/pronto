@@ -11,31 +11,27 @@
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
   import WheelSelect from '$lib/components/wheel-select.svelte';
+  import IntervalPicker from '$lib/components/interval-picker.svelte';
   import Plus from 'lucide-svelte/icons/plus';
 
   const careId = page.params.id!;
   const planId = page.params.planId!;
   const ctrl = getTaskPlanEditState(careId, planId);
-  const intervalFields = [
-    { key: 'days' as const, label: 'Days' },
-    { key: 'weeks' as const, label: 'Weeks' },
-    { key: 'months' as const, label: 'Months' },
-    { key: 'years' as const, label: 'Years' },
-  ];
 
   let title: string = $state('');
   let selectedCareId: string = $state(careId);
   let planType: 'INTERVAL_FIXED' | 'INTERVAL_AFTER_DONE' | 'FIXED_DAYS' = $state('INTERVAL_FIXED');
-  let planInterval: { years: string; months: string; weeks: string; days: string } = $state({
-    years: '',
-    months: '',
-    weeks: '',
-    days: '',
+  let planInterval: { years: number; months: number; weeks: number; days: number } = $state({
+    years: 0,
+    months: 0,
+    weeks: 0,
+    days: 0,
   });
   let planDaysSubtype: 'WEEKDAYS' | 'MONTHDAYS' | 'YEARDAYS' = $state('WEEKDAYS');
   let planDaysOfWeek: number[] = $state([]);
   let planDaysOfMonth: number[] = $state([]);
   let planYearDates: { month: number; day: number }[] = $state([]);
+  let intervalPickerOpen = $state(false);
   let wheelOpen = $state(false);
   let editIdx = $state(-1);
   let wheelMonth: string | number = $state(1);
@@ -56,18 +52,18 @@
       if (plan.recurrence.type === 'INTERVAL' && plan.recurrence.subtype === 'FIXED') {
         planType = 'INTERVAL_FIXED';
         planInterval = {
-          years: plan.recurrence.interval.years?.toString() ?? '',
-          months: plan.recurrence.interval.months?.toString() ?? '',
-          weeks: plan.recurrence.interval.weeks?.toString() ?? '',
-          days: plan.recurrence.interval.days?.toString() ?? '',
+          years: plan.recurrence.interval.years ?? 0,
+          months: plan.recurrence.interval.months ?? 0,
+          weeks: plan.recurrence.interval.weeks ?? 0,
+          days: plan.recurrence.interval.days ?? 0,
         };
       } else if (plan.recurrence.type === 'INTERVAL' && plan.recurrence.subtype === 'AFTER_DONE') {
         planType = 'INTERVAL_AFTER_DONE';
         planInterval = {
-          years: plan.recurrence.interval.years?.toString() ?? '',
-          months: plan.recurrence.interval.months?.toString() ?? '',
-          weeks: plan.recurrence.interval.weeks?.toString() ?? '',
-          days: plan.recurrence.interval.days?.toString() ?? '',
+          years: plan.recurrence.interval.years ?? 0,
+          months: plan.recurrence.interval.months ?? 0,
+          weeks: plan.recurrence.interval.weeks ?? 0,
+          days: plan.recurrence.interval.days ?? 0,
         };
       } else if (plan.recurrence.type === 'FIXED_DAYS') {
         planType = 'FIXED_DAYS';
@@ -87,10 +83,10 @@
 
   function toDurationLike() {
     return {
-      years: Number(planInterval.years) || undefined,
-      months: Number(planInterval.months) || undefined,
-      weeks: Number(planInterval.weeks) || undefined,
-      days: Number(planInterval.days) || undefined,
+      years: planInterval.years || undefined,
+      months: planInterval.months || undefined,
+      weeks: planInterval.weeks || undefined,
+      days: planInterval.days || undefined,
     };
   }
 
@@ -139,10 +135,7 @@
     if (!title.trim()) return false;
     if (planType.startsWith('INTERVAL')) {
       const { years, months, weeks, days } = planInterval;
-      return (
-        (Number(years) || 0) + (Number(months) || 0) + (Number(weeks) || 0) + (Number(days) || 0) >
-        0
-      );
+      return years + months + weeks + days > 0;
     }
     if (planDaysSubtype === 'WEEKDAYS') return planDaysOfWeek.length > 0;
     if (planDaysSubtype === 'MONTHDAYS') return planDaysOfMonth.length > 0;
@@ -263,7 +256,14 @@
         <label class="label" for="plan-schedule-type">
           <span class="label-text">Schedule type</span>
         </label>
-        <select id="plan-schedule-type" class="select select-sm" bind:value={planType}>
+        <select
+          id="plan-schedule-type"
+          class="select select-sm"
+          bind:value={planType}
+          onchange={() => {
+            if (planType.startsWith('INTERVAL')) intervalPickerOpen = true;
+          }}
+        >
           <option value="INTERVAL_FIXED">Fixed interval (e.g. every 2 weeks)</option>
           <option value="INTERVAL_AFTER_DONE">After completion (e.g. 3 days after done)</option>
           <option value="FIXED_DAYS">Specific days (e.g. every wednesday)</option>
@@ -271,14 +271,7 @@
 
         {#if planType.startsWith('INTERVAL')}
           <span class="label-text">Interval</span>
-          <div class="grid grid-cols-2 gap-2 flex-wrap">
-            {#each intervalFields as field (field.key)}
-              <label class="input input-sm flex items-center gap-1">
-                <span class="text-xs">{field.label}</span>
-                <input type="number" min="0" class="" bind:value={planInterval[field.key]} />
-              </label>
-            {/each}
-          </div>
+          <IntervalPicker bind:interval={planInterval} bind:open={intervalPickerOpen} />
         {:else}
           <label class="label" for="plan-day-type">
             <span class="label-text">Day type</span>
