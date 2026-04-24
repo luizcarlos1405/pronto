@@ -207,7 +207,7 @@
         <select id="plan-schedule-type" class="select select-sm" bind:value={planType}>
           <option value="INTERVAL_FIXED">Fixed interval (e.g. every 2 weeks)</option>
           <option value="INTERVAL_AFTER_DONE">After completion (e.g. 3 days after done)</option>
-          <option value="FIXED_DAYS">Specific days</option>
+          <option value="FIXED_DAYS">Specific days (e.g. every wednesday)</option>
         </select>
 
         {#if planType.startsWith('INTERVAL')}
@@ -227,7 +227,7 @@
           <select id="plan-day-type" class="select select-sm" bind:value={planDaysSubtype}>
             <option value="WEEKDAYS">Days of the week</option>
             <option value="MONTHDAYS">Days of the month</option>
-            <option value="YEARDAYS">Specific dates</option>
+            <option value="YEARDAYS">Dates of the year</option>
           </select>
 
           {#if planDaysSubtype === 'WEEKDAYS'}
