@@ -10,6 +10,8 @@
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
+  import WheelSelect from '$lib/components/wheel-select.svelte';
+  import Plus from 'lucide-svelte/icons/plus';
 
   const careId = page.params.id!;
   const planId = page.params.planId!;
@@ -34,6 +36,10 @@
   let planDaysOfWeek: number[] = $state([]);
   let planDaysOfMonth: number[] = $state([]);
   let planYearDates: { month: number; day: number }[] = $state([]);
+  let wheelOpen = $state(false);
+  let editIdx = $state(-1);
+  let wheelMonth: string | number = $state(1);
+  let wheelDay: string | number = $state(1);
   let planStartDate: string = $state('');
   let initialized = $state(false);
 
@@ -156,6 +162,59 @@
   }
 
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const monthNames = [
+    '',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const monthItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const dayItems = Array.from({ length: 31 }, (_, i) => i + 1);
+
+  function formatMonth(v: string | number): string {
+    return monthNames[Number(v)];
+  }
+
+  function openWheelNew() {
+    editIdx = -1;
+    wheelMonth = 1;
+    wheelDay = 1;
+    wheelOpen = true;
+  }
+
+  function openWheelEdit(idx: number) {
+    editIdx = idx;
+    wheelMonth = planYearDates[idx].month;
+    wheelDay = planYearDates[idx].day;
+    wheelOpen = true;
+  }
+
+  function confirmWheel() {
+    const date = { month: Number(wheelMonth), day: Number(wheelDay) };
+    if (editIdx >= 0) {
+      planYearDates = planYearDates.map((d, i) => (i === editIdx ? date : d));
+    } else {
+      planYearDates = [...planYearDates, date];
+    }
+    wheelOpen = false;
+  }
+
+  function removeDate() {
+    if (editIdx >= 0) {
+      planYearDates = planYearDates.filter((_, i) => i !== editIdx);
+    }
+    wheelOpen = false;
+  }
 </script>
 
 <div class="p-4">
@@ -224,7 +283,14 @@
           <label class="label" for="plan-day-type">
             <span class="label-text">Day type</span>
           </label>
-          <select id="plan-day-type" class="select select-sm" bind:value={planDaysSubtype}>
+          <select
+            id="plan-day-type"
+            class="select select-sm"
+            bind:value={planDaysSubtype}
+            onchange={() => {
+              if (planDaysSubtype === 'YEARDAYS') openWheelNew();
+            }}
+          >
             <option value="WEEKDAYS">Days of the week</option>
             <option value="MONTHDAYS">Days of the month</option>
             <option value="YEARDAYS">Dates of the year</option>
@@ -261,21 +327,17 @@
               }}
             />
           {:else}
-            <input
-              type="text"
-              class="input input-sm mt-1"
-              placeholder="Dates: 12-25, 7-4"
-              value={planYearDates.map(({ month, day }) => `${month}-${day}`).join(', ')}
-              oninput={(e) => {
-                planYearDates = (e.target as HTMLInputElement).value
-                  .split(',')
-                  .map((s) => {
-                    const parts = s.trim().split('-');
-                    return { month: parseInt(parts[0]), day: parseInt(parts[1]) };
-                  })
-                  .filter(({ month, day }) => month >= 1 && month <= 12 && day >= 1 && day <= 31);
-              }}
-            />
+            <div class="flex flex-wrap gap-2 items-center mt-1">
+              {#each planYearDates as d, i (i)}
+                <button class="btn btn-sm btn-outline" onclick={() => openWheelEdit(i)}>
+                  {monthNames[d.month]}
+                  {d.day}
+                </button>
+              {/each}
+              <button class="btn btn-sm btn-ghost" onclick={openWheelNew}>
+                <Plus class="size-4" />
+              </button>
+            </div>
           {/if}
         {/if}
 
@@ -299,4 +361,37 @@
       </div>
     {/if}
   {/if}
+
+  <dialog class="modal" class:modal-open={wheelOpen}>
+    <div class="modal-box">
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <WheelSelect
+            items={monthItems}
+            bind:value={wheelMonth}
+            label="Month"
+            cycle={true}
+            format={formatMonth}
+          />
+        </div>
+        <div class="flex-1">
+          <WheelSelect items={dayItems} bind:value={wheelDay} label="Day" cycle={true} />
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4 justify-center">
+        {#if editIdx >= 0}
+          <button class="btn btn-outline btn-error btn-sm" onclick={removeDate}>Remove</button>
+        {/if}
+        <button class="btn btn-ghost btn-sm ml-auto" onclick={() => (wheelOpen = false)}
+          >Cancel</button
+        >
+        <button class="btn btn-primary btn-sm" onclick={confirmWheel}>
+          {editIdx >= 0 ? 'Update' : 'Select'}
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button onclick={() => (wheelOpen = false)}>close</button>
+    </form>
+  </dialog>
 </div>
