@@ -63,7 +63,7 @@
         </div>
       {/each}
     </div>
-    <div class="flex gap-2 mt-4 justify-center">
+    <div class="flex mt-4 justify-end gap-4">
       <button class="btn btn-ghost btn-sm" onclick={cancel}>Cancel</button>
       <button class="btn btn-primary btn-sm" onclick={confirm}>Select</button>
     </div>
