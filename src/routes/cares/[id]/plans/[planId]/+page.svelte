@@ -10,8 +10,8 @@
   import type { Recurrence } from '$lib/types';
   import { goto } from '$app/navigation';
   import { getConfirmState } from '$lib/components/confirm-state.svelte';
-  import WheelSelect from '$lib/components/wheel-select.svelte';
   import IntervalPicker from '$lib/components/interval-picker.svelte';
+  import MonthDayPicker from '$lib/components/month-day-picker.svelte';
   import Plus from 'lucide-svelte/icons/plus';
 
   const careId = page.params.id!;
@@ -171,12 +171,6 @@
     'Nov',
     'Dec',
   ];
-  const monthItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const dayItems = Array.from({ length: 31 }, (_, i) => i + 1);
-
-  function formatMonth(v: string | number): string {
-    return monthNames[Number(v)];
-  }
 
   function openWheelNew() {
     editIdx = -1;
@@ -355,36 +349,12 @@
     {/if}
   {/if}
 
-  <dialog class="modal" class:modal-open={wheelOpen}>
-    <div class="modal-box">
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <WheelSelect
-            items={monthItems}
-            bind:value={wheelMonth}
-            label="Month"
-            cycle={true}
-            format={formatMonth}
-          />
-        </div>
-        <div class="flex-1">
-          <WheelSelect items={dayItems} bind:value={wheelDay} label="Day" cycle={true} />
-        </div>
-      </div>
-      <div class="flex gap-2 mt-4 justify-center">
-        {#if editIdx >= 0}
-          <button class="btn btn-outline btn-error btn-sm" onclick={removeDate}>Remove</button>
-        {/if}
-        <button class="btn btn-ghost btn-sm ml-auto" onclick={() => (wheelOpen = false)}
-          >Cancel</button
-        >
-        <button class="btn btn-primary btn-sm" onclick={confirmWheel}>
-          {editIdx >= 0 ? 'Update' : 'Select'}
-        </button>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button onclick={() => (wheelOpen = false)}>close</button>
-    </form>
-  </dialog>
+  <MonthDayPicker
+    bind:open={wheelOpen}
+    bind:month={wheelMonth}
+    bind:day={wheelDay}
+    editing={editIdx >= 0}
+    onconfirm={confirmWheel}
+    onremove={removeDate}
+  />
 </div>
