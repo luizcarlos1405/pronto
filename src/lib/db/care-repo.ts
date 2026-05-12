@@ -143,3 +143,16 @@ export async function updateTaskPlan(
   };
   return updateCare(doc);
 }
+
+export async function markPlanDone(planId: string, doneDate: string): Promise<void> {
+  const cares = await getAllCares();
+  for (const care of cares) {
+    const idx = care.taskPlans.findIndex((tp) => tp._id === planId);
+    if (idx !== -1) {
+      care.taskPlans[idx].lastDoneDate = doneDate;
+      care.taskPlans[idx].updatedAt = Temporal.Now.instant().toString();
+      await updateCare(care);
+      return;
+    }
+  }
+}

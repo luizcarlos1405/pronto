@@ -10,7 +10,7 @@ import {
   reorderTasks,
 } from '$lib/db/task-repo';
 import { createGoal, getGoal } from '$lib/db/goal-repo';
-import { createCare, getCare } from '$lib/db/care-repo';
+import { createCare, getCare, markPlanDone } from '$lib/db/care-repo';
 import type { TaskDoc } from '$lib/types';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { getTaskRefreshVersion } from '$lib/scheduler-refresh.svelte';
@@ -109,6 +109,9 @@ export function getTasksPageState() {
     if (!task) return;
     if (task.status === 'TODO') {
       await completeTask(id);
+      if (task.taskPlanId) {
+        await markPlanDone(task.taskPlanId, getToday());
+      }
     } else {
       await uncompleteTask(id);
     }
