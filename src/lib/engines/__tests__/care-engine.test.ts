@@ -142,6 +142,35 @@ describe('evaluateIntervalAfterDone', () => {
     expect(result).not.toBeNull();
     expect(result!.doAt).toBe('2026-01-08');
   });
+
+  it('uses lastDoneDate + interval, not startDate, after task completion', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'AFTER_DONE',
+      interval: { days: 4 },
+      startDate: '2026-04-20',
+    });
+    plan.lastDoneDate = '2026-05-12';
+    const today = Temporal.PlainDate.from('2026-05-12');
+    const existing = [makeTask({ taskPlanId: 'tp_test', status: 'DONE' })];
+    const result = evaluateIntervalAfterDone(plan, today, existing);
+    expect(result).not.toBeNull();
+    expect(result!.doAt).toBe('2026-05-16');
+  });
+
+  it('does not reuse startDate when lastDoneDate is set and far ahead', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'AFTER_DONE',
+      interval: { days: 4 },
+      startDate: '2026-04-20',
+    });
+    plan.lastDoneDate = '2026-05-12';
+    const today = Temporal.PlainDate.from('2026-05-20');
+    const result = evaluateIntervalAfterDone(plan, today, []);
+    expect(result).not.toBeNull();
+    expect(result!.doAt).toBe('2026-05-16');
+  });
 });
 
 describe('evaluateFixedDays', () => {
