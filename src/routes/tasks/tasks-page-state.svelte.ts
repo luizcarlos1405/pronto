@@ -9,6 +9,7 @@ import {
   getTask,
   reorderTasks,
   restoreTask,
+  getNextTaskForGoals,
 } from '$lib/db/task-repo';
 import { createGoal, getGoal } from '$lib/db/goal-repo';
 import { createCare, getCare, markPlanDone } from '$lib/db/care-repo';
@@ -25,7 +26,6 @@ import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { reorderItems } from '$lib/utils/reorderItems';
 import { snapshotTask } from '$lib/utils/task-undo';
-import { filterToTopTaskPerGoal } from '$lib/engines/goal-engine';
 
 function getToday(): string {
   return Temporal.Now.plainDateISO().toString();
@@ -49,7 +49,20 @@ export function getTasksPageState() {
   async function load() {
     const today = getToday();
     [allTasks, doneTodayList] = await Promise.all([getVisibleTasks(today), getDoneToday(today)]);
-    displayedTasks = filterToTopTaskPerGoal(allTasks);
+
+    const goalIds = [...new SvelteSet(allTasks.filter((t) => t.goalId).map((t) => t.goalId!))];
+    const topTaskPerGoal =
+      goalIds.length > 0 ? await getNextTaskForGoals(goalIds) : new SvelteMap<string, TaskDoc>();
+
+    const visibleGoalTaskIds = new SvelteSet<string>();
+    for (const topTask of topTaskPerGoal.values()) {
+      if (topTask.doAt <= today) {
+        visibleGoalTaskIds.add(topTask._id);
+      }
+    }
+
+    displayedTasks = allTasks.filter((t) => !t.goalId || visibleGoalTaskIds.has(t._id));
+
     await loadOrigins();
     loading = false;
   }
