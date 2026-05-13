@@ -1,3 +1,12 @@
+export function computeInsertBeforeDone(
+  _items: Array<{ stepOrder?: number | null; status: string }>,
+): {
+  newStepOrder: number;
+  reindexed: Array<{ index: number; stepOrder: number }>;
+} {
+  throw new Error('Not implemented');
+}
+
 export function nextOrder(existingOrders: (number | undefined | null)[]): number {
   const max: number = existingOrders.reduce<number>((m, o) => {
     const val: number = o != null ? o : -1;
