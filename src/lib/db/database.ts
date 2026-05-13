@@ -36,6 +36,7 @@ async function setupIndexes(db: Database): Promise<void> {
   await db.createIndex({ index: { fields: ['type', 'status', 'doAt', 'createdAt'] } });
   await db.createIndex({ index: { fields: ['type', 'goalId', 'doAt'] } });
   await db.createIndex({ index: { fields: ['type', 'goalId', 'stepOrder'] } });
+  await db.createIndex({ index: { fields: ['type', 'status', 'goalId', 'stepOrder'] } });
   await db.createIndex({ index: { fields: ['type', 'careId', 'doAt'] } });
   await db.createIndex({ index: { fields: ['type', 'isProcessed', 'createdAt'] } });
 }

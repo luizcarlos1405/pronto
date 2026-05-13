@@ -142,7 +142,7 @@ export async function getNextTaskForGoals(goalIds: string[]): Promise<Map<string
       status: 'TODO',
       goalId: { $in: goalIds },
     },
-    sort: [{ type: 'asc' }, { goalId: 'asc' }, { stepOrder: 'asc' }],
+    sort: [{ type: 'asc' }, { status: 'asc' }, { goalId: 'asc' }, { stepOrder: 'asc' }],
   });
   const map = new Map<string, TaskDoc>();
   for (const task of result.docs as TaskDoc[]) {
