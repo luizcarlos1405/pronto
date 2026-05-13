@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
-import { nextOrder } from '$lib/engines/ordering';
+import { nextOrder, byListOrder } from '$lib/engines/ordering';
 import type { CareDoc, TaskPlan } from '$lib/types';
 
 export async function createCare(
@@ -58,12 +58,7 @@ export async function getAllCares(): Promise<CareDoc[]> {
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
   });
   const cares = result.docs as CareDoc[];
-  return cares.toSorted((a, b) => {
-    const orderA = a.caresListOrder ?? Infinity;
-    const orderB = b.caresListOrder ?? Infinity;
-    if (orderA !== orderB) return orderA - orderB;
-    return b.createdAt.localeCompare(a.createdAt);
-  });
+  return cares.toSorted(byListOrder((c) => c.caresListOrder));
 }
 
 export async function reorderCares(careIds: string[]): Promise<void> {

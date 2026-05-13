@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
-import { nextOrder } from '$lib/engines/ordering';
+import { nextOrder, byListOrder } from '$lib/engines/ordering';
 import type { GoalDoc } from '$lib/types';
 
 export async function createGoal(title: string, originInboxItemId?: string): Promise<GoalDoc> {
@@ -49,12 +49,7 @@ export async function getAllGoals(): Promise<GoalDoc[]> {
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
   });
   const goals = result.docs as GoalDoc[];
-  return goals.toSorted((a, b) => {
-    const orderA = a.goalsListOrder ?? Infinity;
-    const orderB = b.goalsListOrder ?? Infinity;
-    if (orderA !== orderB) return orderA - orderB;
-    return b.createdAt.localeCompare(a.createdAt);
-  });
+  return goals.toSorted(byListOrder((g) => g.goalsListOrder));
 }
 
 export async function reorderGoals(goalIds: string[]): Promise<void> {

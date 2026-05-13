@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
-import { nextOrder } from '$lib/engines/ordering';
+import { nextOrder, byListOrder } from '$lib/engines/ordering';
 import type { TaskDoc } from '$lib/types';
 
 export async function createTask(data: {
@@ -90,12 +90,7 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
     },
     sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }],
   });
-  return (result.docs as TaskDoc[]).toSorted((a, b) => {
-    const orderA = a.tasksListOrder ?? Infinity;
-    const orderB = b.tasksListOrder ?? Infinity;
-    if (orderA !== orderB) return orderA - orderB;
-    return b.createdAt.localeCompare(a.createdAt);
-  });
+  return (result.docs as TaskDoc[]).toSorted(byListOrder((t) => t.tasksListOrder));
 }
 
 export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
