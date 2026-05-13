@@ -160,11 +160,11 @@ describe('computeInsertBeforeDone', () => {
   it('only returns items whose stepOrder actually changed', () => {
     const result = computeInsertBeforeDone([
       { stepOrder: 0, status: 'TODO' },
-      { stepOrder: 1, status: 'DONE' },
       { stepOrder: 2, status: 'DONE' },
+      { stepOrder: 3, status: 'DONE' },
     ]);
     expect(result.newStepOrder).toBe(1);
-    expect(result.reindexed).toEqual([{ index: 2, stepOrder: 3 }]);
+    expect(result.reindexed).toEqual([]);
   });
 
   it('handles single DONE item', () => {
@@ -185,7 +185,10 @@ describe('computeInsertBeforeDone', () => {
       { stepOrder: 0, status: 'DONE' },
     ]);
     expect(result.newStepOrder).toBe(1);
-    expect(result.reindexed).toEqual([{ index: 1, stepOrder: 2 }]);
+    expect(result.reindexed).toEqual([
+      { index: 0, stepOrder: 0 },
+      { index: 1, stepOrder: 2 },
+    ]);
   });
 
   it('treats null stepOrder as Infinity for sorting', () => {
@@ -194,7 +197,10 @@ describe('computeInsertBeforeDone', () => {
       { stepOrder: 0, status: 'DONE' },
     ]);
     expect(result.newStepOrder).toBe(1);
-    expect(result.reindexed).toEqual([{ index: 1, stepOrder: 2 }]);
+    expect(result.reindexed).toEqual([
+      { index: 0, stepOrder: 0 },
+      { index: 1, stepOrder: 2 },
+    ]);
   });
 
   it('does not mutate the input array', () => {
@@ -213,6 +219,9 @@ describe('computeInsertBeforeDone', () => {
       { stepOrder: 10, status: 'DONE' },
     ]);
     expect(result.newStepOrder).toBe(1);
-    expect(result.reindexed).toEqual([{ index: 1, stepOrder: 2 }]);
+    expect(result.reindexed).toEqual([
+      { index: 0, stepOrder: 0 },
+      { index: 1, stepOrder: 2 },
+    ]);
   });
 });

@@ -1,10 +1,38 @@
 export function computeInsertBeforeDone(
-  _items: Array<{ stepOrder?: number | null; status: string }>,
+  items: Array<{ stepOrder?: number | null; status: string }>,
 ): {
   newStepOrder: number;
   reindexed: Array<{ index: number; stepOrder: number }>;
 } {
-  throw new Error('Not implemented');
+  if (items.length === 0) return { newStepOrder: 0, reindexed: [] };
+
+  const indexed = items.map((item, i) => ({
+    stepOrder: item.stepOrder,
+    status: item.status,
+    _i: i,
+  }));
+  indexed.sort((a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity));
+
+  const todos = indexed.filter((x) => x.status === 'TODO');
+  const dones = indexed.filter((x) => x.status === 'DONE');
+  const newStepOrder = todos.length;
+
+  const reindexed: Array<{ index: number; stepOrder: number }> = [];
+
+  todos.forEach((item, i) => {
+    if ((item.stepOrder ?? -1) !== i) {
+      reindexed.push({ index: item._i, stepOrder: i });
+    }
+  });
+
+  dones.forEach((item, i) => {
+    const desired = newStepOrder + 1 + i;
+    if ((item.stepOrder ?? -1) !== desired) {
+      reindexed.push({ index: item._i, stepOrder: desired });
+    }
+  });
+
+  return { newStepOrder, reindexed };
 }
 
 export function nextOrder(existingOrders: (number | undefined | null)[]): number {
