@@ -9,7 +9,7 @@ export default [
   },
   ...js.configs['flat/recommended'],
   {
-    files: ['src/lib/engines/**/*.ts'],
+    files: ['src/lib/engines/**/*.ts', 'src/lib/utils/**/*.ts'],
     languageOptions: {
       parser: tsParser,
     },
@@ -43,7 +43,7 @@ export default [
     },
   },
   {
-    files: ['src/lib/engines/**/*.ts'],
+    files: ['src/lib/engines/**/*.ts', 'src/lib/utils/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -52,7 +52,12 @@ export default [
             {
               group: ['$lib/db/*', '../db/*', '../../db/*'],
               message:
-                'Core (engines/) must not import shell (db/). Move the I/O to the caller and pass data as arguments.',
+                'Core (engines/, utils/) must not import shell (db/). Move the I/O to the caller and pass data as arguments.',
+            },
+            {
+              group: ['$lib/components/*', '../components/*', '../../components/*'],
+              message:
+                'Core (engines/, utils/) must not import shell (components/). Move the UI logic to the component and pass data as arguments.',
             },
           ],
         },
