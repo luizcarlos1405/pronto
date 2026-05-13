@@ -62,19 +62,13 @@ describe('byListOrder', () => {
   });
 
   it('places items with null order after defined orders', () => {
-    const items = [
-      makeItem({ _id: 'x', order: null }),
-      makeItem({ _id: 'a', order: 0 }),
-    ];
+    const items = [makeItem({ _id: 'x', order: null }), makeItem({ _id: 'a', order: 0 })];
     const sorted = [...items].sort(byListOrder((i) => i.order));
     expect(sorted.map((i) => i._id)).toEqual(['a', 'x']);
   });
 
   it('places items with undefined order after defined orders', () => {
-    const items = [
-      makeItem({ _id: 'x', order: undefined }),
-      makeItem({ _id: 'a', order: 0 }),
-    ];
+    const items = [makeItem({ _id: 'x', order: undefined }), makeItem({ _id: 'a', order: 0 })];
     const sorted = [...items].sort(byListOrder((i) => i.order));
     expect(sorted.map((i) => i._id)).toEqual(['a', 'x']);
   });

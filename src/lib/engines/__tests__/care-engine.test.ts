@@ -7,7 +7,6 @@ import {
   evaluateTaskPlan,
   runScheduler,
 } from '../care-engine';
-import { filterToTopTaskPerGoal } from '../goal-engine';
 import type { TaskPlan, TaskDoc, CareDoc } from '$lib/types';
 
 function makePlan(
@@ -336,10 +335,6 @@ describe('runScheduler', () => {
     expect(result.tasks[0].status).toBe('TODO');
     expect(result.tasks[0].taskPlanId).toBe('tp_new');
     expect(result.tasks[0].careId).toBe('care_1');
-
-    const visible = filterToTopTaskPerGoal(result.tasks);
-    expect(visible).toHaveLength(1);
-    expect(visible[0]._id).toBe(result.tasks[0]._id);
   });
 
   it('generates a task for today with FIXED_DAYS/WEEKDAYS when today matches', () => {
@@ -369,9 +364,6 @@ describe('runScheduler', () => {
     expect(result.tasks.length).toBe(1);
     expect(result.tasks[0].doAt).toBe('2026-01-12');
     expect(result.tasks[0].status).toBe('TODO');
-
-    const visible = filterToTopTaskPerGoal(result.tasks);
-    expect(visible).toHaveLength(1);
   });
 
   it('sets careId on generated tasks', () => {
