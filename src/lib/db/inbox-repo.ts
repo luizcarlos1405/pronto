@@ -35,7 +35,7 @@ export async function getUnprocessed(): Promise<InboxItemDoc[]> {
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: false, createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   return result.docs as InboxItemDoc[];
 }
@@ -45,7 +45,7 @@ export async function getProcessed(): Promise<InboxItemDoc[]> {
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: true, createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   return result.docs as InboxItemDoc[];
 }

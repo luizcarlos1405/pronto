@@ -56,7 +56,7 @@ export async function getAllCares(): Promise<CareDoc[]> {
   const result = await db.find({
     selector: { type: 'Care', createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   const cares = result.docs as CareDoc[];
   return cares.toSorted(byListOrder((c) => c.caresListOrder));

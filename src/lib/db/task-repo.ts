@@ -31,7 +31,7 @@ export async function createTask(data: {
     const result = await db.find({
       selector: { type: 'Task' },
       fields: ['tasksListOrder'],
-      limit: 100000,
+      limit: Infinity,
     });
     tasksListOrder = nextOrder((result.docs as TaskDoc[]).map((t) => t.tasksListOrder));
   }
@@ -95,7 +95,7 @@ export async function getVisibleTasks(today: string): Promise<TaskDoc[]> {
       createdAt: { $gt: null },
     },
     sort: [{ type: 'asc' }, { status: 'asc' }, { doAt: 'asc' }, { createdAt: 'asc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   return (result.docs as TaskDoc[]).toSorted(byListOrder((t) => t.tasksListOrder));
 }
@@ -104,7 +104,7 @@ export async function getDoneToday(todayDate: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const allDone = await db.find({
     selector: { type: 'Task', status: 'DONE' },
-    limit: 100000,
+    limit: Infinity,
   });
   return (allDone.docs as TaskDoc[]).filter((t) => {
     if (!t.completedAt) return false;
@@ -118,7 +118,7 @@ export async function getTasksByGoal(goalId: string): Promise<TaskDoc[]> {
   const result = await db.find({
     selector: { type: 'Task', goalId, doAt: { $gt: null } },
     sort: [{ type: 'asc' }, { goalId: 'asc' }, { doAt: 'asc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   return (result.docs as TaskDoc[]).toSorted(
     (a, b) => (a.stepOrder ?? Infinity) - (b.stepOrder ?? Infinity),
@@ -130,7 +130,7 @@ export async function getTasksByCare(careId: string): Promise<TaskDoc[]> {
   const result = await db.find({
     selector: { type: 'Task', careId, doAt: { $gt: null } },
     sort: [{ type: 'asc' }, { careId: 'asc' }, { doAt: 'asc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   return result.docs as TaskDoc[];
 }
@@ -139,7 +139,7 @@ export async function getTasksByTaskPlan(taskPlanId: string): Promise<TaskDoc[]>
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Task', taskPlanId },
-    limit: 100000,
+    limit: Infinity,
   });
   return result.docs as TaskDoc[];
 }
@@ -154,7 +154,7 @@ export async function getNextTaskForGoals(goalIds: string[]): Promise<Map<string
       goalId: { $in: goalIds },
     },
     sort: [{ type: 'asc' }, { status: 'asc' }, { goalId: 'asc' }, { stepOrder: 'asc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   const map = new Map<string, TaskDoc>();
   for (const task of result.docs as TaskDoc[]) {
@@ -169,7 +169,7 @@ export async function getActiveTasksForPlan(taskPlanId: string): Promise<TaskDoc
   const db = await getDb();
   const result = await db.find({
     selector: { type: 'Task', taskPlanId, status: 'TODO' },
-    limit: 100000,
+    limit: Infinity,
   });
   return result.docs as TaskDoc[];
 }

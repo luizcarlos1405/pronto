@@ -47,7 +47,7 @@ export async function getAllGoals(): Promise<GoalDoc[]> {
   const result = await db.find({
     selector: { type: 'Goal', createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
-    limit: 100000,
+    limit: Infinity,
   });
   const goals = result.docs as GoalDoc[];
   return goals.toSorted(byListOrder((g) => g.goalsListOrder));
