@@ -8,6 +8,7 @@ import {
   updateTask,
   getTask,
   reorderTasks,
+  restoreTask,
 } from '$lib/db/task-repo';
 import { createGoal, getGoal } from '$lib/db/goal-repo';
 import { createCare, getCare, markPlanDone } from '$lib/db/care-repo';
@@ -23,7 +24,7 @@ interface OriginInfo {
 import { Temporal } from '@js-temporal/polyfill';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { reorderItems } from '$lib/utils/reorderItems';
-import { snapshotTask, undoDeleteTask } from '$lib/utils/task-undo';
+import { snapshotTask } from '$lib/utils/task-undo';
 import { filterToTopTaskPerGoal } from '$lib/engines/goal-engine';
 
 function getToday(): string {
@@ -154,7 +155,7 @@ export function getTasksPageState() {
     toast.notify('Task removed', {
       label: 'Undo',
       fn: async () => {
-        await undoDeleteTask(backup);
+        await restoreTask(backup);
         await load();
       },
     });
@@ -191,7 +192,7 @@ export function getTasksPageState() {
     toast.notify('Converted to goal', {
       label: 'Undo',
       fn: async () => {
-        await undoDeleteTask(backup);
+        await restoreTask(backup);
         await load();
       },
     });
@@ -208,7 +209,7 @@ export function getTasksPageState() {
     toast.notify('Converted to care', {
       label: 'Undo',
       fn: async () => {
-        await undoDeleteTask(backup);
+        await restoreTask(backup);
         await load();
       },
     });

@@ -17,12 +17,13 @@ import {
   removeTask as deleteTask,
   reorderGoalTasks,
   assignStepOrder,
+  restoreTask,
 } from '$lib/db/task-repo';
 import { createCare } from '$lib/db/care-repo';
 import { getToastState } from '$lib/components/toast-state.svelte';
 import { calculateGoalStatus } from '$lib/engines/goal-engine';
 import { reorderItems } from '$lib/utils/reorderItems';
-import { snapshotTask, undoDeleteTask } from '$lib/utils/task-undo';
+import { snapshotTask } from '$lib/utils/task-undo';
 import type { GoalDoc, TaskDoc } from '$lib/types';
 
 function getToday(): string {
@@ -211,7 +212,7 @@ export function getGoalDetailState(goalId: string) {
     toast.notify('Converted to goal', {
       label: 'Undo',
       fn: async () => {
-        await undoDeleteTask(backup);
+        await restoreTask(backup);
         await recalcGoalStatus(goalId);
         await load();
       },
@@ -230,7 +231,7 @@ export function getGoalDetailState(goalId: string) {
     toast.notify('Converted to care', {
       label: 'Undo',
       fn: async () => {
-        await undoDeleteTask(backup);
+        await restoreTask(backup);
         await recalcGoalStatus(goalId);
         await load();
       },
