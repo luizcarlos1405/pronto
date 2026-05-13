@@ -1,18 +1,18 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
+import { nextOrder } from '$lib/engines/ordering';
 import type { GoalDoc } from '$lib/types';
 
 export async function createGoal(title: string, originInboxItemId?: string): Promise<GoalDoc> {
   const now = Temporal.Now.instant().toString();
   const existing = await getAllGoals();
-  const maxOrder = existing.reduce((max, g) => Math.max(max, g.goalsListOrder ?? -1), -1);
   const doc: GoalDoc = {
     _id: `goal_${nanoid()}`,
     type: 'Goal',
     title,
     status: 'NOT_STARTED',
-    goalsListOrder: maxOrder + 1,
+    goalsListOrder: nextOrder(existing.map((g) => g.goalsListOrder)),
     originInboxItemId,
     createdAt: now,
     updatedAt: now,

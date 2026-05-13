@@ -1,6 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
+import { nextOrder } from '$lib/engines/ordering';
 import type { CareDoc, TaskPlan } from '$lib/types';
 
 export async function createCare(
@@ -10,7 +11,6 @@ export async function createCare(
 ): Promise<CareDoc> {
   const now = Temporal.Now.instant().toString();
   const existing = await getAllCares();
-  const maxOrder = existing.reduce((max, c) => Math.max(max, c.caresListOrder ?? -1), -1);
   const doc: CareDoc = {
     _id: `care_${nanoid()}`,
     type: 'Care',
@@ -21,7 +21,7 @@ export async function createCare(
       createdAt: now,
       updatedAt: now,
     })),
-    caresListOrder: maxOrder + 1,
+    caresListOrder: nextOrder(existing.map((c) => c.caresListOrder)),
     originInboxItemId,
     createdAt: now,
     updatedAt: now,

@@ -1,6 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
 import { getDb } from './database';
+import { nextOrder } from '$lib/engines/ordering';
 import type { TaskDoc } from '$lib/types';
 
 export async function createTask(data: {
@@ -17,8 +18,7 @@ export async function createTask(data: {
   let stepOrder = data.stepOrder;
   if (data.goalId && stepOrder == null) {
     const existing = await getTasksByGoal(data.goalId);
-    const maxOrder = existing.reduce((max, t) => Math.max(max, t.stepOrder ?? 0), 0);
-    stepOrder = existing.length > 0 ? maxOrder + 1 : 0;
+    stepOrder = nextOrder(existing.map((t) => t.stepOrder));
   }
   let tasksListOrder = data.tasksListOrder;
   if (tasksListOrder == null) {
@@ -27,11 +27,7 @@ export async function createTask(data: {
       selector: { type: 'Task' },
       fields: ['tasksListOrder'],
     });
-    const maxListOrder = (result.docs as TaskDoc[]).reduce(
-      (max, t) => Math.max(max, t.tasksListOrder ?? -1),
-      -1,
-    );
-    tasksListOrder = maxListOrder + 1;
+    tasksListOrder = nextOrder((result.docs as TaskDoc[]).map((t) => t.tasksListOrder));
   }
   const doc: TaskDoc = {
     _id: `task_${nanoid()}`,
