@@ -17,7 +17,7 @@
   const VISIBLE = 5;
   const PAD = Math.floor(VISIBLE / 2);
 
-  let el: HTMLDivElement;
+  let el = $state<HTMLDivElement>();
   let scrollPos = $state(0);
   let scrollTimer: ReturnType<typeof setTimeout>;
   let jumping = false;
