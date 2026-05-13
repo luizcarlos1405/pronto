@@ -145,7 +145,6 @@ export function getGoalDetailState(goalId: string) {
     newTaskTitle = '';
     await recalcGoalStatus(goalId);
     await load();
-    await persistCurrentOrder();
   }
 
   async function toggleTask(taskId: string) {
