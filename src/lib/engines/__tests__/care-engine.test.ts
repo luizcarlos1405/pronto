@@ -400,4 +400,228 @@ describe('runScheduler', () => {
     expect(result.tasks.length).toBe(1);
     expect(result.tasks[0].careId).toBe('care_1');
   });
+
+  it('handles multiple cares with multiple plans', () => {
+    const planA: TaskPlan = {
+      _id: 'tp_a',
+      title: 'Task A',
+      recurrence: {
+        type: 'INTERVAL',
+        subtype: 'FIXED',
+        interval: { days: 1 },
+        startDate: '2026-01-15',
+      },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const planB: TaskPlan = {
+      _id: 'tp_b',
+      title: 'Task B',
+      recurrence: {
+        type: 'INTERVAL',
+        subtype: 'FIXED',
+        interval: { days: 7 },
+        startDate: '2026-01-15',
+      },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const care1: CareDoc = {
+      _id: 'care_1',
+      type: 'Care',
+      title: 'Work',
+      taskPlans: [planA],
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const care2: CareDoc = {
+      _id: 'care_2',
+      type: 'Care',
+      title: 'Home',
+      taskPlans: [planB],
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const today = Temporal.PlainDate.from('2026-01-15');
+    const result = runScheduler([care1, care2], today, () => []);
+    expect(result.tasks.length).toBe(2);
+    expect(result.tasks.find((t) => t.careId === 'care_1')).toBeDefined();
+    expect(result.tasks.find((t) => t.careId === 'care_2')).toBeDefined();
+  });
+
+  it('returns empty when all plans have active TODO tasks (AFTER_DONE)', () => {
+    const plan: TaskPlan = {
+      _id: 'tp_ad',
+      title: 'Recurring',
+      recurrence: {
+        type: 'INTERVAL',
+        subtype: 'AFTER_DONE',
+        interval: { days: 3 },
+        startDate: '2026-01-01',
+      },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const care: CareDoc = {
+      _id: 'care_1',
+      type: 'Care',
+      title: 'Test',
+      taskPlans: [plan],
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const today = Temporal.PlainDate.from('2026-01-10');
+    const result = runScheduler([care], today, () => [
+      makeTask({ taskPlanId: 'tp_ad', status: 'TODO' }),
+    ]);
+    expect(result.tasks.length).toBe(0);
+    expect(result.updatedPlans.size).toBe(0);
+  });
+
+  it('tracks lastDoAtDate in updatedPlans for INTERVAL/FIXED', () => {
+    const plan: TaskPlan = {
+      _id: 'tp_fixed',
+      title: 'Weekly',
+      recurrence: {
+        type: 'INTERVAL',
+        subtype: 'FIXED',
+        interval: { days: 7 },
+        startDate: '2026-01-15',
+      },
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const care: CareDoc = {
+      _id: 'care_1',
+      type: 'Care',
+      title: 'Test',
+      taskPlans: [plan],
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    };
+    const today = Temporal.PlainDate.from('2026-01-15');
+    const result = runScheduler([care], today, () => []);
+    expect(result.updatedPlans.has('tp_fixed')).toBe(true);
+    expect(result.updatedPlans.get('tp_fixed')!.lastDoAtDate).toBe('2026-01-15');
+  });
+});
+
+describe('evaluateIntervalFixed edge cases', () => {
+  it('handles month boundary with months interval from Jan 31', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'FIXED',
+      interval: { months: 1 },
+      startDate: '2026-01-31',
+    });
+    plan.lastDoAtDate = '2026-01-31';
+    const today = Temporal.PlainDate.from('2026-03-01');
+    const result = evaluateIntervalFixed(plan, today);
+    expect(result).not.toBeNull();
+    const doAt = Temporal.PlainDate.from(result!.doAt);
+    expect(doAt.year).toBe(2026);
+    expect(doAt.month).toBeGreaterThanOrEqual(2);
+  });
+
+  it('handles weekly interval', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'FIXED',
+      interval: { weeks: 2 },
+      startDate: '2026-01-05',
+    });
+    const today = Temporal.PlainDate.from('2026-01-19');
+    const result = evaluateIntervalFixed(plan, today);
+    expect(result!.doAt).toBe('2026-01-19');
+  });
+
+  it('returns null for wrong subtype', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'AFTER_DONE',
+      interval: { days: 3 },
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-01-15');
+    expect(evaluateIntervalFixed(plan, today)).toBeNull();
+  });
+});
+
+describe('evaluateFixedDays edge cases', () => {
+  it('WEEKDAYS returns today when today matches dayOfWeek', () => {
+    const plan = makePlan({
+      type: 'FIXED_DAYS',
+      subtype: 'WEEKDAYS',
+      daysOfWeek: [1],
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-01-12');
+    expect(today.dayOfWeek).toBe(1);
+    const result = evaluateFixedDays(plan, today, []);
+    expect(result.length).toBe(1);
+    expect(result[0].doAt).toBe('2026-01-12');
+  });
+
+  it('YEARDAYS rolls to next year when date has passed', () => {
+    const plan = makePlan({
+      type: 'FIXED_DAYS',
+      subtype: 'YEARDAYS',
+      dates: [{ month: 1, day: 15 }],
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-06-01');
+    const result = evaluateFixedDays(plan, today, []);
+    expect(result.length).toBe(1);
+    expect(result[0].doAt).toBe('2027-01-15');
+  });
+
+  it('YEARDAYS Feb 29 clamps to Feb 28 in non-leap year', () => {
+    const plan = makePlan({
+      type: 'FIXED_DAYS',
+      subtype: 'YEARDAYS',
+      dates: [{ month: 2, day: 29 }],
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-01-01');
+    const result = evaluateFixedDays(plan, today, []);
+    expect(result.length).toBe(1);
+    expect(result[0].doAt).toBe('2026-02-28');
+  });
+
+  it('returns empty for wrong recurrence type', () => {
+    const plan = makePlan({
+      type: 'INTERVAL',
+      subtype: 'FIXED',
+      interval: { days: 1 },
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-01-15');
+    expect(evaluateFixedDays(plan, today, [])).toEqual([]);
+  });
+
+  it('MONTHDAYS generates next month when day has passed this month', () => {
+    const plan = makePlan({
+      type: 'FIXED_DAYS',
+      subtype: 'MONTHDAYS',
+      daysOfMonth: [5],
+      startDate: '2026-01-01',
+    });
+    const today = Temporal.PlainDate.from('2026-01-10');
+    const result = evaluateFixedDays(plan, today, []);
+    expect(result.length).toBe(1);
+    expect(result[0].doAt).toBe('2026-02-05');
+  });
+
+  it('MONTHDAYS leap year February day 29', () => {
+    const plan = makePlan({
+      type: 'FIXED_DAYS',
+      subtype: 'MONTHDAYS',
+      daysOfMonth: [29],
+      startDate: '2024-01-01',
+    });
+    const today = Temporal.PlainDate.from('2024-02-01');
+    const result = evaluateFixedDays(plan, today, []);
+    expect(result.length).toBe(1);
+    expect(result[0].doAt).toBe('2024-02-29');
+  });
 });
