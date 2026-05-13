@@ -134,10 +134,10 @@
       <button class="btn btn-success btn-sm mb-4" onclick={ctrl.markCompleted}> Mark done </button>
     {/if}
 
-    <div class="join w-full mb-6">
+    <div class="join w-full mb-6 sticky top-4 z-50">
       <input
         type="text"
-        class="input join-item flex-1 sticky top-4 z-50"
+        class="input join-item flex-1"
         placeholder="Add a task..."
         bind:value={ctrl.newTaskTitle}
         onkeydown={handleKeydown}
