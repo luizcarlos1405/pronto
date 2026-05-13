@@ -1,8 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-export function formatFriendlyDate(isoDate: string): string {
+export function formatFriendlyDate(
+  isoDate: string,
+  today: Temporal.PlainDate = Temporal.Now.plainDateISO(),
+): string {
   const date = Temporal.PlainDate.from(isoDate);
-  const today = Temporal.Now.plainDateISO();
   const diff = date.until(today, { largestUnit: 'day' }).days;
 
   if (diff === 0) return 'Today';
