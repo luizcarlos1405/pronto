@@ -133,6 +133,26 @@ export async function getTasksByTaskPlan(taskPlanId: string): Promise<TaskDoc[]>
   return result.docs as TaskDoc[];
 }
 
+export async function getNextTaskForGoals(goalIds: string[]): Promise<Map<string, TaskDoc>> {
+  if (goalIds.length === 0) return new Map();
+  const db = await getDb();
+  const result = await db.find({
+    selector: {
+      type: 'Task',
+      status: 'TODO',
+      goalId: { $in: goalIds },
+    },
+    sort: [{ type: 'asc' }, { goalId: 'asc' }, { stepOrder: 'asc' }],
+  });
+  const map = new Map<string, TaskDoc>();
+  for (const task of result.docs as TaskDoc[]) {
+    if (task.goalId && !map.has(task.goalId)) {
+      map.set(task.goalId, task);
+    }
+  }
+  return map;
+}
+
 export async function getActiveTasksForPlan(taskPlanId: string): Promise<TaskDoc[]> {
   const db = await getDb();
   const result = await db.find({
