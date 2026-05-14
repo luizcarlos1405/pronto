@@ -7,6 +7,7 @@
   import Heart from 'lucide-svelte/icons/heart';
   import Plus from 'lucide-svelte/icons/plus';
   import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
 
   let { open, inboxItem, onDone }: { open: boolean; inboxItem?: InboxItemDoc; onDone: () => void } =
     $props();
@@ -99,6 +100,9 @@
           </button>
           <button class="btn btn-outline btn-sm" onclick={() => (ctrl!.mode = 'care')}>
             <Heart class="size-4" /> Add care
+          </button>
+          <button class="btn btn-outline btn-error btn-sm" onclick={handleFinish}>
+            <Trash2 class="size-4" /> Discard
           </button>
         </div>
       {:else if ctrl.mode === 'task'}
