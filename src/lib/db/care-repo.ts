@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
-import { getDb } from './database';
+import { getDb, FIND_LIMIT_ALL } from './database';
 import { nextOrder, byListOrder } from '$lib/engines/ordering';
 import type { CareDoc, TaskPlan } from '$lib/types';
 
@@ -56,7 +56,7 @@ export async function getAllCares(): Promise<CareDoc[]> {
   const result = await db.find({
     selector: { type: 'Care', createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
-    limit: Infinity,
+    limit: FIND_LIMIT_ALL,
   });
   const cares = result.docs as CareDoc[];
   return cares.toSorted(byListOrder((c) => c.caresListOrder));

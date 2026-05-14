@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
-import { getDb } from './database';
+import { getDb, FIND_LIMIT_ALL } from './database';
 import { nextOrder, byListOrder } from '$lib/engines/ordering';
 import type { GoalDoc } from '$lib/types';
 
@@ -47,7 +47,7 @@ export async function getAllGoals(): Promise<GoalDoc[]> {
   const result = await db.find({
     selector: { type: 'Goal', createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { createdAt: 'desc' }],
-    limit: Infinity,
+    limit: FIND_LIMIT_ALL,
   });
   const goals = result.docs as GoalDoc[];
   return goals.toSorted(byListOrder((g) => g.goalsListOrder));

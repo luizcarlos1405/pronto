@@ -8,6 +8,11 @@ type FazDoc = InboxItemDoc | TaskDoc | GoalDoc | CareDoc;
 
 export type Database = PouchDB.Database<FazDoc>;
 
+// Max value accepted by IDBObjectStore.getAll() — passing Infinity or larger values
+// (e.g. Number.MAX_SAFE_INTEGER) causes a TypeError at the IndexedDB boundary.
+// Use this as the `limit` in pouchdb-find queries that should return all documents.
+export const FIND_LIMIT_ALL = 4294967295;
+
 let dbInstance: Database | null = null;
 let initPromise: Promise<void> | null = null;
 

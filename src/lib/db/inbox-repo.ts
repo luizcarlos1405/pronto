@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { nanoid } from 'nanoid';
-import { getDb } from './database';
+import { getDb, FIND_LIMIT_ALL } from './database';
 import type { InboxItemDoc } from '$lib/types';
 
 export async function createInboxItem(title: string): Promise<InboxItemDoc> {
@@ -35,7 +35,7 @@ export async function getUnprocessed(): Promise<InboxItemDoc[]> {
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: false, createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
-    limit: Infinity,
+    limit: FIND_LIMIT_ALL,
   });
   return result.docs as InboxItemDoc[];
 }
@@ -45,7 +45,7 @@ export async function getProcessed(): Promise<InboxItemDoc[]> {
   const result = await db.find({
     selector: { type: 'InboxItem', isProcessed: true, createdAt: { $gt: null } },
     sort: [{ type: 'asc' }, { isProcessed: 'asc' }, { createdAt: 'desc' }],
-    limit: Infinity,
+    limit: FIND_LIMIT_ALL,
   });
   return result.docs as InboxItemDoc[];
 }
