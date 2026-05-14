@@ -4,6 +4,7 @@
   import Target from 'lucide-svelte/icons/target';
   import Heart from 'lucide-svelte/icons/heart';
   import ChevronDown from 'lucide-svelte/icons/chevron-down';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
   import { slide } from 'svelte/transition';
 
   let {
@@ -13,6 +14,7 @@
     onsave,
     ontransformgoal,
     ontransformcare,
+    ondelete,
   }: {
     open: boolean;
     task?: TaskDoc | null;
@@ -20,6 +22,7 @@
     onsave: (title: string, doAt: string) => void;
     ontransformgoal: () => void;
     ontransformcare: () => void;
+    ondelete: () => void;
   } = $props();
 
   let editTitle = $state('');
@@ -110,6 +113,11 @@
     </div>
 
     <div class="modal-action">
+      <button class="btn btn-ghost btn-sm text-error" onclick={ondelete}>
+        <Trash2 class="size-4" />
+        Discard
+      </button>
+      <div class="flex-1"></div>
       <button class="btn btn-ghost btn-sm" onclick={onclose}>Cancel</button>
       <button class="btn btn-primary btn-sm" onclick={handleSave} disabled={!editTitle.trim()}>
         Save

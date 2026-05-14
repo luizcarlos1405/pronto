@@ -163,6 +163,7 @@ export function getTasksPageState() {
     const backup = snapshotTask(task);
 
     await deleteTask(id);
+    editingTask = null;
     await load();
 
     toast.notify('Task removed', {

@@ -218,6 +218,27 @@ export function getGoalDetailState(goalId: string) {
     });
   }
 
+  async function removeTask(id: string) {
+    const task = tasks.find((t) => t._id === id);
+    if (!task) return;
+
+    const backup = snapshotTask(task);
+
+    await deleteTask(id);
+    editingTask = null;
+    await recalcGoalStatus(goalId);
+    await load();
+
+    toast.notify('Task removed', {
+      label: 'Undo',
+      fn: async () => {
+        await restoreTask(backup);
+        await recalcGoalStatus(goalId);
+        await load();
+      },
+    });
+  }
+
   async function transformToCare() {
     if (!editingTask) return;
     const task = await getTask(editingTask._id);
@@ -277,6 +298,7 @@ export function getGoalDetailState(goalId: string) {
     saveEdit,
     transformToGoal,
     transformToCare,
+    removeTask,
     reorder,
     persistOrder,
   };

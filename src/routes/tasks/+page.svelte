@@ -185,4 +185,5 @@
   onsave={ctrl.saveEdit}
   ontransformgoal={ctrl.transformToGoal}
   ontransformcare={ctrl.transformToCare}
+  ondelete={() => ctrl.removeTask(ctrl.editingTask!._id)}
 />
